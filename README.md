@@ -12,23 +12,39 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 2. [Abstract](#abstract)  
 3. [Contents](#contents)  
 4. [AIM:](#aim)  
-5. [Initial git repo setup for simple Flask app](#initial-git-repo-setup-for-simple-flask-app)  
-6. [Next steps](#next-steps)  
-7. [Questions / Barriers](#questions--barriers)  
+5. [Next steps](#next-steps)  
+6. [Questions / Barriers](#questions--barriers)  
 	1. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
 	2. [Whats teh minimum serach info required for sensible results?](#whats-teh-minimum-serach-info-required-for-sensible-results)  
-8. [How To's](#how-tos)  
-	1. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
+7. [How To's](#how-tos)  
+	1. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
 	2. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
-9. [TIPS](#tips)  
-10. [REFERENCES](#references)  
-11. [Completed](#completed)  
+	3. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
+8. [TIPS](#tips)  
+9. [REFERENCES](#references)  
+10. [Completed](#completed)  
 
 
 ## AIM:
 A little python practice, scraping, flask, basic web.
 
-## Initial git repo setup for simple Flask app
+## Next steps
+Setup basic Flask dir tree.  
+Add disc scan, to find movie files.  
+Pass the information to scraper, gather information.
+Build DB / non-valatile storage (JSON file will do to start).
+Display information using flask & boostrap cards.
+Allow toggling of favourite icon, seen it icon
+
+
+## Questions / Barriers
+### How do we scrape IMDB for movie info to display?  
+### Whats teh minimum serach info required for sensible results?  
+
+
+
+## How To's
+### How to do initial git repo setup for simple Flask app
 ```
 > git add .gitignore			# add config file - which dir/files to track/ignore
 > git commit -m'update config'
@@ -52,22 +68,17 @@ Werkzeug==0.15.4
 > pip install -r requirements.txt	# gives us the basics for flask, postgres, imdb 
 ```
 
-## Next steps
-Setup basic Flask dir tree.  
-Add disc scan, to find movie files.  
-Pass the information to scraper, gather information.
-Build DB / non-valatile storage (JSON file will do to start).
-Display information using flask & boostrap cards.
-Allow toggling of favourite icon, seen it icon
+
+### How do I auto generate TOC?
+```
+Point script at the right docs				# DEFAULT_FILE (input)
+											# DEFAULT_README(output w TOC)
+> create_TOC_for_md.py                      # run script
+                                            # paste output into .md file TOC
+```
+Available here: [create_TOC_for_md.py](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/create_TOC_for_md.py)  
 
 
-## Questions / Barriers
-### How do we scrape IMDB for movie info to display?  
-### Whats teh minimum serach info required for sensible results?  
-
-
-
-## How To's
 ### How do I insert a TOC?
 To create a link to a chapter in MD:
 ```
@@ -90,15 +101,6 @@ To create a TOC, create a numbered list of links. Tab in next level with new num
 6. [Tips on context doc](#tips)\
 7. [References](#references)
 ```
-
-### How do I auto generate TOC?
-```
-Point script at the right docs				# DEFAULT_FILE (input)
-											# DEFAULT_README(output w TOC)
-> create_TOC_for_md.py                      # run script
-                                            # paste output into .md file TOC
-```
-Available here: [create_TOC_for_md.py](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/create_TOC_for_md.py)  
 
 
 ## TIPS
