@@ -30,6 +30,7 @@ A little python practice, scraping, flask, basic web.
 
 ## Next steps
 Pass the information to scraper, gather information.
+Make MMdia serializable - w/ meta class?
 Build DB / non-valatile storage (JSON file will do to start).
 Display information using flask & boostrap cards.
 Allow toggling of favourite icon, seen it icon
