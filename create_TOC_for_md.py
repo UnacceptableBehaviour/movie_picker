@@ -114,7 +114,8 @@ def create_TOC_as_string_from_TOC_nested_list(toc_list):
 
     return lines
 
-
+# INPUT
+#DEFAULT_FILE = Path('/_COURSES_00_WIP/ALGO_00_Intro_2_Algorithms_MIT.rtf')
 #DEFAULT_FILE = Path('context.md')
 DEFAULT_FILE = Path('README.md')
 def get_mark_down(filename=DEFAULT_FILE):
@@ -139,12 +140,12 @@ def get_mark_down(filename=DEFAULT_FILE):
     
     return content        
     
-
+# OUTPUT - w/ TOC added
 DEFAULT_README = Path('./README.md')
 #DEFAULT_README = Path('./README.tex.md')    # if Texify installed it will convert the Latex into equations
 def save_text_w_toc_to_readme(text, toc_string):
     
-    replacement = "## Contents  \n" + toc_string + "\n\n## AIM:  \n"
+    replacement = "## Contents  \n" + toc_string + "\n\n## AIM:"
     
     print(f"***\n***\n{replacement}\n***\n***\n")
     
