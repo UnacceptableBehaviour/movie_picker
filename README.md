@@ -18,8 +18,9 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 	2. [Whats teh minimum serach info required for sensible results?](#whats-teh-minimum-serach-info-required-for-sensible-results)  
 7. [How To's](#how-tos)  
 	1. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
-	2. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
-	3. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
+	2. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
+	3. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
+	4. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
 8. [TIPS](#tips)  
 9. [REFERENCES](#references)  
 10. [Completed](#completed)  
@@ -37,13 +38,6 @@ Allow toggling of favourite icon, seen it icon
 
 
 ## Questions / Barriers
-### How do we access IMDB for movie info to display?
-```
-import imdb						# use this module
-
-> ./movie_info_imdb.py 			# < exaples here
-								# retrieves id, title, synopsis, year release, cast, runtime, rating, genre, kind, 
-```
 ### How do we scrape IMDB for movie info to display?
 ### Whats teh minimum serach info required for sensible results?  
 
@@ -72,6 +66,14 @@ SQLAlchemy==1.3.13
 striprtf==0.0.8					# if maintining README.md in and RTF doc
 Werkzeug==0.15.4
 > pip install -r requirements.txt	# gives us the basics for flask, postgres, imdb 
+```
+
+### How do we access IMDB for movie info to display?
+```
+import imdb						# use this module
+
+> ./movie_info_imdb.py 			# < exaples here
+								# retrieves id, title, synopsis, year release, cast, runtime, rating, genre, kind, 
 ```
 
 
