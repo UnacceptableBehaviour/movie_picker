@@ -37,7 +37,14 @@ Allow toggling of favourite icon, seen it icon
 
 
 ## Questions / Barriers
-### How do we scrape IMDB for movie info to display?  
+### How do we access IMDB for movie info to display?
+```
+import imdb						# use this module
+
+> ./movie_info_imdb.py 			# < exaples here
+								# retrieves id, title, synopsis, year release, cast, runtime, rating, genre, kind, 
+```
+### How do we scrape IMDB for movie info to display?
 ### Whats teh minimum serach info required for sensible results?  
 
 
