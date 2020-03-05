@@ -30,6 +30,7 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 A little python practice, scraping, flask, basic web.
 
 ## Next steps
+Integrate IMDB queries into MMdia class
 Pass the information to scraper, gather information.
 Make MMdia serializable - w/ meta class?
 Build DB / non-valatile storage (JSON file will do to start).
@@ -129,4 +130,5 @@ BLUE  - Parked, no action planned. (maybe incomplete / redundant)
 ## Completed
 2020.Mar.05 - SF - Create Context Template - Move to bottom?  
 2020.Mar.05 - SF - Setup basic Flask dir tree.
-2020.Mar.05 - SF - Add disc scan, to find movie (and audio) files.  
+2020.Mar.05 - SF - Add disc scan, to find movie (and audio) files.
+2020.Mar.05 - SF - Query IMDB for movie info.  
