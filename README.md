@@ -106,12 +106,13 @@ To create a TOC, create a numbered list of links. Tab in next level with new num
 ## TIPS
 Keep status concise:  
 Put the colour in square brackets on the next line immediately after status  
-RED   - Stalled, technology/cost barrier.
-AMBER - Work in progress.
-GREEN - Complete.
-BLUE  - Parked, no action planned. (maybe incomplete / redundant)
+RED   - Stalled, technology/cost barrier.  
+AMBER - Work in progress.  
+GREEN - Complete.  
+BLUE  - Parked, no action planned. (maybe incomplete / redundant)  
 
-<br>/CRLF in markdown is endline \\
+<br>/CRLF in markdown is endline \\ or 2 spaces at the end '  '
+
 
 
 ## REFERENCES
