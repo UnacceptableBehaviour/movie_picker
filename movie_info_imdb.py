@@ -62,18 +62,25 @@ if __name__ == '__main__':
     print(f"\n\n\nRetieving info from IMDB\nSearching fror: {query} <")
     results = ia.search_movie(query)
 
-    for m in results:
-      pprint(m)
+    print("Found:")
+    for i,m in enumerate(results):
+      print(i, m)  
+    
+    chosen = 0
+    # chosen = input(f"Select result from 0 - {len(results)-1} (default 0):")
+    # if chosen == '' : chosen = 0    
+    # chosen = int(chosen)
       
     # return result with highest Doc Distance with search
-    movie = results[0]
-    m = ia.get_movie(results[0].movieID)
+    #movie = results[chosen]
+    m = ia.get_movie(results[chosen].movieID)
     print(ia.get_movie_infoset())
     
     print(f"ID: {m.movieID}")
     print(f"Title: {m.get('title')}")
+    print(f"Title: {m['title']}")
     print(f"Rating: {m['rating']}")
-    print(f"Runtimes: {m['runtimes']}")
+    print(f"Runtimes: {m['runtimes']} or {int(m['runtimes'][0])%60}h{int(m['runtimes'][0])%60}")
     print(m.current_info)
     
     # m.get('plot') - list of str (7 in this case all diffferent)
