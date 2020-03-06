@@ -207,6 +207,8 @@ if __name__ == '__main__':
       print(media_lib['video'][k].movie_data['title'], len(media_lib['video'][k].movie_data['title']))
       print(media_lib['video'][k].movie_data['year'])
       print(media_lib['video'][k].file_stat)
+      print(f"{int(media_lib['video'][k].file_stat.st_size/(1024*1024))}MiB")
+      print(f"{round(media_lib['video'][k].file_stat.st_size/(1024*1024*1024),1)}GiB")
       if i > 20: break
     
             
