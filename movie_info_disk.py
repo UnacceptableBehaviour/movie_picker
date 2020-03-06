@@ -4,7 +4,7 @@ from collections import Counter
 from pprint import pprint
 import re
 import json
-    
+import imdb    
 
 
 class MMdia:
@@ -26,16 +26,61 @@ class MMdia:
     self.full_path = Path(file_path)
     self.filename = self.full_path.name
     self.location = self.full_path.parent
-    self.media_title = None
-    self.media_year = None
-    self.get_media_name_and_year()
-    self.seen = False
+    self.file_stat = Path(file_path).stat()
+    self.movie_data = {
+      'id': None,
+      'title': '',
+      'synopsis': '',
+      'year': 0,
+      'cast': [],
+      'runtime': 0,
+      'rating':0,
+      'genre':[],
+      'kind':[],
+      'seen': False,
+      'fav':False
+    }
+    self.get_media_name_and_year_from_disc()
     #st_size
 
   def to_s(self):
     print
 
-  def get_media_name_and_year(self):
+  def query_imdb_for_movie_info(self):
+    pass
+    # self.movie_data = {
+    #   'id': None,
+    #   'title': '',
+    #   'synopsis': '',
+    #   'year': 0,
+    #   'cast': [],
+    #   'runtime': 0,
+    #   'rating':0,
+    #   'genre':[],
+    #   'kind':[],
+    #   'seen': False,
+    #   'fav':False
+    # }
+    ia = imdb.IMDb()      # instantiation cost?
+#     
+# integrate. . . 
+#     media_title = 'Joker'
+#     media_year = '2019'
+#     query = f"{media_title} {media_year}"
+#     
+#     print(f"\n\n\nRetieving info from IMDB\nSearching fror: {query} <")
+#     results = ia.search_movie(query)
+# 
+#     for m in results:
+#       pprint(m)
+#       
+#     # return result with highest Doc Distance with search
+#     movie = results[0]
+#     m = ia.get_movie(results[0].movieID)
+    
+    
+
+  def get_media_name_and_year_from_disc(self):
     #if self.is_video(self.filename):
     if self.obj_is_video():
       # movies
@@ -43,12 +88,12 @@ class MMdia:
       # r'[\(\)\[\]]?\d\d\d\d[\(\)\[\]]?[\.\b]' - 4 digit year followed by . or word boundary      
       match = re.search(r'(.*?)[\(\)\[\]]?(\d\d\d\d)[\(\)\[\]]?[\.\b]', self.filename, re.I )
       if match:
-        self.media_year = match.group(2)
+        self.movie_data['year'] = match.group(2)
         dirty_title = match.group(1)
         dirty_title = re.sub(r'^[\W_]*','',dirty_title)     # remove leading non word
         dirty_title = re.sub(r'[\W_]*$','',dirty_title)     # remove trailing non word
         dirty_title = re.sub(r'[\._]',' ',dirty_title)      # replace . and underscore with space
-        self.media_title = dirty_title
+        self.movie_data['title'] = dirty_title
         
       else:
         self.__badly_formatted_names.append(self.full_path)
@@ -155,11 +200,14 @@ if __name__ == '__main__':
     #pprint(media_lib['audio'])
     ##MMdia.dump_bad_names()
     
-    for k in media_lib['video'].keys():
-      print(f"\n\n\ndisk: {k} <")
+    for i,k in enumerate(media_lib['video'].keys()):
+      if len(media_lib['video'][k].movie_data['title']) == 0: continue        # skip titles of zero length - curate later
+      print(f"\n\ndisk: {k} <")
       pprint(media_lib['video'][k])               # TODO ex - use metaclass to dump object attributes
-      print(media_lib['video'][k].media_title)
-      print(media_lib['video'][k].media_year)
+      print(media_lib['video'][k].movie_data['title'], len(media_lib['video'][k].movie_data['title']))
+      print(media_lib['video'][k].movie_data['year'])
+      print(media_lib['video'][k].file_stat)
+      if i > 20: break
     
             
     # 
