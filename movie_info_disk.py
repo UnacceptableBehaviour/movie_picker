@@ -5,7 +5,7 @@ from pprint import pprint
 import re
 import json
 import imdb    
-
+import urllib.request
 
 class MMdia:
   # choose order by most frequently occuring
@@ -33,21 +33,29 @@ class MMdia:
       'synopsis': '',
       'year': 0,
       'cast': [],
-      'runtime': 0,
+      'runtime_m': 0,
+      'runtime_hm': 0,
       'rating':0,
-      'genre':[],
+      'genres':[],
       'kind':[],
       'seen': False,
-      'fav':False
+      'fav':False,
+      'image_url':None,
+      'file_name': self.full_path,
+      'file_title': None
     }
     self.get_media_name_and_year_from_disc()
+    self.query_imdb_for_movie_info()
     #st_size
 
   def to_s(self):
     print
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # USING imdb module
+  # Usage (keys): https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   def query_imdb_for_movie_info(self):
-    pass
     # self.movie_data = {
     #   'id': None,
     #   'title': '',
@@ -56,27 +64,120 @@ class MMdia:
     #   'cast': [],
     #   'runtime': 0,
     #   'rating':0,
-    #   'genre':[],
+    #   'genres':[],
     #   'kind':[],
     #   'seen': False,
     #   'fav':False
     # }
     ia = imdb.IMDb()      # instantiation cost?
-#     
-# integrate. . . 
-#     media_title = 'Joker'
-#     media_year = '2019'
-#     query = f"{media_title} {media_year}"
-#     
-#     print(f"\n\n\nRetieving info from IMDB\nSearching fror: {query} <")
-#     results = ia.search_movie(query)
-# 
-#     for m in results:
-#       pprint(m)
-#       
-#     # return result with highest Doc Distance with search
-#     movie = results[0]
-#     m = ia.get_movie(results[0].movieID)
+    query = f"{self.movie_data['file_title']} {self.movie_data['year']}"    
+    print(f"\n\n\n")
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    print(f"Retieving info from IMDB\nSearching for: {query} <")
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    results = ia.search_movie(query)
+
+    chosen = 0
+    
+    print("Found:")
+    for i,m in enumerate(results):
+      print(i, m, m['kind'])
+      if m['kind'] == 'movie':
+        chosen = i
+        break
+    
+    # chosen = input(f"Select result from 0 - {len(results)-1} (default 0):")
+    # if chosen == '' : chosen = 0    
+    # chosen = int(chosen)
+      
+    # return result with highest Doc Distance with search
+    #movie = results[chosen]
+    self.movie_data['id'] = results[chosen].movieID
+    
+    m = ia.get_movie(results[chosen].movieID)
+    #print(ia.get_movie_infoset())
+    
+    print(f"ID: {m.movieID}")
+    print(f"Title: {m['title']}")
+    try:
+      self.movie_data['title'] = m['title']
+    except:
+      print(">> - - - - - > WARNING: no m['title']")
+    
+    print(f"Rating: {m['rating']}")
+    try:
+      self.movie_data['rating'] = m['rating']
+    except:
+      print(">> - - - - - > WARNING: no m['rating']")      
+    
+    print(f"Runtimes: {m['runtimes']} or {int(m['runtimes'][0])%60}h{int(m['runtimes'][0])%60}m")
+    print(m.current_info)
+    try:
+      self.movie_data['runtime_m'] = m['runtimes'][0]
+      self.movie_data['runtime_hm'] = f"{int(m['runtimes'][0])%60}h{int(m['runtimes'][0])%60}m"
+    except:
+      print(">> - - - - - > WARNING: no m['runtimes']")
+      
+    # m.get('plot') - list of str (7 in this case all diffferent)
+    plot_size = 0
+    for synopsis in m.get('plot'):
+      # caballo grande ande on no ande!
+      if plot_size < len(synopsis):
+        plot_size = len(synopsis)
+        self.movie_data['synopsis'] = synopsis
+        print(f"SYNOPSIS:\n{synopsis}")
+      
+    print(f"\nSYNOPSIS PICKED:\n{synopsis}")        
+    
+    
+    # this is actually the plot - massive
+    # print(f"\nSYNOPSIS:\n{m.get('synopsis')}")
+    
+    print(f"GENRES?: {'genres' in m}")
+    if 'genres' in m: print(m['genres'])
+    print(f"KIND: {m['kind']}")
+    try:
+      self.movie_data['genres'] = m['genres']
+      self.movie_data['kind'] = m['kind']
+    except:
+      print(">> - - - - - > WARNING: no m['genres'] or ['kind'] ?")      
+    
+    print(f"CAST:")    
+    #for index, member in enumerate(m['cast']):
+    #  print(member, member['id'])
+    
+    index = 0
+    for member in m['cast']:
+      print(member)
+      if index > 10: break
+      index+=1
+      
+    # this retreives low quality cover art
+    #
+    # https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYT...
+    # ...k2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SY150_CR0,0,101,150_.jpg
+    #
+    # Change ending @@._V1_SY300_CR0,0,201,300_.jpg
+    #                    size ^    x,y,x1, y1
+    print(f"COVER ART: {m['cover url']}")
+    try:
+      self.movie_data['image_url'] = m['cover url']
+      url = self.movie_data['image_url']
+    except:
+      print(">> - - - - - > WARNING: no m['genres'] or ['kind'] ?")
+      
+    # url = urllib.parse.quote(url, safe='/:')  # replace spaces if there are any - urlencode
+    # print(url)    
+    local_file_name = Path(self.location, f"{self.full_path.stem}.jpg")
+    print(f"STORING IMAGE TO:\n{local_file_name}")
+    #urllib.request.urlretrieve(url, local_file_name)
+    urllib.request.urlretrieve(url, Path('./scratch', f"{self.full_path.stem}.jpg"))
+    
+    # from scrape
+    # https://www.imdb.com/title/tt7286456/mediaviewer/rm3353122305
+    #                          ID: 7286456
+    #                       Title: Joker
+
     
     
 
@@ -93,7 +194,7 @@ class MMdia:
         dirty_title = re.sub(r'^[\W_]*','',dirty_title)     # remove leading non word
         dirty_title = re.sub(r'[\W_]*$','',dirty_title)     # remove trailing non word
         dirty_title = re.sub(r'[\._]',' ',dirty_title)      # replace . and underscore with space
-        self.movie_data['title'] = dirty_title
+        self.movie_data['file_title'] = dirty_title
         
       else:
         self.__badly_formatted_names.append(self.full_path)
@@ -172,44 +273,53 @@ if __name__ == '__main__':
         
     #pprint(get_list_of_file_extensions())
     # pathlib example - use
-    vid = '/here/i/am/Ghostbusters.1984.Remastered.1080p.mp4'
-    print(f"AUDIO?: {MMdia.is_audio('Atominc Fusion Corp.mp3')}")
-    print(f"VIDEO?: {MMdia.is_video('Atominc Fusion Corp.ac3')}")        
-    print(f"AUDIO?: {MMdia.is_audio('Ghostbusters.1984.Remastered.1080p.mp4')}")
-    print(f"VIDEO?: {MMdia.is_video('Ghostbusters.1984.Remastered.1080p.mp4')}")
-    print(f"AUDIO?: {MMdia.is_audio(vid)}")
-    print(f"VIDEO?: {MMdia.is_video(vid)}")
-    print(f"Path:  {Path(vid).parent}")
-    print(f"Name:  {Path(vid).name}")
-    print(f"Ext:   {Path(vid).suffix}")        
-    
-    pprint(Path(r'/Volumes/FAITHFUL500/15_rpi_shortlist/The Last Thing He Wanted (2020) [720p] [WEBRip] [YTS.MX]/The.Last.Thing.He.Wanted.2020.720p.WEBRip.x264.AAC-[YTS.MX].mp4').stat())
-    
-    t = 'first.man.'
-    print(re.sub(r'[\W_]*$','',t))
-    t = '(^*)a.pistol.shooter.dies.'
-    u = re.sub(r'^[\W_]*','',t)
-    print(re.sub(r'\.',' ',u).strip())
-    t = '._a.star.is.born.'
-    print(re.sub(r'^[\W_]*','',t))
-
 
     media_lib = MMdia.refresh_media_files_information(mmdia_root)
+    
+    print(f"SIZE: {media_lib['video'].keys()} - {len(media_lib['video'].keys())} - {type(media_lib)}")
     
     #pprint(media_lib['video'])
     #pprint(media_lib['audio'])
     ##MMdia.dump_bad_names()
+
+    # self.full_path = Path(file_path)
+    # self.filename = self.full_path.name
+    # self.location = self.full_path.parent
+    # self.file_stat = Path(file_path).stat()
+    # self.movie_data = {
+    #   'id': None,
+    #   'title': '',
+    #   'synopsis': '',
+    #   'year': 0,
+    #   'cast': [],
+    #   'runtime_m': 0,
+    #   'runtime_hm': 0,
+    #   'rating':0,
+    #   'genres':[],
+    #   'kind':[],
+    #   'seen': False,
+    #   'fav':False,
+    #   'image_url':None,
+    #   'file_name': self.full_path,
+    #   'file_title': None
+    # }
     
-    for i,k in enumerate(media_lib['video'].keys()):
-      if len(media_lib['video'][k].movie_data['title']) == 0: continue        # skip titles of zero length - curate later
-      print(f"\n\ndisk: {k} <")
+    count = 0
+    for k in media_lib['video'].keys():
+      #if len(media_lib['video'][k].movie_data['title']) == 0: continue        # skip titles of zero length - curate later
+      count += 1
+      print(f"\n\ndisk: {k} - {count}<")
       pprint(media_lib['video'][k])               # TODO ex - use metaclass to dump object attributes
-      print(media_lib['video'][k].movie_data['title'], len(media_lib['video'][k].movie_data['title']))
-      print(media_lib['video'][k].movie_data['year'])
+      print(media_lib['video'][k].full_path)
+      print(media_lib['video'][k].filename)
+      print(media_lib['video'][k].location)
       print(media_lib['video'][k].file_stat)
+      pprint(media_lib['video'][k].movie_data)
+      # print(media_lib['video'][k].movie_data['title'], len(media_lib['video'][k].movie_data['title']))
+      # print(media_lib['video'][k].movie_data['year'])
       print(f"{int(media_lib['video'][k].file_stat.st_size/(1024*1024))}MiB")
       print(f"{round(media_lib['video'][k].file_stat.st_size/(1024*1024*1024),1)}GiB")
-      if i > 20: break
+      if count > 200: break
     
             
     # 
