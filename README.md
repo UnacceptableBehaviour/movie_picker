@@ -15,12 +15,12 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 5. [Next steps](#next-steps)  
 6. [Questions / Barriers](#questions--barriers)  
 	1. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
-	2. [Whats teh minimum serach info required for sensible results?](#whats-teh-minimum-serach-info-required-for-sensible-results)  
 7. [How To's](#how-tos)  
 	1. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
 	2. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
-	3. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
-	4. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
+	3. [Whats teh minimum serach info required for sensible results?](#whats-teh-minimum-serach-info-required-for-sensible-results)  
+	4. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
+	5. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
 8. [TIPS](#tips)  
 9. [REFERENCES](#references)  
 10. [Completed](#completed)  
@@ -30,8 +30,8 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 A little python practice, scraping, flask, basic web.
 
 ## Next steps
-Integrate IMDB queries into MMdia class (was Pass the information to scraper, gather information.)
-Make MMdia serializable - w/ meta class?
+X-ref search result and query using doc_ditsance to get nearest match
+Make MMdia serializable - w/ meta class? (allow to and from JSON/DUMPS)
 Build DB / non-valatile storage (JSON file will do to start).
 Display information using flask & boostrap cards.
 Allow toggling of favourite icon, seen it icon
@@ -39,7 +39,6 @@ Allow toggling of favourite icon, seen it icon
 
 ## Questions / Barriers
 ### How do we scrape IMDB for movie info to display?
-### Whats teh minimum serach info required for sensible results?  
 
 
 
@@ -75,6 +74,10 @@ import imdb						# use this module
 > ./movie_info_imdb.py 			# < exaples here
 								# retrieves id, title, synopsis, year release, cast, runtime, rating, genre, kind, 
 ```
+
+### Whats teh minimum serach info required for sensible results?
+Are we looking for a movie? YES for now.
+Movie name, year released.
 
 
 ### How do I auto generate TOC?
@@ -131,4 +134,5 @@ BLUE  - Parked, no action planned. (maybe incomplete / redundant)
 2020.Mar.05 - SF - Setup basic Flask dir tree.
 2020.Mar.05 - SF - Add disc scan, to find movie (and audio) files.
 2020.Mar.05 - SF - Query IMDB for movie info.
-
+2020.Mar.07 - SF - Integrate IMDB queries into MMdia class (was Pass the information to scraper, gather information.)
+2020.Mar.08 - SF - Check search reulst for kind = movie
