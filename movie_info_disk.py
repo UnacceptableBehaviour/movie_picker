@@ -84,6 +84,8 @@ class MMdia:
       print(i, m, m['kind'])
       if m['kind'] == 'movie':
         chosen = i
+        # X-ref with DocDistance query compared to search results
+        # select for mathces movie & highest value match DocDist
         break
     
     # chosen = input(f"Select result from 0 - {len(results)-1} (default 0):")
