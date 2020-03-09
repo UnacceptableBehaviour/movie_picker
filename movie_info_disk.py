@@ -79,6 +79,10 @@ class MMdia:
 
     chosen = 0
     
+    select_best_item_from_search_results('movie', query, results)
+    
+    return None
+    
     print("Found:")
     for i,m in enumerate(results):
       print(i, m, m['kind'])
@@ -99,22 +103,24 @@ class MMdia:
     m = ia.get_movie(results[chosen].movieID)
     #print(ia.get_movie_infoset())
     
-    print(f"ID: {m.movieID}")
-    print(f"Title: {m['title']}")
     try:
+      print(f"ID: {m.movieID}")
+      print(f"Title: {m['title']}")
       self.movie_data['title'] = m['title']
     except:
       print(">> - - - - - > WARNING: no m['title']")
     
-    print(f"Rating: {m['rating']}")
+    
     try:
+      print(f"Rating: {m['rating']}")
       self.movie_data['rating'] = m['rating']
     except:
       print(">> - - - - - > WARNING: no m['rating']")      
     
-    print(f"Runtimes: {m['runtimes']} or {int(m['runtimes'][0])%60}h{int(m['runtimes'][0])%60}m")
-    print(m.current_info)
+
     try:
+      print(f"Runtimes: {m['runtimes']} or {int(m['runtimes'][0])%60}h{int(m['runtimes'][0])%60}m")
+      print(m.current_info)
       self.movie_data['runtime_m'] = m['runtimes'][0]
       self.movie_data['runtime_hm'] = f"{int(m['runtimes'][0])%60}h{int(m['runtimes'][0])%60}m"
     except:
@@ -256,7 +262,8 @@ class MMdia:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # helpers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-mmdia_root = Path('/Volumes/FAITHFUL500')
+#mmdia_root = Path('/Volumes/FAITHFUL500')
+mmdia_root = Path('./scratch')
 def get_list_of_file_extensions(root_dir = mmdia_root):
   extensions = Counter()
   
@@ -264,6 +271,49 @@ def get_list_of_file_extensions(root_dir = mmdia_root):
     extensions[p.suffix.lower()] += 1
     
   return extensions
+
+# given the kind and query select the most appropriate result
+# from the list returned by the query
+def select_best_item_from_search_results(kind, query, results):
+  result = None
+  right_kind = []
+  doc_distance = []
+  
+  possible_kinds = ['movie', 'tv series', 'tv mini series', 'video game', 'video movie', 'tv movie', 'episode']
+  
+  if kind not in possible_kinds:
+    kind == 'movie'
+    
+  # collect result of teh right 'kind'
+  for i,r in enumerate(results):
+    print(f"{i} - {r['title']}")
+    if r['kind'] == kind:
+      right_kind.append(r)
+  
+  pprint(right_kind)
+  
+  return result
+  
+  
+
+def get_doc_vector_word(doc):
+  # remove non alphanumeric and white space
+  
+  # split into words
+  
+  # create vector
+  return None
+  
+  
+def get_doc_vector_seq2(doc):
+  # remove non alphanumeric and white space
+  
+  # split into 2 character sequnces 
+  
+  # create vector
+  return None  
+  
+  
 
   
 
