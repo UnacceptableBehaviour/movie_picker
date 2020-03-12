@@ -81,28 +81,13 @@ class MMdia:
 
     chosen = 0
     
-    select_best_item_from_search_results('movie', query, results)
-    
-    return None
-    
-    print("Found:")
-    for i,m in enumerate(results):
-      print(i, m, m['kind'])
-      if m['kind'] == 'movie':
-        chosen = i
-        # X-ref with DocDistance query compared to search results
-        # select for mathces movie & highest value match DocDist
-        break
-    
-    # chosen = input(f"Select result from 0 - {len(results)-1} (default 0):")
-    # if chosen == '' : chosen = 0    
-    # chosen = int(chosen)
-      
     # return result with highest Doc Distance with search
-    #movie = results[chosen]
-    self.movie_data['id'] = results[chosen].movieID
+    movie = select_best_item_from_search_results('movie', query, results)
+      
     
-    m = ia.get_movie(results[chosen].movieID)
+    self.movie_data['id'] = movie.movieID
+    
+    m = ia.get_movie(movie.movieID)
     #print(ia.get_movie_infoset())
     
     try:
@@ -121,10 +106,10 @@ class MMdia:
     
 
     try:
-      print(f"Runtimes: {m['runtimes']} or {int(m['runtimes'][0])%60}h{int(m['runtimes'][0])%60}m")
+      print(f"Runtimes: {m['runtimes']} or {int(int(m['runtimes'][0])/60)}h{int(m['runtimes'][0])%60}m")
       print(m.current_info)
       self.movie_data['runtime_m'] = m['runtimes'][0]
-      self.movie_data['runtime_hm'] = f"{int(m['runtimes'][0])%60}h{int(m['runtimes'][0])%60}m"
+      self.movie_data['runtime_hm'] = f"{int(int(m['runtimes'][0])/60)}h{int(m['runtimes'][0])%60}m"
     except:
       print(">> - - - - - > WARNING: no m['runtimes']")
       
@@ -232,7 +217,7 @@ class MMdia:
   @staticmethod
   def refresh_media_files_information(root_dir):
     
-    limit_to = 10
+    limit_to = 3
     count = 0
     # iterate through all paths found - p
     for p in root_dir.glob('**/*'):
@@ -317,26 +302,29 @@ def select_best_item_from_search_results(kind, query, results):
     print(f"\nQRY:{query}\n\nRESULT: {result_title_with_year}\nd_d:{doc_distances[sr]}")
     pprint(sr)
   
-  print("right_kind")
-  pprint(right_kind)
-  print("doc_distances")
-  pprint(doc_distances)
+  # print("right_kind")
+  # pprint(right_kind)
+  # print("doc_distances")
+  # pprint(doc_distances)
   # sort dict by value
   # for dict x    items in x---\             
   # {k: v for k, v in sorted(x.items(), key=lambda item: item[1])}    # dict comprehension
   # sorted( item_to_sort, key=sorting_function_applied_to_each_item ) # https://docs.python.org/3/howto/sorting.html
-  sorted_d_d = {k: v for k,v in sorted(doc_distances.items(), key=lambda item: item[1])}  # dict item[0]=key item[1]=value ?
-  print("doc_distances.items()")
-  pprint(doc_distances.items())
-  print(r'sorted(doc_distances.items(), key=lambda item: item[1])')
-  pprint(sorted(doc_distances.items(), key=lambda item: item[1]))
-  print("sorted_d_d")
-  pprint(sorted_d_d)      # not sorted when it prints!? WTF
-  print('sorted(doc_distances.items(), key=lambda item: item[1])[0][0]')
-  pprint(sorted(doc_distances.items(), key=lambda item: item[1])[0][0])
+  # sorted_d_d = {k: v for k,v in sorted(doc_distances.items(), key=lambda item: item[1])}  # dict item[0]=key item[1]=value ?
+  # print("doc_distances.items()")
+  # pprint(doc_distances.items())
+  # print(r'sorted(doc_distances.items(), key=lambda item: item[1])')
+  # pprint(sorted(doc_distances.items(), key=lambda item: item[1]))
+  # print("sorted_d_d")
+  # pprint(sorted_d_d)      # not sorted when it prints!? WTF
+  # print('sorted(doc_distances.items(), key=lambda item: item[1])[0][0]')
+  # pprint(sorted(doc_distances.items(), key=lambda item: item[1])[0][0])
   
+  LOWEST_DOC_DISTANCE = 0
+  MOVIE = 0
+  DOC_DIST = 1
   
-  return sorted(doc_distances.items(), key=lambda item: item[1])[0][0] # 
+  return sorted(doc_distances.items(), key=lambda item: item[1])[LOWEST_DOC_DISTANCE][MOVIE] 
 
 # put smaller vector 1st!
 def inner_product(v1,v2):
@@ -362,9 +350,9 @@ def doc_distance(d1, d2):
 
 def get_doc_vector_word(doc):
   # remove non alphanumeric and white space
-  print(f"get_doc_vector_word 0:{doc}")
+  #print(f"get_doc_vector_word 0:{doc}")
   doc = re.sub(r'[\W_]',' ',doc)
-  print(f"get_doc_vector_word 1:{doc}")
+  #print(f"get_doc_vector_word 1:{doc}")
   
   # split into words
   doc_words = doc.split()
