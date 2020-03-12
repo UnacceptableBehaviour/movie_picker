@@ -6,6 +6,8 @@ import re
 import json
 import imdb    
 import urllib.request
+import math
+import traceback
 
 class MMdia:
   # choose order by most frequently occuring
@@ -230,6 +232,8 @@ class MMdia:
   @staticmethod
   def refresh_media_files_information(root_dir):
     
+    limit_to = 10
+    count = 0
     # iterate through all paths found - p
     for p in root_dir.glob('**/*'):
       
@@ -240,6 +244,9 @@ class MMdia:
       elif MMdia.is_video(p):
         MMdia.media_files_count['video'][p.name.lower()] += 1
         MMdia.media_files['video'][p.name.lower()] = MMdia(p)
+        count += 1
+        if count > limit_to:
+          break
 
       else:
         MMdia.other_files.append(p)
@@ -277,32 +284,102 @@ def get_list_of_file_extensions(root_dir = mmdia_root):
 def select_best_item_from_search_results(kind, query, results):
   result = None
   right_kind = []
-  doc_distance = []
+  doc_distances = {}
   
   possible_kinds = ['movie', 'tv series', 'tv mini series', 'video game', 'video movie', 'tv movie', 'episode']
   
   if kind not in possible_kinds:
     kind == 'movie'
     
-  # collect result of teh right 'kind'
+  # collect result of the right 'kind'
   for i,r in enumerate(results):
     print(f"{i} - {r['title']}")
     if r['kind'] == kind:
       right_kind.append(r)
   
+  print(f"Found {len(right_kind)} of the right_kind . .")
   pprint(right_kind)
   
-  return result
+  # walk saerch results and find best match  
+  for sr in right_kind:
+    search_vector = get_doc_vector_word(query)
+    
+    result_title_with_year = sr['title']    
+    try:
+      result_title_with_year = f"{sr['title']} {sr['year']}"
+    except Exception:
+      print("select_best_item_from_search_results")
+      traceback.print_exc()
+    finally:
+      result_vector = get_doc_vector_word(result_title_with_year)
+      
+    doc_distances[sr] = doc_distance(search_vector, result_vector)
+    print(f"\nQRY:{query}\n\nRESULT: {result_title_with_year}\nd_d:{doc_distances[sr]}")
+    pprint(sr)
   
+  print("right_kind")
+  pprint(right_kind)
+  print("doc_distances")
+  pprint(doc_distances)
+  # sort dict by value
+  # for dict x    items in x---\             
+  # {k: v for k, v in sorted(x.items(), key=lambda item: item[1])}    # dict comprehension
+  # sorted( item_to_sort, key=sorting_function_applied_to_each_item ) # https://docs.python.org/3/howto/sorting.html
+  sorted_d_d = {k: v for k,v in sorted(doc_distances.items(), key=lambda item: item[1])}  # dict item[0]=key item[1]=value ?
+  print("doc_distances.items()")
+  pprint(doc_distances.items())
+  print(r'sorted(doc_distances.items(), key=lambda item: item[1])')
+  pprint(sorted(doc_distances.items(), key=lambda item: item[1]))
+  print("sorted_d_d")
+  pprint(sorted_d_d)      # not sorted when it prints!? WTF
+  print('sorted(doc_distances.items(), key=lambda item: item[1])[0][0]')
+  pprint(sorted(doc_distances.items(), key=lambda item: item[1])[0][0])
+  
+  
+  return sorted(doc_distances.items(), key=lambda item: item[1])[0][0] # 
+
+# put smaller vector 1st!
+def inner_product(v1,v2):
+  sum = 0.0
+  
+  for symbol1 in v1:                # go through keys 
+    if symbol1 in v2:      
+        sum += v1[symbol1] * v2[symbol1]
+  
+  return sum
+
+
+#def vector_angle(d1, d2):  
+def doc_distance(d1, d2):
+  """
+  Return the angle between these two vectors.
+  """
+  numerator = inner_product(d1,d2)  
+  denominator = math.sqrt(inner_product(d1,d1)*inner_product(d2,d2))
+  return math.acos(numerator/denominator)  
+    
   
 
 def get_doc_vector_word(doc):
   # remove non alphanumeric and white space
+  print(f"get_doc_vector_word 0:{doc}")
+  doc = re.sub(r'[\W_]',' ',doc)
+  print(f"get_doc_vector_word 1:{doc}")
   
   # split into words
+  doc_words = doc.split()
+  #print(f"get_doc_vector_word 2:{doc}")
+  #pprint(doc_words)
   
   # create vector
-  return None
+  vector = Counter()
+  for w in doc_words:
+    vector[w] += 1
+  
+  #print("get_doc_vector_word 3:")
+  #pprint(vector)
+    
+  return vector
   
   
 def get_doc_vector_seq2(doc):
