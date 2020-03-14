@@ -30,8 +30,8 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 A little python practice, scraping, flask, basic web.
 
 ## Next steps
-X-ref search result and query using doc_ditsance to get nearest match
-Make MMdia serializable - w/ meta class? (allow to and from JSON/DUMPS)
+Make MMdia serializable - w/ meta class? (allow to and from JSON/DUMPS
+	see MMdia_metaclass.txt
 Build DB / non-valatile storage (JSON file will do to start).
 Display information using flask & boostrap cards.
 Allow toggling of favourite icon, seen it icon
@@ -136,3 +136,4 @@ BLUE  - Parked, no action planned. (maybe incomplete / redundant)
 2020.Mar.05 - SF - Query IMDB for movie info.
 2020.Mar.07 - SF - Integrate IMDB queries into MMdia class (was Pass the information to scraper, gather information.)
 2020.Mar.08 - SF - Check search reulst for kind = movie
+2020.Mar.13 - SF - X-ref search result and query using doc_ditsance to get best match
