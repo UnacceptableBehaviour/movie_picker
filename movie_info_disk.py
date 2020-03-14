@@ -8,6 +8,8 @@ import imdb
 import urllib.request
 import math
 import traceback
+import pickle
+
 
 class MMdia:
   # choose order by most frequently occuring
@@ -217,7 +219,7 @@ class MMdia:
   @staticmethod
   def refresh_media_files_information(root_dir):
     
-    limit_to = 3
+    limit_to = 1
     count = 0
     # iterate through all paths found - p
     for p in root_dir.glob('**/*'):
@@ -254,8 +256,8 @@ class MMdia:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # helpers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-#mmdia_root = Path('/Volumes/FAITHFUL500')
-mmdia_root = Path('./scratch')
+mmdia_root = Path('/Volumes/FAITHFUL500')
+#mmdia_root = Path('./scratch')
 def get_list_of_file_extensions(root_dir = mmdia_root):
   extensions = Counter()
   
@@ -391,10 +393,10 @@ if __name__ == '__main__':
     #pprint(get_list_of_file_extensions())
     # pathlib example - use
 
+    media_lib = ''
     media_lib = MMdia.refresh_media_files_information(mmdia_root)
     
-    print(f"SIZE: {media_lib['video'].keys()} - {len(media_lib['video'].keys())} - {type(media_lib)}")
-    
+     
     #pprint(media_lib['video'])
     #pprint(media_lib['audio'])
     ##MMdia.dump_bad_names()
@@ -437,8 +439,40 @@ if __name__ == '__main__':
       print(f"{int(media_lib['video'][k].file_stat.st_size/(1024*1024))}MiB")
       print(f"{round(media_lib['video'][k].file_stat.st_size/(1024*1024*1024),1)}GiB")
       if count > 200: break
+        
     
-            
+    # saving object to disk
+    # marshal.dump / load docs say use pickle
+    # pickle (marshal/store) media_lib to mmdia_root
+    # https://docs.python.org/3/library/pickle.html#module-pickle
+    # https://docs.python.org/3/library/pickle.html#pickling-class-instances
+    
+    # target Path
+    picked_media_lib_file = mmdia_root.joinpath('media_data','medialib.pickle')
+    
+    # create directory if it doesn't exist
+    picked_media_lib_file.parent.mkdir(parents=True, exist_ok=True)
+    
+    # write lib to disk - save rebuild all on every run
+    #if len(media_lib) > 0:
+    print(f"SIZE: {media_lib['video'].keys()} - {len(media_lib['video'].keys())} - {type(media_lib)}")
+    print(f"len(media_lib): {len(media_lib)}")
+    print(f"picked_media_lib_file: {picked_media_lib_file}")
+    
+    print(f"PICKLING to {picked_media_lib_file}")
+    with open(picked_media_lib_file, 'wb') as f:
+      pickle.dump(media_lib, f, pickle.HIGHEST_PROTOCOL)
+    
+    media_lib = None
+    
+    print(f"\n\nUN-PICKLING from {picked_media_lib_file}")
+    with open(picked_media_lib_file, 'rb') as f:
+      media_lib = pickle.load(f)
+    
+    print(f"SIZE: {media_lib['video'].keys()} - {len(media_lib['video'].keys())} - {type(media_lib)}")
+    print(f"len(media_lib): {len(media_lib)}")
+    print(f"picked_media_lib_file: {picked_media_lib_file}")
+      
     # 
     #print(json.dumps(media_lib))   #MMdia not serializable
     #print(MMdia.JSON_DUMP)
