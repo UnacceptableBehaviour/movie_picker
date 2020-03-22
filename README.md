@@ -19,22 +19,22 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 	1. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
 	2. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
 	3. [Whats teh minimum serach info required for sensible results?](#whats-teh-minimum-serach-info-required-for-sensible-results)  
-	4. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
-	5. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
-8. [TIPS](#tips)  
-9. [REFERENCES](#references)  
-10. [Completed](#completed)  
+	4. [How do I mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)  
+	5. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
+	6. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
+		1. [TIPS](#tips)  
+8. [REFERENCES](#references)  
+9. [Completed](#completed)  
 
 
 ## AIM:
 A little python practice, scraping, flask, basic web.
 
 ## Next steps
-Make MMdia serializable - w/ meta class? (allow to and from JSON/DUMPS
-	see MMdia_metaclass.txt
-Build DB / non-valatile storage (JSON file will do to start).
-Display information using flask & boostrap cards.
-Allow toggling of favourite icon, seen it icon
+Make MMdia serializable - w/ meta class? (allow to and from JSON/DUMPS  
+	see MMdia_metaclass.txt  
+Display information using flask & boostrap cards.  
+Allow toggling of favourite icon, seen it icon  
 
 
 ## Questions / Barriers
@@ -79,6 +79,27 @@ import imdb						# use this module
 Are we looking for a movie? YES for now.
 Movie name, year released.
 
+### How do I mount the media disk (on rPi) R/W locally on mac for development
+Find UUID of device, 
+```
+> sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL		# list attached devices & mount point
+UUID                                 NAME        FSTYPE    SIZE MOUNTPOINT            LABEL       MODEL
+                                     sdb                 465.8G                                   MK5076GSX       
+564B-5772                            └─sdb1      vfat    465.8G /media/pi/FAITHFUL500 FAITHFUL500 
+or
+> sudo blkid		# list bulk devices
+/dev/sdb1: LABEL="FAITHFUL500" UUID="564B-5772" TYPE="vfat" PARTUUID="00095536-01"
+> sudo mount /dev/sdb1 /home/pi/MMdia/		# source_device_mountpoint target_mount_point
+											# with this mount can view FAITHFUL500 remotely on osx											
+```
+Next setup so mounts automatically on boot
+```
+> sudo nano /etc/fstab						# edit file system table
+											# add following line
+UUID=564B-5772 /home/pi/MMdia/ vfat defaults,auto,users,rw,nofail 0 0
+     ^ID       ^mount point    ^FSTYPE
+```
+
 
 ### How do I auto generate TOC?
 ```
@@ -112,9 +133,7 @@ To create a TOC, create a numbered list of links. Tab in next level with new num
 6. [Tips on context doc](#tips)\
 7. [References](#references)
 ```
-
-
-## TIPS
+#### TIPS
 Keep status concise:  
 Put the colour in square brackets on the next line immediately after status  
 RED   - Stalled, technology/cost barrier.  
@@ -137,3 +156,4 @@ BLUE  - Parked, no action planned. (maybe incomplete / redundant)
 2020.Mar.07 - SF - Integrate IMDB queries into MMdia class (was Pass the information to scraper, gather information.)
 2020.Mar.08 - SF - Check search reulst for kind = movie
 2020.Mar.13 - SF - X-ref search result and query using doc_ditsance to get best match
+2020.Mar.14 - SF - Build DB / non-valatile storage (used pickle to start).
