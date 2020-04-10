@@ -159,3 +159,4 @@ BLUE  - Parked, no action planned. (maybe incomplete / redundant)
 2020.Mar.08 - SF - Check search reulst for kind = movie  
 2020.Mar.13 - SF - X-ref search result and query using doc_ditsance to get best match  
 2020.Mar.14 - SF - Build DB / non-valatile storage (used pickle to start).  
+2020.Apr.10 - SF - Added __repr__ to class.  

@@ -60,37 +60,48 @@ class MMdia:              # (object) not needed in 3.x
   def __str__(self):
     return 'MMdia::def __str__' # return f"{self.key}:{self.depth}"
 
-  def __unicode__(self):
-    return 'MMdia::def __unicode__'    # return f"{u'{val}'}"
+  # def __unicode__(self):      # python 2.x - not needed?
+  #   return 'MMdia::def __unicode__'    # return f"{u'{val}'}"
 
   def __repr__(self):           # pprint()
-    obj_as_string = f"full_path:'{self.full_path}'\n" \
-                  + f"filename:{self.filename}\n" \
-                  + f"location:{self.location}\n" \
-                  + f"file_stat:{self.file_stat}\n" \
-                  + f"movie_data_loaded:{self.movie_data_loaded}\n" \
-                  + f"hires_image:{self.hires_image}\n"
+    return str({'class': type(self),
+                'filename': self.filename,
+                'location': self.location,
+                'full_path': self.full_path,
+                'movie_data_loaded': self.movie_data_loaded,
+                'hires_image':self.hires_image,            
+                'movie_data': self.movie_data      
+                })
     
-    dict_name = "'movie_data':"
-    md = ''
-    line = 0
-    for k,v in self.movie_data.items():
-      v_str = f"{v}"
-      if v_str.__class__.__name__ == 'str': v_str = f"'{v}'"
-      spacer = ' ' * ((len(dict_name)+1) * min(1,line)) # 0 on first line, 1 otherwise
-      line += 1
-      md = md + f"{spacer}'{k}': {v_str},\n"
-    
-    md = re.sub('^ ?', '{', md)     # add { at start 
-    md = re.sub(',\n$', '}', md)    # add } at end
-    
-    md = f"{dict_name}{md}"
-    
-    obj_as_string += md
-    
-    obj_as_string = f"\n{type(self)}" + '\n{' + f"{obj_as_string}" + ' }'
-    
-    return obj_as_string
+
+  # def __repr__(self):           # pprint()
+  #   obj_as_string = f"full_path:'{self.full_path}'\n" \
+  #                 + f"filename:{self.filename}\n" \
+  #                 + f"location:{self.location}\n" \
+  #                 + f"file_stat:{self.file_stat}\n" \
+  #                 + f"movie_data_loaded:{self.movie_data_loaded}\n" \
+  #                 + f"hires_image:{self.hires_image}\n"
+  #   
+  #   dict_name = "'movie_data':"
+  #   md = ''
+  #   line = 0
+  #   for k,v in self.movie_data.items():
+  #     v_str = f"{v}"
+  #     if v_str.__class__.__name__ == 'str': v_str = f"'{v}'"
+  #     spacer = ' ' * ((len(dict_name)+1) * min(1,line)) # 0 on first line, 1 otherwise
+  #     line += 1
+  #     md = md + f"{spacer}'{k}': {v_str},\n"
+  #   
+  #   md = re.sub('^ ?', '{', md)     # add { at start 
+  #   md = re.sub(',\n$', '}', md)    # add } at end
+  #   
+  #   md = f"{dict_name}{md}"
+  #   
+  #   obj_as_string += md
+  #   
+  #   obj_as_string = f"\n{type(self)}" + '\n{' + f"{obj_as_string}" + ' }'
+  #   
+  #   return obj_as_string
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # USING imdb module
   # Usage (keys): https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
