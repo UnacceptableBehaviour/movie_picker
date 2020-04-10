@@ -1,0 +1,33 @@
+# dumping object member vaiables
+# https://stackoverflow.com/questions/39013249/metaclass-in-python-3
+class MetaTable(type):
+	def __getattr__(cls, key):
+		temp = key.split("__")
+		name = temp[0]
+		alias = None
+		if len(temp) > 1:
+			alias = temp[1]
+		return cls(name, alias)
+
+class Table(object, metaclass=MetaTable):
+	def __init__(self, name, alias=None):
+		self._name = name
+		self._alias = alias
+
+
+d = Table
+d.student__s
+
+
+
+OR  >>> https://docs.python.org/3/howto/sorting.html
+
+class Student:
+    def __init__(self, name, grade, age):
+        self.name = name
+        self.grade = grade
+        self.age = age
+    def __repr__(self):
+        return repr((self.name, self.grade, self.age))
+
+

@@ -9,9 +9,10 @@ import urllib.request
 import math
 import traceback
 import pickle
+import sys        # sys.exit()
 
 
-class MMdia:
+class MMdia:              # (object) not needed in 3.x
   # choose order by most frequently occuring
   AUDIO_EXTS = [ '.mp3', '.ac3' ]                   
   VIDEO_EXTS = [ '.mp4', '.avi', '.mkv', '.m4a' ]
@@ -26,11 +27,15 @@ class MMdia:
   
   other_files = []
   
+  ia = imdb.IMDb()      # instantiation cost?
+  
   def __init__( self, file_path ):
     self.full_path = Path(file_path)
     self.filename = self.full_path.name
     self.location = self.full_path.parent
     self.file_stat = Path(file_path).stat()
+    self.movie_data_loaded = False
+    self.hires_image = None
     self.movie_data = {
       'id': None,
       'title': '',
@@ -49,48 +54,76 @@ class MMdia:
       'file_title': None
     }
     self.get_media_name_and_year_from_disc()
-    self.query_imdb_for_movie_info()
+    #self.query_imdb_for_movie_info()
     #st_size
 
-  def to_s(self):
-    print
+  def __str__(self):
+    return 'MMdia::def __str__' # return f"{self.key}:{self.depth}"
 
+  def __unicode__(self):
+    return 'MMdia::def __unicode__'    # return f"{u'{val}'}"
+
+  def __repr__(self):           # pprint()
+    obj_as_string = f"full_path:'{self.full_path}'\n" \
+                  + f"filename:{self.filename}\n" \
+                  + f"location:{self.location}\n" \
+                  + f"file_stat:{self.file_stat}\n" \
+                  + f"movie_data_loaded:{self.movie_data_loaded}\n" \
+                  + f"hires_image:{self.hires_image}\n"
+    
+    dict_name = "'movie_data':"
+    md = ''
+    line = 0
+    for k,v in self.movie_data.items():
+      v_str = f"{v}"
+      if v_str.__class__.__name__ == 'str': v_str = f"'{v}'"
+      spacer = ' ' * ((len(dict_name)+1) * min(1,line)) # 0 on first line, 1 otherwise
+      line += 1
+      md = md + f"{spacer}'{k}': {v_str},\n"
+    
+    md = re.sub('^ ?', '{', md)     # add { at start 
+    md = re.sub(',\n$', '}', md)    # add } at end
+    
+    md = f"{dict_name}{md}"
+    
+    obj_as_string += md
+    
+    obj_as_string = f"\n{type(self)}" + '\n{' + f"{obj_as_string}" + ' }'
+    
+    return obj_as_string
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # USING imdb module
   # Usage (keys): https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   def query_imdb_for_movie_info(self):
-    # self.movie_data = {
-    #   'id': None,
-    #   'title': '',
-    #   'synopsis': '',
-    #   'year': 0,
-    #   'cast': [],
-    #   'runtime': 0,
-    #   'rating':0,
-    #   'genres':[],
-    #   'kind':[],
-    #   'seen': False,
-    #   'fav':False
-    # }
-    ia = imdb.IMDb()      # instantiation cost?
-    query = f"{self.movie_data['file_title']} {self.movie_data['year']}"    
+    
+    query = f"{self.movie_data['file_title']} {self.movie_data['year']}"
+    
+    if self.movie_data_loaded:    # already retrieved
+      print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+      print(f"Retieving info from D-I-S-C\nSearching for: {query} < {self.movie_data_loaded}")
+      pprint(self.movie_data)
+      print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")      
+      return
+    
     print(f"\n\n\n")
     print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
-    print(f"Retieving info from IMDB\nSearching for: {query} <")
+    print(f"Retieving info from IMDB\nSearching for: {query} < LOADED? {self.movie_data_loaded}")
     print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
-    results = ia.search_movie(query)
-
-    chosen = 0
+    results = MMdia.ia.search_movie(query)
     
     # return result with highest Doc Distance with search
     movie = select_best_item_from_search_results('movie', query, results)
-      
+    
+    if movie == None:
+      MMdia.__badly_formatted_names.append(self.full_path)
+      self.movie_data_loaded = True # dont get hung up on failure
+      return      
     
     self.movie_data['id'] = movie.movieID
     
-    m = ia.get_movie(movie.movieID)
-    #print(ia.get_movie_infoset())
+    m = MMdia.ia.get_movie(movie.movieID)
+    #print(MMdia.ia.get_movie_infoset())
     
     try:
       print(f"ID: {m.movieID}")
@@ -140,14 +173,17 @@ class MMdia:
       print(">> - - - - - > WARNING: no m['genres'] or ['kind'] ?")      
     
     print(f"CAST:")    
-    #for index, member in enumerate(m['cast']):
-    #  print(member, member['id'])
-    
-    index = 0
-    for member in m['cast']:
-      print(member)
-      if index > 10: break
-      index+=1
+    # for index, member in enumerate(m['cast']):
+    #   print(index, member) # member['id']
+        
+    try:    
+      for index, member in enumerate(m['cast']):
+        print(member)
+        self.movie_data['cast'].append(member)
+        if index > 15: break
+    except:
+      print(">> - - - - - > WARNING: no m['cast']")
+
       
     # this retreives low quality cover art
     #
@@ -161,20 +197,21 @@ class MMdia:
       self.movie_data['image_url'] = m['cover url']
       url = self.movie_data['image_url']
     except:
-      print(">> - - - - - > WARNING: no m['genres'] or ['kind'] ?")
+      print(">> - - - - - > WARNING: no m['cover url']")
       
     # url = urllib.parse.quote(url, safe='/:')  # replace spaces if there are any - urlencode
     # print(url)    
-    local_file_name = Path(self.location, f"{self.full_path.stem}.jpg")
+    local_file_name = Path(self.location, f"{self.full_path.stem}_dl.jpg")
     print(f"STORING IMAGE TO:\n{local_file_name}")
-    #urllib.request.urlretrieve(url, local_file_name)
-    urllib.request.urlretrieve(url, Path('./scratch', f"{self.full_path.stem}.jpg"))
+    urllib.request.urlretrieve(url, local_file_name)
+    #urllib.request.urlretrieve(url, Path('./scratch', f"{self.full_path.stem}.jpg"))
     
     # from scrape
     # https://www.imdb.com/title/tt7286456/mediaviewer/rm3353122305
     #                          ID: 7286456
     #                       Title: Joker
-
+    # TODO do intergirty / minimum requiremnts check before setting True
+    self.movie_data_loaded = True
     
     
 
@@ -215,32 +252,58 @@ class MMdia:
   @staticmethod
   def is_video(filename):
     return Path(filename).suffix in MMdia.VIDEO_EXTS
+
+  @staticmethod
+  def load_media_files_information(media_files):
+    MMdia.media_files = media_files
+    # print(f">------ DIAGNOSTICS ------ S")
+    # pprint(MMdia.media_files)
+    # pprint(MMdia.media_files['video'])
+    # 
+    # for k,m in MMdia.media_files['video'].items():
+    #   print(f"FILE: {k} - DATA LOADED:{m.movie_data_loaded}")
+    #   pprint(m.movie_data)
+    #   print("  - - ")    
+    # print(f">------ DIAGNOSTICS ------ E")
+
         
   @staticmethod
   def refresh_media_files_information(root_dir):
     
-    limit_to = 1
+    limit_to = 2000
     count = 0
     # iterate through all paths found - p
     for p in root_dir.glob('**/*'):
       
-      if MMdia.is_audio(p):
-        MMdia.media_files_count['audio'][p.name.lower()] += 1
-        MMdia.media_files['audio'][p.name.lower()] = MMdia(p)
-
-      elif MMdia.is_video(p):
-        MMdia.media_files_count['video'][p.name.lower()] += 1
-        MMdia.media_files['video'][p.name.lower()] = MMdia(p)
-        count += 1
-        if count > limit_to:
-          break
-
-      else:
-        MMdia.other_files.append(p)
+      if MMdia.is_new_media(p):      
+        if MMdia.is_audio(p):
+          MMdia.media_files_count['audio'][p.name.lower()] += 1
+          MMdia.media_files['audio'][p.name.lower()] = MMdia(p)
+  
+        elif MMdia.is_video(p):
+          MMdia.media_files_count['video'][p.name.lower()] += 1
+          MMdia.media_files['video'][p.name.lower()] = MMdia(p)
+          count += 1
+          if count > limit_to:
+            break
+  
+        else:
+          MMdia.other_files.append(p)
             
       #print(p.name.lower())
       
     return MMdia.media_files
+  
+  @staticmethod
+  def is_new_media(mfile):
+    
+    if mfile.name.lower() in MMdia.media_files['audio']:
+      return False
+    
+    if mfile.name.lower() in MMdia.media_files['video']:
+      return False
+    
+    return True
   
   @staticmethod
   def dump_bad_names():
@@ -256,7 +319,9 @@ class MMdia:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # helpers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-mmdia_root = Path('/Volumes/FAITHFUL500')
+#mmdia_root = Path('/Volumes/FAITHFUL500')
+mmdia_root = Path('/Volumes/Home Directory/MMdia/')  # remote mount point - dev
+#mmdia_root = Path('~/MMdia/')  # on target
 #mmdia_root = Path('./scratch')
 def get_list_of_file_extensions(root_dir = mmdia_root):
   extensions = Counter()
@@ -326,7 +391,15 @@ def select_best_item_from_search_results(kind, query, results):
   MOVIE = 0
   DOC_DIST = 1
   
-  return sorted(doc_distances.items(), key=lambda item: item[1])[LOWEST_DOC_DISTANCE][MOVIE] 
+  
+  try:
+    result = sorted(doc_distances.items(), key=lambda item: item[1])[LOWEST_DOC_DISTANCE][MOVIE]
+  except:
+    print(">> - - - - - > WARNING: sorting issue  --S ")
+    pprint(right_kind)
+    print(">> - - - - - > WARNING: sorting issue  --E ")
+  
+  return result
 
 # put smaller vector 1st!
 def inner_product(v1,v2):
@@ -390,57 +463,6 @@ def main():
 
 if __name__ == '__main__':
         
-    #pprint(get_list_of_file_extensions())
-    # pathlib example - use
-
-    media_lib = ''
-    media_lib = MMdia.refresh_media_files_information(mmdia_root)
-    
-     
-    #pprint(media_lib['video'])
-    #pprint(media_lib['audio'])
-    ##MMdia.dump_bad_names()
-
-    # self.full_path = Path(file_path)
-    # self.filename = self.full_path.name
-    # self.location = self.full_path.parent
-    # self.file_stat = Path(file_path).stat()
-    # self.movie_data = {
-    #   'id': None,
-    #   'title': '',
-    #   'synopsis': '',
-    #   'year': 0,
-    #   'cast': [],
-    #   'runtime_m': 0,
-    #   'runtime_hm': 0,
-    #   'rating':0,
-    #   'genres':[],
-    #   'kind':[],
-    #   'seen': False,
-    #   'fav':False,
-    #   'image_url':None,
-    #   'file_name': self.full_path,
-    #   'file_title': None
-    # }
-    
-    count = 0
-    for k in media_lib['video'].keys():
-      #if len(media_lib['video'][k].movie_data['title']) == 0: continue        # skip titles of zero length - curate later
-      count += 1
-      print(f"\n\ndisk: {k} - {count}<")
-      pprint(media_lib['video'][k])               # TODO ex - use metaclass to dump object attributes
-      print(media_lib['video'][k].full_path)
-      print(media_lib['video'][k].filename)
-      print(media_lib['video'][k].location)
-      print(media_lib['video'][k].file_stat)
-      pprint(media_lib['video'][k].movie_data)
-      # print(media_lib['video'][k].movie_data['title'], len(media_lib['video'][k].movie_data['title']))
-      # print(media_lib['video'][k].movie_data['year'])
-      print(f"{int(media_lib['video'][k].file_stat.st_size/(1024*1024))}MiB")
-      print(f"{round(media_lib['video'][k].file_stat.st_size/(1024*1024*1024),1)}GiB")
-      if count > 200: break
-        
-    
     # saving object to disk
     # marshal.dump / load docs say use pickle
     # pickle (marshal/store) media_lib to mmdia_root
@@ -448,31 +470,65 @@ if __name__ == '__main__':
     # https://docs.python.org/3/library/pickle.html#pickling-class-instances
     
     # target Path
-    picked_media_lib_file = mmdia_root.joinpath('media_data','medialib.pickle')
+    pickled_media_lib_file = mmdia_root.joinpath('media_data','medialib.pickle')
     
     # create directory if it doesn't exist
-    picked_media_lib_file.parent.mkdir(parents=True, exist_ok=True)
+    pickled_media_lib_file.parent.mkdir(parents=True, exist_ok=True)
+
+    if pickled_media_lib_file.exists():
+      print(f"\n\nUN-PICKLING from {pickled_media_lib_file}")
+      with open(pickled_media_lib_file, 'rb') as f:
+        # MMdia = pickle.load(f)
+        MMdia.load_media_files_information(pickle.load(f))
+        # TODO pickle class 
+    
+    #sys.exit()
+    
+    media_lib = MMdia.refresh_media_files_information(mmdia_root)
+
+    #pprint(media_lib['video'])
+    #pprint(media_lib['audio'])
+
+        
+    for count, k in enumerate(media_lib['video'].keys()):
+      #if len(media_lib['video'][k].movie_data['title']) == 0: continue        # skip titles of zero length - curate later
+      count += 1
+      print(f"\ndisk: {k} - {count} <")
+      #pprint(media_lib['video'][k])               # TODO ex - use metaclass to dump object attributes
+      #print(media_lib['video'][k].full_path)
+      print('\t',media_lib['video'][k].filename)
+      #print(media_lib['video'][k].location)
+      #print(media_lib['video'][k].file_stat)
+      #pprint(media_lib['video'][k].movie_data)
+      # print(media_lib['video'][k].movie_data['title'], len(media_lib['video'][k].movie_data['title']))
+      # print(media_lib['video'][k].movie_data['year'])
+      print(f"\t{int(media_lib['video'][k].file_stat.st_size/(1024*1024))}MiB")
+      #print(f"{round(media_lib['video'][k].file_stat.st_size/(1024*1024*1024),1)}GiB")
+      if count > 200: break
+        
+    
+
     
     # write lib to disk - save rebuild all on every run
     #if len(media_lib) > 0:
     print(f"SIZE: {media_lib['video'].keys()} - {len(media_lib['video'].keys())} - {type(media_lib)}")
     print(f"len(media_lib): {len(media_lib)}")
-    print(f"picked_media_lib_file: {picked_media_lib_file}")
+    print(f"pickled_media_lib_file: {pickled_media_lib_file}")
     
-    print(f"PICKLING to {picked_media_lib_file}")
-    with open(picked_media_lib_file, 'wb') as f:
+    print(f"PICKLING to {pickled_media_lib_file} - {MMdia}")
+    with open(pickled_media_lib_file, 'wb') as f:
+      #pickle.dump(MMdia, f, pickle.HIGHEST_PROTOCOL)  # how to pickle class instance
       pickle.dump(media_lib, f, pickle.HIGHEST_PROTOCOL)
     
-    media_lib = None
+    print("- - - - - - OFFENDERS - - - - - - ")
+    print("- - - - - - OFFENDERS - - - - - - ")
+    MMdia.dump_bad_names()
+    print("- - - - - - OFFENDERS - - - - - - ")
+
+
+
     
-    print(f"\n\nUN-PICKLING from {picked_media_lib_file}")
-    with open(picked_media_lib_file, 'rb') as f:
-      media_lib = pickle.load(f)
     
-    print(f"SIZE: {media_lib['video'].keys()} - {len(media_lib['video'].keys())} - {type(media_lib)}")
-    print(f"len(media_lib): {len(media_lib)}")
-    print(f"picked_media_lib_file: {picked_media_lib_file}")
-      
     # 
     #print(json.dumps(media_lib))   #MMdia not serializable
     #print(MMdia.JSON_DUMP)

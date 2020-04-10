@@ -14,7 +14,8 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 4. [AIM:](#aim)  
 5. [Next steps](#next-steps)  
 6. [Questions / Barriers](#questions--barriers)  
-	1. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
+	1. [How do you pickle a class (with it's class variables) and reconstitute it](#how-do-you-pickle-a-class-with-its-class-variables-and-reconstitute-it)  
+	2. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
 7. [How To's](#how-tos)  
 	1. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
 	2. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
@@ -38,6 +39,7 @@ Allow toggling of favourite icon, seen it icon
 
 
 ## Questions / Barriers
+### How do you pickle a class (with it's class variables) and reconstitute it
 ### How do we scrape IMDB for movie info to display?
 
 
@@ -150,10 +152,10 @@ BLUE  - Parked, no action planned. (maybe incomplete / redundant)
 
 ## Completed
 2020.Mar.05 - SF - Create Context Template - Move to bottom?  
-2020.Mar.05 - SF - Setup basic Flask dir tree.
-2020.Mar.05 - SF - Add disc scan, to find movie (and audio) files.
-2020.Mar.05 - SF - Query IMDB for movie info.
-2020.Mar.07 - SF - Integrate IMDB queries into MMdia class (was Pass the information to scraper, gather information.)
-2020.Mar.08 - SF - Check search reulst for kind = movie
-2020.Mar.13 - SF - X-ref search result and query using doc_ditsance to get best match
-2020.Mar.14 - SF - Build DB / non-valatile storage (used pickle to start).
+2020.Mar.05 - SF - Setup basic Flask dir tree.  
+2020.Mar.05 - SF - Add disc scan, to find movie (and audio) files.  
+2020.Mar.05 - SF - Query IMDB for movie info.  
+2020.Mar.07 - SF - Integrate IMDB queries into MMdia class (was Pass the information to scraper, gather information.)  
+2020.Mar.08 - SF - Check search reulst for kind = movie  
+2020.Mar.13 - SF - X-ref search result and query using doc_ditsance to get best match  
+2020.Mar.14 - SF - Build DB / non-valatile storage (used pickle to start).  
