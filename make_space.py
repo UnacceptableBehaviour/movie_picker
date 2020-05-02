@@ -34,7 +34,7 @@ if __name__ == '__main__':
     
     #pprint(time_box['video'])
     
-    fs_tor   = MMdia.refresh_media_files_information(PATH_TO_TOR)
+    fs_tor   = MMdia.refresh_media_files_information(PATH_TO_TOR, True)
     
     removal_list = []
     
