@@ -2,8 +2,10 @@
 
 # from example
 # https://www.slideshare.net/DamianGordon1/python-the-iterator-pattern
+# (2c3df72cf70ff3760096b8deae038995ebbbe076)
 # &
 # https://refactoring.guru/design-patterns/iterator/python/example#:~:text=Iterator%20in%20Python,using%20a%20single%20iterator%20interface.
+# 
 
 from collections.abc import Iterable, Iterator
 # collection.abc = abstract base class
@@ -13,9 +15,14 @@ from collections.abc import Iterable, Iterator
 import sys		# sys.exit()
 
 
-class Movies:
+class Movie:	
 	def __init__(self, name, year, rating):
-		pass
+		self.title = name
+		self.year = year
+		self.rating = rating
+		
+	def __str__(self):
+		return f"{self.year} {self.rating.rjust(4)} - {self.title}"
 
 
 class MediaLib(Iterable):
@@ -38,19 +45,40 @@ class MediaLibIter(Iterator):
 	def __iter__(self):				# use?
 		return self
 	
-	def __next__(self):
-		#print(f"idx:{self._index + 1} - {len(self.media_files)} - {self.media_files[self._index]}")
+	def __next__(self):		
 		if self._index + 1 < len(self.media_files):
 			return_item = self.media_files[self._index]
 			self._index += 1	
 			return return_item
 		else:
 			raise StopIteration()
+	#
+	# or 
+	# def __next__(self):
+	# 	try:
+	# 		return_item = self.media_files[self._index]
+	# 		
+	# 		if self._index < len(self.media_files):				
+	# 			self._index += 1	
+	# 
+	# 	except IndexError:
+	# 		raise StopIteration()
+	# 
+	# 	return return_item
+	
+
 
 		
 
 def main():
-	movies = ['The Big Short','A Star Is Born','Annihilation','Alita: Battle Angel','Bill Burr: Why Do I Do This?','Food Inc','Joker','Shallow Grave','The Thirteenth Floor','The Great Hack','District 9','Taxi','Taxi Driver']
+	
+	titles = ['The Big Short','A Star Is Born','Annihilation','Alita: Battle Angel','Bill Burr: Why Do I Do This?','Joker','Shallow Grave','The Thirteenth Floor','The Great Hack']
+	year = ['2015','2018','2018','2019','2008','2019','1994','1999','2019']
+	rating = ['7.8','7.7','6.9','7.3','8.4','8.5','7.3','7.1','7.0']	
+	
+	movies = []
+	for title, year, rating in zip(titles, year, rating):
+		movies.append(Movie(title, year, rating))
 	
 	media_library = MediaLib(movies)
 	
@@ -65,3 +93,55 @@ if __name__ == '__main__':
 						
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
 		
+
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# Notes
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# -> notation after method definition is a return type hint
+# :  natation inside signature brackets preceeds a return type hint
+#
+# def __init__(self, collection: List[Any] = []) -> None:			# w/ hints
+# same as
+# def __init__(self, collection = []):								# unadorned
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#
+# def greeting(name):
+#   return 'Hello, {}'.format(name)
+# 
+# can be written
+# 
+# def greeting(name: str) -> str:
+#   return 'Hello, {}'.format(name)
+# to indicate types (not enforced but useful for toolchain)
+# Ref: https://stackoverflow.com/questions/5336320/how-to-know-function-return-type-and-argument-types
+
+# You can also alias types:
+#
+# from typing import List
+# Vector = List[float]
+# def scale(scalar: float, vector: Vector) -> Vector:
+#     return [scalar * num for num in vector]
+# 
+# > scale(2.0, [1.0, -4.2, 5.4])
+# > [2.0, -8.4, 10.8]
+#
+#
+# Type aliases are useful for simplifying complex type signatures. For example: 
+# from typing import Dict, Tuple, Sequence
+# 
+# ConnectionOptions = Dict[str, str]
+# Address = Tuple[str, int]
+# Server = Tuple[Address, ConnectionOptions]
+# 
+# def broadcast_message(message: str, servers: Sequence[Server]) -> None:
+#     ...
+# 
+# # The static type checker will treat the previous type signature as
+# # being exactly equivalent to this one.
+# def broadcast_message(
+#         message: str,
+#         servers: Sequence[Tuple[Tuple[str, int], Dict[str, str]]]) -> None:
+# 
+# Ref: https://docs.python.org/3/library/typing.html
+
+
