@@ -118,6 +118,12 @@ class MMediaLib():
 			with open(self.lib_file_path, 'rb') as f:				
 				self.media_files = pickle.load(f)
 
+	def __iter__(self):
+		pass
+
+	def __next__(self):
+		pass
+
 	def __str__(self):	
 		return 'MMediaLib::def __str__'
 
@@ -168,7 +174,8 @@ class MMediaLib():
 		self.lib_file_path.parent.mkdir(parents=True, exist_ok=True)
 		
 		print(f'Pickling before exit:\n{self.lib_file_path}')
-		print(f"SIZE: {self.media_files['video'].keys()} - {len(self.media_files['video'].keys())} - {type(self.media_files)}")
+		#print(f"SIZE: {self.media_files['video'].keys()} - {len(self.media_files['video'].keys())} - {type(self.media_files)}")
+		print(f"SIZE: {len(self.media_files['video'].keys())} - {type(self.media_files)}")
 		print(f"len(self.media_files): {len(self.media_files)}")
 		print(f"self.lib_file_path: {self.lib_file_path}")
 		
@@ -184,23 +191,30 @@ def main():
 
 
 if __name__ == '__main__':
-	
-	# convert to new classes for pickling
-	print("** movie picker main() - old_media_lib **")
-	old_media_lib = get_MMdia_lib()
 
 	print("** movie picker main() - new_media_lib **")
-	new_media_lib = MMediaLib()			
+	new_media_lib = MMediaLib()		
 	
-	for count, (movie,media) in enumerate(old_media_lib['video'].items()):
+	# # convert to new classes for pickling
+	# print("** movie picker main() - old_media_lib **")
+	# old_media_lib = get_MMdia_lib()
+	# 
+	# for count, (movie,media) in enumerate(old_media_lib['video'].items()):
+	# 	
+	# 	file_size = (str( round(old_media_lib['video'][movie].file_stat.st_size / (1024 * 1024),1))+'MB').rjust(6)
+	# 	
+	# 	print(f"== {str(count).rjust(3)} - {file_size} - {movie}")
+	# 	media.movie_data['movie_data_loaded'] = media.movie_data_loaded
+	# 	media.movie_data['hires_image'] = media.hires_image
+	# 	new_media_type = MMedia(media.movie_data)
+	# 	new_media_lib.add_media(new_media_type)
+
+
+	for count, (movie,media) in enumerate(new_media_lib['video'].items()):
 		
-		file_size = (str( round(old_media_lib['video'][movie].file_stat.st_size / (1024 * 1024),1))+'MB').rjust(6)
-		
-		print(f"== {str(count).rjust(3)} - {file_size} - {movie}")
-		media.movie_data['movie_data_loaded'] = media.movie_data_loaded
-		media.movie_data['hires_image'] = media.hires_image
-		new_media_type = MMedia(media.movie_data)
-		new_media_lib.add_media(new_media_type)
-				
+		array_code_for_iterator = "["
+			
+		print(f"== {str(count).rjust(3)} - {media.info['title']} - {movie}")
+						
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
 		
