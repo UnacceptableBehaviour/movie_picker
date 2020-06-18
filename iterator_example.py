@@ -14,6 +14,30 @@ from collections.abc import Iterable, Iterator
 
 import sys		# sys.exit()
 
+FORWARD = 1
+REVERSE = -1
+class MediaLibIter(Iterator):
+	'''
+	Iterator designed for MediaLib inherits from Iterator base class
+	'''
+	def __init__(self, media_list, direction=FORWARD):
+		self.direction = REVERSE if direction==REVERSE else FORWARD 	# has to be FORWARD or REVERSE!
+		self._index = -1 if direction==REVERSE else 0					# start at index 0 if going forward -1 if reversing
+		self.media_files = media_list
+
+	def __iter__(self):				# use?
+		return self
+	
+	def __next__(self):
+		try:
+			return_item = self.media_files[self._index]			
+			self._index += self.direction
+	
+		except IndexError:
+			raise StopIteration()
+	
+		return return_item
+	
 
 class Movie:	
 	def __init__(self, name, year, rating):
@@ -29,42 +53,14 @@ class MediaLib(Iterable):
 	def __init__(self, media_list=[]):
 		self.media_files = media_list
 
-	def __iter__(self):		
+	def __iter__(self) -> MediaLibIter:		
 		return MediaLibIter(self.media_files)
 	
+	def reverse_each(self):
+		return MediaLibIter(self.media_files, direction=REVERSE)
 	
 	
-class MediaLibIter(Iterator):
-	'''
-	Iterator designed for MediaLib inherits from Iterator base class
-	'''
-	def __init__(self, media_list):
-		self._index = 0
-		self.media_files = media_list
 
-	def __iter__(self):				# use?
-		return self
-	
-	def __next__(self):		
-		if self._index + 1 < len(self.media_files):
-			return_item = self.media_files[self._index]
-			self._index += 1	
-			return return_item
-		else:
-			raise StopIteration()
-	#
-	# or 
-	# def __next__(self):
-	# 	try:
-	# 		return_item = self.media_files[self._index]
-	# 		
-	# 		if self._index < len(self.media_files):				
-	# 			self._index += 1	
-	# 
-	# 	except IndexError:
-	# 		raise StopIteration()
-	# 
-	# 	return return_item
 	
 
 
@@ -85,6 +81,10 @@ def main():
 	for media in media_library:
 		print(media)
 	
+	print(". . and for my next trick . . . BACKWARDS . . . ooh!")
+	
+	for media in media_library.reverse_each():
+		print(media)
 
 
 if __name__ == '__main__':
