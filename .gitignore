@@ -1,7 +1,9 @@
 # for osx
 .DS_Store
+*.pyc
 
 # ignore directory and contents
+/movie_picker/__pycache__
 /__pycache__
 /venv
 /scratch
