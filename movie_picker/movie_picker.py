@@ -128,6 +128,7 @@ class MediaLibIter(Iterator):
 	
 
 mmdia_root2 = Path('/Volumes/time_box_2018/movies/')
+#mmdia_root2 = Path('./movies/')	# git demo 
 PICKLED_MEDIA_LIB_FILE_V2 = mmdia_root2.joinpath('__media_data2','medialib2.pickle')
 READ_ONLY = 'r'
 READ_WRITE = 'w'
@@ -244,10 +245,34 @@ class MMediaLib(Iterable):
 			with open(self.lib_file_path, 'wb') as f:
 				pickle.dump(self.media_files, f, pickle.HIGHEST_PROTOCOL)	
 
+
+	def list_DB_by_attribute(self, attribute='recent', verbose=False):
+		sort_type = {
+			'year'	:self.sorted_by_year,				
+			'title' :self.sorted_by_title,
+			'rating':self.sorted_by_rating,				
+			'recent':self.sorted_by_most_recently_added
+		}
+				
+		if attribute in sort_type:
+			self.sorted_iterator = sort_type[attribute]
+			for m in self.sorted_iterator():			
+				if verbose == True:
+					print(f" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - S")
+					pprint(m)
+				else:
+					#if m == {} or m.info['title'] == 'And Then There Were None':
+					print(m)
+		else:
+			print(f"**WARNING** INVALID -l option. Sort types: {' '.join(sort_type.keys())}\n\n")
+			raise 'IncorrectSortAttributeError' # TODO add to exception file
+	
+
 	
 
 def main():
 	pass
+
 
 
 if __name__ == '__main__':
@@ -255,70 +280,62 @@ if __name__ == '__main__':
 	print("** movie picker main() - new_media_lib **")
 	new_media_lib = MMediaLib()
 	#new_media_lib.set_write_mode(READ_WRITE)
-	
+
 	
 	# TODO - the 'And Then There Were None' bug
 	# - possible due to video title incorrectly extracted from file?
-	# - querie imdb with None and the closest resul is 'And Then There Were None'
+	# - querie imdb with None and the closest result is 'And Then There Were None'
 	
-	count = 0
-	#for m in new_media_lib.sorted_by_year():
-	#for m in new_media_lib.sorted_by_title():
-	for m in new_media_lib.sorted_by_rating():
-	#for m in new_media_lib.sorted_by_most_recently_added():
-		if m == {} or m.info['title'] == 'And Then There Were None':
-			continue
-		print(m)
-		# print(f" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << S {count}")
-		# pprint(m)
-		# print(dir(m))		
-		# print(f" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << E {count}")
-		# count += 1
-		# if count > 15:
-		# 	break
-	
+	pprint(sys.argv)
+	if '-l' in sys.argv:
+		print(f"option -l: {sys.argv[sys.argv.index('-l')+1]}")
+		print(f"id(new_media_lib) {id(new_media_lib)}")
+		new_media_lib.list_DB_by_attribute(attribute=sys.argv[sys.argv.index('-l')+1])
+
 	
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
 
-
+	# # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# # importing library from old script
 	# from pprint import pprint
 	# from movie_info_disk import get_MMdia_lib, MMdia
 	#
-	print("** movie picker main() - new_media_lib **")
-	new_media_lib = MMediaLib()
-	new_media_lib.set_write_mode(READ_WRITE)
-	
-	# convert to new classes for pickling - import data
-	print("** movie picker main() - old_media_lib **")
-	old_media_lib = get_MMdia_lib()
-	
-	for count, (movie,media) in enumerate(old_media_lib['video'].items()):
-		print(f" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << S {count}")
-		pprint(media)
-		print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << M")
-		print(f"== {str(count).rjust(3)} - - - - - - - - - - - - - - - - - - - - - ")		
-		file_stats = Path(old_media_lib['video'][movie].full_path).stat() # refresh stats
-		file_size = (str( round(file_stats.st_size / (1024 * 1024),1))+'MB').rjust(6)
-		file_path = old_media_lib['video'][movie].full_path
-		added_epoch = creation_date(file_path)
-		print(file_stats)
-		print(f"epoch added: {added_epoch} - {hr_readable_from_nix(added_epoch)}")
-		
-		print(f"== {str(count).rjust(3)} - {file_size} - {movie}")
-		media.movie_data['movie_data_loaded'] = media.movie_data_loaded
-		media.movie_data['hires_image'] = media.hires_image
-		media.movie_data['file_path'] = file_path
-		media.movie_data['file_name'] = movie
-		media.movie_data['file_stats'] = file_stats
-		media.movie_data['when_added'] = added_epoch
-		new_media_type = MMedia(media.movie_data)
-		new_media_lib.add_media(new_media_type)						
-		print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << M2")
-		pprint(new_media_type)
-		print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << E")
-		#if count > 5: break
-
-	sys.exit()
+	# print("** movie picker main() - new_media_lib **")
+	# new_media_lib = MMediaLib()
+	# new_media_lib.set_write_mode(READ_WRITE)
+	# 
+	# # convert to new classes for pickling - import data
+	# print("** movie picker main() - old_media_lib **")
+	# old_media_lib = get_MMdia_lib()
+	# 
+	# for count, (movie,media) in enumerate(old_media_lib['video'].items()):
+	# 	print(f" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << S {count}")
+	# 	pprint(media)
+	# 	print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << M")
+	# 	print(f"== {str(count).rjust(3)} - - - - - - - - - - - - - - - - - - - - - ")		
+	# 	file_stats = Path(old_media_lib['video'][movie].full_path).stat() # refresh stats
+	# 	file_size = (str( round(file_stats.st_size / (1024 * 1024),1))+'MB').rjust(6)
+	# 	file_path = old_media_lib['video'][movie].full_path
+	# 	added_epoch = creation_date(file_path)
+	# 	print(file_stats)
+	# 	print(f"epoch added: {added_epoch} - {hr_readable_from_nix(added_epoch)}")
+	# 	
+	# 	print(f"== {str(count).rjust(3)} - {file_size} - {movie}")
+	# 	media.movie_data['movie_data_loaded'] = media.movie_data_loaded
+	# 	media.movie_data['hires_image'] = media.hires_image
+	# 	media.movie_data['file_path'] = file_path
+	# 	media.movie_data['file_name'] = movie
+	# 	media.movie_data['file_stats'] = file_stats
+	# 	media.movie_data['when_added'] = added_epoch
+	# 	new_media_type = MMedia(media.movie_data)
+	# 	new_media_lib.add_media(new_media_type)						
+	# 	print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << M2")
+	# 	pprint(new_media_type)
+	# 	print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << E")
+	# 	#if count > 5: break
+	# 
+	# sys.exit()
+	# # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	
 	# # ah dict.keys() returns dict_keys(['f1', 'f2', 'f3', 'f4']) type 
 	# a = {'f1': MMedia({'title': 'F1'}),
@@ -329,3 +346,21 @@ if __name__ == '__main__':
 	# b = [key for key in a.keys()]	# use list comprehension to convert
 	# 
 	# pprint(b)		
+
+	# # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# # dumb info from DB
+	# count = 0
+	# #for m in new_media_lib.sorted_by_year():
+	# #for m in new_media_lib.sorted_by_title():
+	# for m in new_media_lib.sorted_by_rating():
+	# #for m in new_media_lib.sorted_by_most_recently_added():
+	# 	if m == {} or m.info['title'] == 'And Then There Were None':
+	# 		continue
+	# 	print(m)
+	# 	# print(f" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << S {count}")
+	# 	# pprint(m)
+	# 	# print(dir(m))		
+	# 	# print(f" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << E {count}")
+	# 	# count += 1
+	# 	# if count > 15:
+	# 	# 	break

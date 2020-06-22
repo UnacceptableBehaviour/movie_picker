@@ -31,3 +31,42 @@ class Student:
         return repr((self.name, self.grade, self.age))
 
 
+
+
+
+
+movie_picker Tool use cases
+
+as script:
+	args
+	-h	print help
+	-db	location of pickled ‘db’ file	dir/	dir/file.pickle 	EG -l dir/medialib.pickle
+	-f 	find db files												EG -f dir/ to search
+	-rb	build db from scratch	
+	-u	update db from directory		dir/						EG -u dir/ to search for updates
+	-d	dont save results
+
+
+
+as module - import Mmdialib, Mmedia			# multi media library, 	multi media object
+	API
+	mmdialib = Mmdialib.new(path)			# load pickle file / create library  if none exists
+
+	for m in mmadialib:						# iterable
+		print(m.title)
+		print(m.synopsis)
+
+	
+	query = medialib.all()
+	
+
+	mmdialib.query({‘title’:”Joker”})		# simplified searchable - query(include_dict, exclude_dict)
+	>list of Mmedia object
+
+	mmdialib.query({‘title’:”Joker”, ‘year’:2019})
+	>list of Mmedia object
+
+	mmdialib.query({‘genres’:”Comedy”})
+	>list of Mmedia object
+	
+	

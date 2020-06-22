@@ -72,7 +72,7 @@ class MediaLib(Iterable):
 		self._sorted_by_rating = sorted(self.media_files, key=lambda x: float(x.rating), reverse=True)
 
 	def __iter__(self) -> MediaLibIter:									#  -> MediaLibIter is optional guide to coder & toolchain
-		return MediaLibIter(self.media_files)
+		return MediaLibIter(self.media_files)							#                  it indicates the return type
 	
 	def reverse_each(self) -> MediaLibIter:
 		return MediaLibIter(self.media_files, direction=REVERSE)
