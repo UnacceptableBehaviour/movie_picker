@@ -23,10 +23,10 @@ from movie_info_disk import get_MMdia_lib, MMdia
 
 # choose order by most frequently occuring - TODO - stats from data
 AUDIO_EXTS = [ '.mp3', '.ac3' ]                   
-VIDEO_EXTS = [ '.mp4', '.avi', '.mkv', '.m4a' ]
+VIDEO_EXTS = [ '.mp4', '.mkv', 'wmv', '.avi', '.m4a' ]
 class MMedia:
 	
-	def __init__( self, mmdia_info = {}, file_path=None ):
+	def __init__( self, file_path=None, mmdia_info = {} ):
 		self.info = { 'id': None,
 			'title': '',
 			'synopsis': '',
@@ -41,7 +41,7 @@ class MMedia:
 			'fav':False,
 			'image_url':None,
 			'hires_image': None,			# or path to image
-			'file_path': None,
+			'file_path': file_path,
 			'file_stats':None,
 			'file_name': None,				# actually full path - refactor
 			'file_title': None,
@@ -51,7 +51,8 @@ class MMedia:
 		
 		if file_path != None:
 			# build movie data
-			print("** IMPLEMENT BUILD MOVIE DATA **")
+			print(f"** IMPLEMENT BUILD MOVIE DATA **\n{file_path}")
+			
 		else:
 			self.info.update(mmdia_info)
 
@@ -128,16 +129,20 @@ class MediaLibIter(Iterator):
 	
 
 mmdia_root2 = Path('/Volumes/time_box_2018/movies/')
-#mmdia_root2 = Path('./movies/')	# git demo 
 PICKLED_MEDIA_LIB_FILE_V2 = mmdia_root2.joinpath('__media_data2','medialib2.pickle')
+look_in_repo = Path('./movies/')	# git demo
+PICKLED_MEDIA_LIB_FILE_REPO = look_in_repo.joinpath('__media_data2','medialib2.pickle')
 READ_ONLY = 'r'
 READ_WRITE = 'w'
 class MMediaLib(Iterable):
 
 	ia = imdb.IMDb()
 
-	def __init__( self, lib_file_path=PICKLED_MEDIA_LIB_FILE_V2 ):
+	def __init__( self, lib_file_path=PICKLED_MEDIA_LIB_FILE_V2, media_root=None ):
 		self.lib_file_path = lib_file_path
+		
+		self.media_root = self.lib_file_path.parent.parent if not media_root else media_root
+		
 		self.read_write_mode = READ_ONLY
 		
 		self.__badly_formatted_names = []
@@ -189,37 +194,65 @@ class MMediaLib(Iterable):
 
 	def sort_lists(self):
 		# create list of sorted keys - use sorted key for iterators
-		self._sorted_by_year = sorted(self.media_files, key=lambda k: int(self.media_files[k].info['year']))	# in place media_files.sort(key=lambda x: x.year)
-		self._sorted_by_title = sorted(self.media_files, key=lambda k: self.media_files[k].info['title'])
-		self._sorted_by_rating = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['rating']), reverse=True)
-		self._sorted_by_most_recently_added = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['when_added']), reverse=True)
-	
+		#self._sorted_by_year = sorted(self.media_files, key=lambda k: int(self.media_files[k].info['year']))	# in place media_files.sort(key=lambda x: x.year)
+		#self._sorted_by_title = sorted(self.media_files, key=lambda k: self.media_files[k].info['title'])
+		#self._sorted_by_rating = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['rating']), reverse=True)
+		#self._sorted_by_most_recently_added = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['when_added']), reverse=True)
+		pass
 		
-	
 	def __str__(self):	
 		return 'MMediaLib::def __str__'
 
 	def __repr__(self):   
 		return 'MMediaLib::def __repr__'  
 
-	def add_media(self, media):		
-		# TODO raise if incorrect type
+	def add_directory_to_library(self, search_dir = None):
+	
+		search_dir = self.media_root if not search_dir else search_dir
 		
-		print(f"ADD MEDIA: {media.file_path()} type:{media.__class__.__name__}")
-		if self.is_new_media(media.file_path()):
-			print(f"NEW MEDIA: {media.file_path()}")
-			# TODO add check to see if info['movie_data_loaded']: False
-			# load it if not
-			if not media.data_loaded:
-				print(f"DATA LOADED?: {media.data_loaded()}")
-				media = MMedia({}, media.file_path())
+		search_dir = Path(search_dir)
+		
+		# glob for files here		
+		for media_file in search_dir.glob('**/*'):
+			
+			self.add_media(media_file)
+			
+
+	def add_media(self, media_path):
+		media_path = Path(media_path)
+						
+		if self.is_new_media(media_path):
+			print(f"ADD NEW MEDIA: {media_path.name} type:{media_path.__class__.__name__} {media_path.dir}")			
+			
+			media = MMedia(media_path, {})
 		
 			self.media_files_count[media.file_path().name.lower()] += 1
 			self.media_files[media.file_path().name.lower()] = media
+		else:
+			print(f"MEDIA ALREADY EXISTS: {media_path.name()} loc:{media_path.parent}")
+			pprint(self.media_files[media_path.name])
+	
+
+
+	# # ** DEPRACATED ** was for importing legacy data **
+	# def add_media_legacy(self, media):		
+	# 	# TODO raise if incorrect type
+	# 	
+	# 	print(f"ADD MEDIA: {media.file_path()} type:{media.__class__.__name__}")
+	# 	if self.is_new_media(media.file_path()):
+	# 		print(f"NEW MEDIA: {media.file_path()}")
+	# 		# TODO add check to see if info['movie_data_loaded']: False
+	# 		# load it if not
+	# 		if not media.data_loaded:
+	# 			print(f"DATA LOADED?: {media.data_loaded()}")
+	# 			media = MMedia(media.file_path(), {})
+	# 	
+	# 		self.media_files_count[media.file_path().name.lower()] += 1
+	# 		self.media_files[media.file_path().name.lower()] = media
 							
 
 	def is_new_media(self, mfile):
-		#mfile = Path(mfile)
+		mfile = Path(mfile)
 
 		if mfile.name.lower() in self.media_files.keys():
 			return False
@@ -235,7 +268,8 @@ class MMediaLib(Iterable):
 						
 	# maybe use a context manager to call this? (https://docs.python-guide.org/writing/structure/)
 	# TODO assees exersize
-	def exit_handler(self):		
+	def exit_handler(self):
+		print(f"R/W? - {self.read_write_mode}")
 		if self.read_write_mode == READ_WRITE:
 			# create directory if it doesn't exist
 			self.lib_file_path.parent.mkdir(parents=True, exist_ok=True)			
@@ -267,7 +301,19 @@ class MMediaLib(Iterable):
 			print(f"**WARNING** INVALID -l option. Sort types: {' '.join(sort_type.keys())}\n\n")
 			raise 'IncorrectSortAttributeError' # TODO add to exception file
 	
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# HELPERS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+def get_list_of_file_extensions(search_dir = None):
+	extensions = Counter()
+	
+	search_dir = mmdia_root2 if not search_dir else search_dir
+	
+	for p in search_dir.glob('**/*'):
+		extensions[p.suffix.lower()] += 1
+	
+	return extensions
 	
 
 def main():
@@ -277,9 +323,24 @@ def main():
 
 if __name__ == '__main__':
 
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# load media lib
 	print("** movie picker main() - new_media_lib **")
+	new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO, '/Volumes/time_box_2018/movies_Chris/__for_chris/movies_recomended')
 	new_media_lib = MMediaLib()
-	#new_media_lib.set_write_mode(READ_WRITE)
+
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# -ec = dont save results
+	if '-ec' in sys.argv:
+		pprint(get_list_of_file_extensions())
+		# '.mp4': 126, '.mkv': 85, '.wmv': 74, '.avi': 51,
+		sys.exit()
+	
+	
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# -d = dont save results		as in WRITE mode unless blocked
+	if '-d' not in sys.argv:
+		new_media_lib.set_write_mode(READ_WRITE)
 
 	
 	# TODO - the 'And Then There Were None' bug
@@ -287,11 +348,33 @@ if __name__ == '__main__':
 	# - querie imdb with None and the closest result is 'And Then There Were None'
 	
 	pprint(sys.argv)
-	if '-l' in sys.argv:
-		print(f"option -l: {sys.argv[sys.argv.index('-l')+1]}")
-		print(f"id(new_media_lib) {id(new_media_lib)}")
-		new_media_lib.list_DB_by_attribute(attribute=sys.argv[sys.argv.index('-l')+1])
 
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# -u dir_name = update searching in directory for media
+	if '-u' in sys.argv:
+		
+		try: 
+			search_directory = sys.argv[sys.argv.index('-u')+1]
+			
+			if Path(search_directory).exists():
+				new_media_lib.add_directory_to_library(search_directory)
+		
+		except IndexError:
+			new_media_lib.add_directory_to_library()
+
+
+
+
+	
+	
+	if '-l' in sys.argv:
+		try:
+			print(f"option -l: {sys.argv[sys.argv.index('-l')+1]}")
+			new_media_lib.list_DB_by_attribute(attribute=sys.argv[sys.argv.index('-l')+1])
+		except IndexError:		
+			for m in new_media_lib:
+				print(m)
+		
 	
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
 
@@ -328,7 +411,7 @@ if __name__ == '__main__':
 	# 	media.movie_data['file_stats'] = file_stats
 	# 	media.movie_data['when_added'] = added_epoch
 	# 	new_media_type = MMedia(media.movie_data)
-	# 	new_media_lib.add_media(new_media_type)						
+	# 	new_media_lib.add_media_legacy(new_media_type)						
 	# 	print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << M2")
 	# 	pprint(new_media_type)
 	# 	print(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - << E")

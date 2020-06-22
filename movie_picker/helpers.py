@@ -22,5 +22,6 @@ def creation_date(path_to_file):
         
 
 def hr_readable_from_nix(nix_time):
-    return datetime.utcfromtimestamp(nix_time).strftime("%Y %m %d %H%M")
+    if nix_time:
+        return datetime.utcfromtimestamp(nix_time).strftime("%Y %m %d %H%M")
 

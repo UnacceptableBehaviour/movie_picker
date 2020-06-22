@@ -39,12 +39,16 @@ movie_picker Tool use cases
 
 as script:
 	args
+	-l  list entries
+	-u	update db from directory		dir/						EG -u dir/ to search for updates
+	-d	dont save results
+	-ec	count extension in target  		'.mp4': 126, '.mkv': 85, '.wmv': 74, '.avi': 51,
+
+
 	-h	print help
 	-db	location of pickled ‘db’ file	dir/	dir/file.pickle 	EG -l dir/medialib.pickle
 	-f 	find db files												EG -f dir/ to search
 	-rb	build db from scratch	
-	-u	update db from directory		dir/						EG -u dir/ to search for updates
-	-d	dont save results
 
 
 
