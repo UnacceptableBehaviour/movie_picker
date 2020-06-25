@@ -11,6 +11,8 @@ import urllib.request
 import pickle
 import sys		# sys.exit()
 import atexit
+import math
+import traceback
 
 # from operator import itemgetter, attrgetter		# sorting by object attributes
 
@@ -21,12 +23,13 @@ from movie_info_disk import get_MMdia_lib, MMdia
 # TODO remove after refactor ^^
 
 
-# choose order by most frequently occuring - TODO - stats from data
+# choose order by most frequently occuring - movie_picker -ec will print this info about target disk
 AUDIO_EXTS = [ '.mp3', '.ac3' ]                   
 VIDEO_EXTS = [ '.mp4', '.mkv', 'wmv', '.avi', '.m4a' ]
 class MMedia:
+	_badly_formatted_names = ['Empty']
 	
-	def __init__( self, file_path=None, mmdia_info = {} ):
+	def __init__( self, file_path=None, mmdia_info = {}, imdb_query=False ):
 		self.info = { 'id': None,
 			'title': '',
 			'synopsis': '',
@@ -41,7 +44,7 @@ class MMedia:
 			'fav':False,
 			'image_url':None,
 			'hires_image': None,			# or path to image
-			'file_path': file_path,
+			'file_path': Path(file_path),
 			'file_stats':None,
 			'file_name': None,				# actually full path - refactor
 			'file_title': None,
@@ -50,9 +53,11 @@ class MMedia:
 		}
 		
 		if file_path != None:
-			# build movie data
-			print(f"** IMPLEMENT BUILD MOVIE DATA **\n{file_path}")
-			
+			self.get_media_name_and_year_from_disc()
+			print(f"Found: Y:{self.info['year']} <  Title:{self.info['file_title']} < \n") #Bad: {MMedia._badly_formatted_names[-1]} <\n")
+			if imdb_query == True:
+				self.query_imdb_for_movie_info()
+				
 		else:
 			self.info.update(mmdia_info)
 
@@ -96,7 +101,159 @@ class MMedia:
 	def data_loaded(self):
 		return self.info['movie_data_loaded']
 
+	def get_media_name_and_year_from_disc(self):
 
+		if self.is_video():
+			# movies
+			# looking for: name followed by year or (year) or [year] resolution bla bla .ext
+			# r'[\(\)\[\]]?\d\d\d\d[\(\)\[\]]?[\.\b]' - 4 digit year followed by . or word boundary      
+			match = re.search(r'(.*?)[\(\)\[\]]?(\d\d\d\d)[\(\)\[\]]?[\.\b]', self.info['file_path'].stem, re.I )
+			if match:
+				self.info['year'] = match.group(2)
+				dirty_title = match.group(1)
+				dirty_title = re.sub(r'^[\W_]*','',dirty_title)     # remove leading non word
+				dirty_title = re.sub(r'[\W_]*$','',dirty_title)     # remove trailing non word
+				cleaned_up_title = re.sub(r'[\._]',' ',dirty_title) # replace . and underscore with space
+				self.info['file_title'] = cleaned_up_title
+			else:
+				MMedia._badly_formatted_names.append(self.info['file_path'].stem)
+		
+		elif self.is_audio():
+			pass
+
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# USING imdb module
+	# Usage (keys): https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	def query_imdb_for_movie_info(self):
+		
+		seach_year = self.info['year'] if len(str(self.info['year'])) > 3 else ''
+		
+		query = f"{self.info['file_title']} {seach_year}"
+		
+		if self.info['movie_data_loaded']:
+			print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+			print(f"Retieving info from D-I-S-C\nSearching for: {query} < {self.info['movie_data_loaded']}")
+			pprint(self.info)
+			print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")      
+			return
+		
+		print(f"\n\n\n")
+		print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+		print(f"Retieving info from IMDB\nSearching for: {query} < LOADED? {self.info['movie_data_loaded']}")
+		print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+		results = MMediaLib.imdb_search.search_movie(query)
+		
+		# return result with highest Doc Distance with search
+		movie = select_best_item_from_search_results('movie', query, results)
+
+		if movie == None:
+			MMediaLib._badly_formatted_names.append(self.info['file_path'])
+			self.info['movie_data_loaded'] = True # dont get hung up on failure
+			return      
+		
+		self.info['id'] = movie.movieID
+		
+		m = MMediaLib.imdb_search.get_movie(movie.movieID)
+		#print(MMediaLib.imdb_search.get_movie_infoset())
+		
+		try:
+			print(f"ID: {m.movieID}")
+			print(f"Title: {m['title']}")
+			self.info['title'] = m['title']
+		except:
+			print(">> - - - - - > WARNING: no m['title']")
+		
+		
+		try:
+			print(f"Rating: {m['rating']}")
+			self.info['rating'] = m['rating']
+		except:
+			print(">> - - - - - > WARNING: no m['rating']")      
+
+		try:
+			print(f"Runtimes: {m['runtimes']} or {int(int(m['runtimes'][0])/60)}h{int(m['runtimes'][0])%60}m")
+			print(m.current_info)
+			self.info['runtime_m'] = m['runtimes'][0]
+			self.info['runtime_hm'] = f"{int(int(m['runtimes'][0])/60)}h{int(m['runtimes'][0])%60}m"
+		except:
+			print(">> - - - - - > WARNING: no m['runtimes']")
+
+		# m.get('plot') - list of str (7 in this case all diffferent)
+		plot_size = 0
+		for synopsis in m.get('plot'):
+			# caballo grande ande on no ande!
+			if plot_size < len(synopsis):
+				plot_size = len(synopsis)
+				self.info['synopsis'] = synopsis
+				print(f"SYNOPSIS:\n{synopsis}")
+
+		print(f"\nSYNOPSIS PICKED:\n{synopsis}")        
+		
+		
+		# this is actually the plot - massive
+		# print(f"\nSYNOPSIS:\n{m.get('synopsis')}")
+		
+		print(f"GENRES?: {'genres' in m}")
+		if 'genres' in m: print(m['genres'])
+		print(f"KIND: {m['kind']}")
+		try:
+			self.info['genres'] = m['genres']
+			self.info['kind'] = m['kind']
+		except:
+			print(">> - - - - - > WARNING: no m['genres'] or ['kind'] ?")      
+		
+		print(f"CAST:")    
+		# for index, member in enumerate(m['cast']):
+		#   print(index, member) # member['id']
+			
+		try:    
+			for index, member in enumerate(m['cast']):
+				print(member)
+				self.info['cast'].append(member)
+				if index > 15: break
+		except:
+			print(">> - - - - - > WARNING: no m['cast']")
+
+
+		# this retreives low quality cover art
+		#
+		# https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYT...
+		# ...k2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_SY150_CR0,0,101,150_.jpg
+		#
+		# Change ending @@._V1_SY300_CR0,0,201,300_.jpg
+		#                    size ^    x,y,x1, y1
+		print(f"COVER ART: {m['cover url']}")
+		try:
+			self.info['image_url'] = m['cover url']
+			url = self.info['image_url']
+		except:
+			print(">> - - - - - > WARNING: no m['cover url']")
+
+		# url = urllib.parse.quote(url, safe='/:')  # replace spaces if there are any - urlencode
+		# print(url)    
+		local_file_name = Path(self.info['file_path'].parent, f"{self.info['file_path'].stem}_dl.jpg")
+		print(f"STORING IMAGE TO:\n{local_file_name}")
+		urllib.request.urlretrieve(url, local_file_name)
+		#urllib.request.urlretrieve(url, Path('./scratch', f"{self.info['file_path'].stem}.jpg"))
+		
+		# from scrape
+		# https://www.imdb.com/title/tt7286456/mediaviewer/rm3353122305
+		#                          ID: 7286456
+		#                       Title: Joker
+		# TODO do integrity / minimum requiremnts check before setting True
+		self.info['movie_data_loaded'] = True
+
+
+
+
+
+
+
+
+
+
+	
 
 from collections.abc import Iterable, Iterator
 # collection.abc = abstract base class
@@ -136,16 +293,31 @@ READ_ONLY = 'r'
 READ_WRITE = 'w'
 class MMediaLib(Iterable):
 
-	ia = imdb.IMDb()
+	imdb_search = imdb.IMDb()
 
 	def __init__( self, lib_file_path=PICKLED_MEDIA_LIB_FILE_V2, media_root=None ):
 		self.lib_file_path = lib_file_path
+		self.media_root = media_root
 		
-		self.media_root = self.lib_file_path.parent.parent if not media_root else media_root
+		# create DB in directory of search path - ./media_root/__media_data2/medialib2.pickle
+		if self.lib_file_path == None and media_root != None:
+			self.lib_file_path = Path(media_root).joinpath('__media_data2','medialib2.pickle')
+		
+		if self.lib_file_path != None and media_root == None:
+			self.media_root = self.lib_file_path.parent.parent 
+		
+		if self.lib_file_path == None and media_root == None:
+			raise "Arse"	# TODO add exception to file
+		
+		if self.media_root == None:
+			print(id(self))
+			print(f"self.lib_file_path: {self.lib_file_path}")
+			print(f"media_root: {media_root}")
+			print(f"self.media_root: {self.media_root}")
+			raise "Arse"	# TODO add exception to file
+
 		
 		self.read_write_mode = READ_ONLY
-		
-		self.__badly_formatted_names = []
 	
 		self.media_files_count = Counter() 		# track duplicates 
 		
@@ -206,25 +378,38 @@ class MMediaLib(Iterable):
 	def __repr__(self):   
 		return 'MMediaLib::def __repr__'  
 
+	def __len__(self):
+		return len(self.media_files)
+
+	def inspect_directory_before_adding_to_library(self, search_dir = None):
+	
+		search_dir = self.media_root if not search_dir else search_dir		
+		search_dir = Path(search_dir)
+		
+		# glob for files here		
+		for media_file in search_dir.glob('**/*'):			
+			if MMediaLib.is_accepted_media(media_file):
+				print(media_file)
+				MMedia(media_file, {}, False)
+
 	def add_directory_to_library(self, search_dir = None):
 	
-		search_dir = self.media_root if not search_dir else search_dir
-		
+		search_dir = self.media_root if not search_dir else search_dir		
 		search_dir = Path(search_dir)
 		
 		# glob for files here		
 		for media_file in search_dir.glob('**/*'):
-			
-			self.add_media(media_file)
+			if MMediaLib.is_accepted_media(media_file):
+				self.add_media(media_file)
 			
 
 	def add_media(self, media_path):
 		media_path = Path(media_path)
 						
 		if self.is_new_media(media_path):
-			print(f"ADD NEW MEDIA: {media_path.name} type:{media_path.__class__.__name__} {media_path.dir}")			
+			print(f"ADD NEW MEDIA: {media_path.name} type:{media_path.__class__.__name__}\n{media_path.parent}")			
 			
-			media = MMedia(media_path, {})
+			media = MMedia(media_path, {}, True)
 		
 			self.media_files_count[media.file_path().name.lower()] += 1
 			self.media_files[media.file_path().name.lower()] = media
@@ -232,7 +417,10 @@ class MMediaLib(Iterable):
 			print(f"MEDIA ALREADY EXISTS: {media_path.name()} loc:{media_path.parent}")
 			pprint(self.media_files[media_path.name])
 	
-
+	#@classmethod	#def is_accepted_media(klass, file_name)
+	@staticmethod	#def is_accepted_media(file_name)
+	def is_accepted_media(file_name):
+		return ( Path(file_name).suffix.lower() in (AUDIO_EXTS + VIDEO_EXTS) )
 
 	# # ** DEPRACATED ** was for importing legacy data **
 	# def add_media_legacy(self, media):		
@@ -274,8 +462,8 @@ class MMediaLib(Iterable):
 			# create directory if it doesn't exist
 			self.lib_file_path.parent.mkdir(parents=True, exist_ok=True)			
 			print(f'PICKLING before EXIT: {self.lib_file_path}')
-			third_key = list(self.media_files.keys())[2]
-			print(f"SIZE: {len(self.media_files.keys())} - {type(self.media_files[third_key])} ")
+			#third_key = list(self.media_files.keys())[2] ; print(f"Entry type {type(self.media_files[third_key])} ")
+			print(f"SIZE: {len(self.media_files.keys())}") 
 			with open(self.lib_file_path, 'wb') as f:
 				pickle.dump(self.media_files, f, pickle.HIGHEST_PROTOCOL)	
 
@@ -316,6 +504,108 @@ def get_list_of_file_extensions(search_dir = None):
 	return extensions
 	
 
+# given the kind and query select the most appropriate result
+# from the list returned by the query
+LOWEST_DOC_DISTANCE = 0
+MOVIE = 0
+DOC_DIST = 1
+def select_best_item_from_search_results(kind, query, results):
+	result = None
+	right_kind = []
+	doc_distances = {}
+	
+	possible_kinds = ['movie', 'tv series', 'tv mini series', 'video game', 'video movie', 'tv movie', 'episode']
+	
+	if kind not in possible_kinds:
+		kind == 'movie'
+		
+	# collect result of the right 'kind'
+	for i,r in enumerate(results):
+		print(f"{i} - {r['title']}")
+		if r['kind'] == kind:
+			right_kind.append(r)
+	
+	print(f"Found {len(right_kind)} of the right_kind . .")
+	pprint(right_kind)
+	
+	# walk saerch results and find best match  
+	for sr in right_kind:
+		search_vector = get_doc_vector_word(query)
+	
+		result_title_with_year = sr['title']    
+		try:
+			result_title_with_year = f"{sr['title']} {sr['year']}"
+		except KeyError:
+			print("select_best_item_from_search_results")
+			pprint(sr)
+			traceback.print_exc()
+			print(" - - ^ ^ - - ")
+		finally:
+			result_vector = get_doc_vector_word(result_title_with_year)
+	
+		doc_distances[sr] = doc_distance(search_vector, result_vector)
+		print(f"\nQRY:{query}\n\nRESULT: {result_title_with_year}\nd_d:{doc_distances[sr]}")
+		pprint(sr)
+	
+	try:
+		result = sorted(doc_distances.items(), key=lambda item: item[1])[LOWEST_DOC_DISTANCE][MOVIE]
+	except:
+		print(">> - - - - - > WARNING: sorting issue  --S ")
+		pprint(right_kind)
+		print(">> - - - - - > WARNING: sorting issue  --M ")
+		pprint(doc_distances)
+		print(">> - - - - - > WARNING: sorting issue  --E ")
+	
+	return result
+
+
+# put smaller vector 1st!
+def inner_product(v1,v2):
+	sum = 0.0
+	
+	for symbol1 in v1:                # go through keys 
+		if symbol1 in v2:      
+			sum += v1[symbol1] * v2[symbol1]
+	
+	return sum
+
+
+#def vector_angle(d1, d2):  
+def doc_distance(d1, d2):
+	"""
+	Return the angle between these two vectors.
+	"""
+	numerator = inner_product(d1,d2)  
+	denominator = math.sqrt(inner_product(d1,d1)*inner_product(d2,d2))
+	
+	return math.acos(numerator/denominator)  
+
+
+def get_doc_vector_word(doc):
+	# remove non alphanumeric and white space
+	#print(f"get_doc_vector_word 0:{doc}")
+	doc = re.sub(r'[\W_]',' ',doc)
+	#print(f"get_doc_vector_word 1:{doc}")
+	
+	# split into words
+	doc_words = doc.split()
+	#print(f"get_doc_vector_word 2:{doc}")
+	#pprint(doc_words)
+	
+	# create vector
+	vector = Counter()
+	for w in doc_words:
+	  vector[w] += 1
+	
+	#print("get_doc_vector_word 3:")
+	#pprint(vector)
+	  
+	return vector
+
+
+
+
+
 def main():
 	pass
 
@@ -325,10 +615,18 @@ if __name__ == '__main__':
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# load media lib
-	print("** movie picker main() - new_media_lib **")
-	new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO, '/Volumes/time_box_2018/movies_Chris/__for_chris/movies_recomended')
-	new_media_lib = MMediaLib()
-
+	
+	# timebox_media_lib = MMediaLib()	# default
+	# new_media_lib = timebox_media_lib
+	# 
+	# repo_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
+	# new_media_lib = repo_media_lib
+	
+	alt_media_lib = MMediaLib(None,'/Volumes/time_box_2018/movies_Chris/__for_chris/movies_recomended') # create DB.pickle in search dir
+	new_media_lib = alt_media_lib
+	print(f"** movie picker main() - new_media_lib: {new_media_lib.media_root} **")
+	
+	
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# -ec = dont save results
 	if '-ec' in sys.argv:
@@ -352,28 +650,30 @@ if __name__ == '__main__':
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# -u dir_name = update searching in directory for media
 	if '-u' in sys.argv:
-		
-		try: 
-			search_directory = sys.argv[sys.argv.index('-u')+1]
-			
-			if Path(search_directory).exists():
-				new_media_lib.add_directory_to_library(search_directory)
-		
-		except IndexError:
-			new_media_lib.add_directory_to_library()
+		new_media_lib.add_directory_to_library()
+		# try: 
+		# 	search_directory = sys.argv[sys.argv.index('-u')+1]
+		# 	
+		# 	if Path(search_directory).exists():
+		# 		new_media_lib.add_directory_to_library(search_directory)
+		# 
+		# except IndexError:
+		# 	new_media_lib.add_directory_to_library()
 
-
-
-
-	
 	
 	if '-l' in sys.argv:
 		try:
 			print(f"option -l: {sys.argv[sys.argv.index('-l')+1]}")
 			new_media_lib.list_DB_by_attribute(attribute=sys.argv[sys.argv.index('-l')+1])
 		except IndexError:		
-			for m in new_media_lib:
-				print(m)
+			if len(new_media_lib) == 0:
+				print(f"Inspecting: {new_media_lib.media_root}")
+				new_media_lib.inspect_directory_before_adding_to_library()
+				pprint(MMedia._badly_formatted_names)			
+			else:
+				for m in new_media_lib:
+					print(f"{str(m).ljust(60)}\t{m.info['file_name']}")
+				
 		
 	
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB

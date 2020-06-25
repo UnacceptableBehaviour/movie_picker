@@ -14,16 +14,18 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 4. [AIM:](#aim)  
 5. [Next steps](#next-steps)  
 6. [Questions / Barriers](#questions--barriers)  
-	1. [How do you pickle a class (with it's class variables) and reconstitute it](#how-do-you-pickle-a-class-with-its-class-variables-and-reconstitute-it)  
-	2. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
+	1. [What directory structure is required for a module? (python3)](#what-directory-structure-is-required-for-a-module-python3)  
+	2. [How do you pickle a class (with it's class variables) and reconstitute it](#how-do-you-pickle-a-class-with-its-class-variables-and-reconstitute-it)  
 7. [How To's](#how-tos)  
-	1. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
-	2. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
-	3. [Whats teh minimum serach info required for sensible results?](#whats-teh-minimum-serach-info-required-for-sensible-results)  
-	4. [How do I mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)  
-	5. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
-	6. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
+	1. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
+	2. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
 		1. [TIPS](#tips)  
+	3. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
+	4. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
+	5. [Whats the minimum search info required for sensible results?](#whats-the-minimum-search-info-required-for-sensible-results)  
+	6. [How do I mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)  
+	7. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
+	8. [How do I make a class iterable?](#how-do-i-make-a-class-iterable)  
 8. [REFERENCES](#references)  
 9. [Completed](#completed)  
 
@@ -32,9 +34,7 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 A little python practice, scraping, flask, basic web.
 
 ## Next steps
-POC working. Refactor functionality into a module split into MMediaLib, MMedia (item)
-	add Mmedia items
-	add iterator functionality
+POC working. Refactor functionality into a module split into MMediaLib, MMedia (item)	
 	return_block (next 10 items - for JS world) get_n_items(n, json=True) = return keys if json False
 	return block as json - add flag to above
 Make MMdia serializable - w/ meta class? (allow to and from JSON/DUMPS  
@@ -57,64 +57,6 @@ https://github.com/navdeep-G/samplemod	Is this 2.7?
 
 
 ## How To's
-### How to do initial git repo setup for simple Flask app
-```
-> git add .gitignore			# add config file - which dir/files to track/ignore
-> git commit -m'update config'
-> git push
-> python3 -m venv venv			# setup python 3 virtual env
-> .pe							# activate environment - alias .pe='. venv/bin/activate'
-> pip install --upgrade pip		# update pip 
-> nano requirements.txt			# add following to text file
-Click==7.0
-Flask==1.0.3
-httplib2==0.17.0
-IMDbPY==6.8
-itsdangerous==1.1.0
-Jinja2==2.10.1
-lxml==4.5.0
-MarkupSafe==1.1.1
-pathlib==1.0.1
-SQLAlchemy==1.3.13
-striprtf==0.0.8					# if maintining README.md in and RTF doc
-Werkzeug==0.15.4
-> pip install -r requirements.txt	# gives us the basics for flask, postgres, imdb 
-```
-
-### How do we access IMDB for movie info to display?
-```
-import imdb						# use this module
-
-> ./movie_info_imdb.py 			# < exaples here
-								# retrieves id, title, synopsis, year release, cast, runtime, rating, genre, kind, 
-```
-
-### Whats the minimum serach info required for sensible results?
-Are we looking for a movie? YES for now.
-Movie NAME, YEAR released.
-
-### How do I mount the media disk (on rPi) R/W locally on mac for development
-Find UUID of device, 
-```
-> sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL		# list attached devices & mount point
-UUID                                 NAME        FSTYPE    SIZE MOUNTPOINT            LABEL       MODEL
-                                     sdb                 465.8G                                   MK5076GSX       
-564B-5772                            └─sdb1      vfat    465.8G /media/pi/FAITHFUL500 FAITHFUL500 
-or
-> sudo blkid		# list bulk devices
-/dev/sdb1: LABEL="FAITHFUL500" UUID="564B-5772" TYPE="vfat" PARTUUID="00095536-01"
-> sudo mount /dev/sdb1 /home/pi/MMdia/		# source_device_mountpoint target_mount_point
-											# with this mount can view FAITHFUL500 remotely on osx											
-```
-Next setup so mounts automatically on boot
-```
-> sudo nano /etc/fstab						# edit file system table
-											# add following line
-UUID=564B-5772 /home/pi/MMdia/ vfat defaults,auto,users,rw,nofail 0 0
-     ^ID       ^mount point    ^FSTYPE
-```
-
-
 ### How do I auto generate TOC?
 ```
 Point script at the right docs				# DEFAULT_FILE (input)
@@ -157,6 +99,63 @@ BLUE  - Parked, no action planned. (maybe incomplete / redundant)
 
 <br>/CRLF in markdown is endline \\ or 2 spaces at the end '  '
 
+### How to do initial git repo setup for simple Flask app
+```
+> git add .gitignore			# add config file - which dir/files to track/ignore
+> git commit -m'update config'
+> git push
+> python3 -m venv venv			# setup python 3 virtual env
+> .pe							# activate environment - alias .pe='. venv/bin/activate'
+> pip install --upgrade pip		# update pip 
+> nano requirements.txt			# add following to text file
+Click==7.0
+Flask==1.0.3
+httplib2==0.17.0
+IMDbPY==6.8
+itsdangerous==1.1.0
+Jinja2==2.10.1
+lxml==4.5.0
+MarkupSafe==1.1.1
+pathlib==1.0.1
+SQLAlchemy==1.3.13
+striprtf==0.0.8					# if maintining README.md in and RTF doc
+Werkzeug==0.15.4
+> pip install -r requirements.txt	# gives us the basics for flask, postgres, imdb 
+```
+
+### How do we access IMDB for movie info to display?
+```
+import imdb						# use this module
+
+> ./movie_info_imdb.py 			# < exaples here
+								# retrieves id, title, synopsis, year release, cast, runtime, rating, genre, kind, 
+```
+
+### Whats the minimum search info required for sensible results?
+Are we looking for a movie? YES for now.
+Movie NAME, YEAR released.
+
+### How do I mount the media disk (on rPi) R/W locally on mac for development
+Find UUID of device, 
+```
+> sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL		# list attached devices & mount point
+UUID                                 NAME        FSTYPE    SIZE MOUNTPOINT            LABEL       MODEL
+                                     sdb                 465.8G                                   MK5076GSX
+564B-5772                            └─sdb1      vfat    465.8G /media/pi/FAITHFUL500 FAITHFUL500 
+or
+> sudo blkid		# list bulk devices
+/dev/sdb1: LABEL="FAITHFUL500" UUID="564B-5772" TYPE="vfat" PARTUUID="00095536-01"
+> sudo mount /dev/sdb1 /home/pi/MMdia/		# source_device_mountpoint target_mount_point
+					# with this mount can view FAITHFUL500 remotely on osx
+```
+Next setup so mounts automatically on boot
+```
+> sudo nano /etc/fstab						# edit file system table
+											# add following line
+UUID=564B-5772 /home/pi/MMdia/ vfat defaults,auto,users,rw,nofail 0 0
+     ^ID       ^mount point    ^FSTYPE
+```
+
 ### How do we scrape IMDB for movie info to display?  
 Scraping isnt needed for this task theres an imdb module:  
 ```
@@ -167,6 +166,16 @@ Demo script: [scripts/movie_info_imdb.py](https://github.com/UnacceptableBehavio
 
 REFS
 https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
+
+### How do I make a class iterable?
+Give the calss you need to be iterable a base class of Iterable
+Create a class to handle iteration and have it inherit from Iterator
+implement ```__init__``` , ```__iter__``` and ```__next__``` in this class!
+```
+from collections.abc import Iterable, Iterator
+```
+Example iterator implimentation: [iterator_example.py here](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/iterator_example.py)  
+Iterates FORWARD & REVERSE, and content SORTED by YEAR, TITLE or RATING.
 
 
 
@@ -182,4 +191,9 @@ https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
 2020.Mar.08 - SF - Check search results for kind = movie  
 2020.Mar.13 - SF - X-ref search result and query using doc_ditsance to get best match  
 2020.Mar.14 - SF - Build DB / non-valatile storage (used pickle to start).  
-2020.Apr.10 - SF - Added __repr__ to class.  
+2020.Apr.10 - SF - Added __repr__ to class.
+2020.Jun.19 - SF - POC working. Refactored functionality into a module split into MMediaLib, MMedia (item)
+	added MMedia items, added iterator functionality MMediaLib
+2020.Jun.22 - SF - Added beginings of script interface, some basic option processing
+2020.Jun.23 - SF - move imdb query function over to new classes
+	
