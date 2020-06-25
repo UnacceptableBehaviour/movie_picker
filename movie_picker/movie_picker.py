@@ -14,6 +14,7 @@ import sys		# sys.exit()
 import atexit
 import math
 import traceback
+import json
 
 # from operator import itemgetter, attrgetter		# sorting by object attributes
 
@@ -62,6 +63,12 @@ class MMedia:
 		else:
 			self.info.update(mmdia_info)
 
+	def as_json_str(self):
+		media = self.info.copy()
+		#media['cast'] = [ (str(actor), actor.getID()) for actor in media['cast'] ] # name & ID
+		media['cast'] = [ str(actor) for actor in media['cast'] ]
+		media['file_path'] = str(media['file_path'])
+		return json.dumps(media)
 
 	def __str__(self):		
 		return f"MMedia: {self.info['year']} {str(self.info['rating']).rjust(4)} {self.info['title']} - Added:{hr_readable_from_nix(self.info['when_added'])}"
@@ -675,7 +682,9 @@ if __name__ == '__main__':
 				for m in new_media_lib:
 					print(f"{str(m).ljust(60)}\t{m.info['file_name']}")
 				
-		
+	# json check			
+	# for m in new_media_lib:
+	# 	print(m.as_json_str())
 	
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
 
