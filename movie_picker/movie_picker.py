@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 from pathlib import Path
 from helpers import creation_date, hr_readable_from_nix
+from mp_exceptions import *
 from collections import Counter
 import re
 # import json
@@ -307,14 +308,14 @@ class MMediaLib(Iterable):
 			self.media_root = self.lib_file_path.parent.parent 
 		
 		if self.lib_file_path == None and media_root == None:
-			raise "Arse"	# TODO add exception to file
+			raise NoRootDirectoryOrDBFound()
 		
 		if self.media_root == None:
 			print(id(self))
 			print(f"self.lib_file_path: {self.lib_file_path}")
 			print(f"media_root: {media_root}")
 			print(f"self.media_root: {self.media_root}")
-			raise "Arse"	# TODO add exception to file
+			raise NoDBFileFound()
 
 		
 		self.read_write_mode = READ_ONLY
@@ -487,7 +488,7 @@ class MMediaLib(Iterable):
 					print(m)
 		else:
 			print(f"**WARNING** INVALID -l option. Sort types: {' '.join(sort_type.keys())}\n\n")
-			raise 'IncorrectSortAttributeError' # TODO add to exception file
+			raise IncorrectSortAttributeError(attribute)
 	
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # HELPERS

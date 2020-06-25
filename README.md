@@ -35,10 +35,10 @@ A little python practice, scraping, flask, basic web.
 
 ## Next steps
 POC working. Refactor functionality into a module split into MMediaLib, MMedia (item)	
-	return_block (next 10 items - for JS world) get_n_items(n, json=True) = return keys if json False
-	return block as json - add flag to above
-Make MMdia serializable - w/ meta class? (allow to and from JSON/DUMPS  
-	see MMdia_metaclass.txt  
+- return_block (next 10 items - for JS world)
+- get_n_items(n, json=True) = return keys if json False  
+- return block as json - add flag to above  
+Tidy up argument processing, bit flaky - not thought out - exception city!
 Display information using flask & boostrap cards.  
 Allow toggling of favourite icon, seen it icon  
 
@@ -59,10 +59,10 @@ https://github.com/navdeep-G/samplemod	Is this 2.7?
 ## How To's
 ### How do I auto generate TOC?
 ```
-Point script at the right docs				# DEFAULT_FILE (input)
-											# DEFAULT_README(output w TOC)
-> create_TOC_for_md.py                      # run script
-                                            # paste output into .md file TOC
+Point script at the right docs			# DEFAULT_FILE (input)
+						# DEFAULT_README(output w TOC)
+> create_TOC_for_md.py 			# run script
+						# paste output into .md file TOC
 ```
 Available here: [create_TOC_for_md.py](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/create_TOC_for_md.py)  
 
@@ -96,7 +96,6 @@ RED   - Stalled, technology/cost barrier.
 AMBER - Work in progress.  
 GREEN - Complete.  
 BLUE  - Parked, no action planned. (maybe incomplete / redundant)  
-
 <br>/CRLF in markdown is endline \\ or 2 spaces at the end '  '
 
 ### How to do initial git repo setup for simple Flask app
@@ -105,7 +104,7 @@ BLUE  - Parked, no action planned. (maybe incomplete / redundant)
 > git commit -m'update config'
 > git push
 > python3 -m venv venv			# setup python 3 virtual env
-> .pe							# activate environment - alias .pe='. venv/bin/activate'
+> .pe					# activate environment - alias .pe='. venv/bin/activate'
 > pip install --upgrade pip		# update pip 
 > nano requirements.txt			# add following to text file
 Click==7.0
@@ -118,17 +117,27 @@ lxml==4.5.0
 MarkupSafe==1.1.1
 pathlib==1.0.1
 SQLAlchemy==1.3.13
-striprtf==0.0.8					# if maintining README.md in and RTF doc
+striprtf==0.0.8				# if maintining README.md in and RTF doc
 Werkzeug==0.15.4
 > pip install -r requirements.txt	# gives us the basics for flask, postgres, imdb 
 ```
+### How do we scrape IMDB for movie info to display?  
+Scraping isnt needed for this task theres an imdb module:  
+```
+> pip install IMDbPY
+import imdb     # API for imdb
+```
+Demo script: [scripts/movie_info_imdb.py](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/scripts/movie_info_imdb.py)  
+
+REFS
+https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
 
 ### How do we access IMDB for movie info to display?
 ```
-import imdb						# use this module
+import imdb			# use this module
 
-> ./movie_info_imdb.py 			# < exaples here
-								# retrieves id, title, synopsis, year release, cast, runtime, rating, genre, kind, 
+> ./movie_info_imdb.py 		# < exaples here
+				# retrieves id, title, synopsis, year release, cast, runtime, rating, genre, kind, 
 ```
 
 ### Whats the minimum search info required for sensible results?
@@ -150,27 +159,18 @@ or
 ```
 Next setup so mounts automatically on boot
 ```
-> sudo nano /etc/fstab						# edit file system table
-											# add following line
+> sudo nano /etc/fstab			# edit file system table
+					# add following line
 UUID=564B-5772 /home/pi/MMdia/ vfat defaults,auto,users,rw,nofail 0 0
      ^ID       ^mount point    ^FSTYPE
 ```
 
-### How do we scrape IMDB for movie info to display?  
-Scraping isnt needed for this task theres an imdb module:  
-```
-> pip install IMDbPY
-import imdb     # API for imdb
-```
-Demo script: [scripts/movie_info_imdb.py](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/scripts/movie_info_imdb.py)  
 
-REFS
-https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
 
 ### How do I make a class iterable?
-Give the calss you need to be iterable a base class of Iterable
-Create a class to handle iteration and have it inherit from Iterator
-implement ```__init__``` , ```__iter__``` and ```__next__``` in this class!
+Give the calss you need to be iterable a base class of Iterable  
+Create a class to handle iteration and have it inherit from Iterator  
+implement ```__init__``` , ```__iter__``` and ```__next__``` in this class!  
 ```
 from collections.abc import Iterable, Iterator
 ```
@@ -196,4 +196,5 @@ Iterates FORWARD & REVERSE, and content SORTED by YEAR, TITLE or RATING.
 	added MMedia items, added iterator functionality MMediaLib
 2020.Jun.22 - SF - Added beginings of script interface, some basic option processing
 2020.Jun.23 - SF - move imdb query function over to new classes
+2020.Jun.25 - SF - add exceptions file
 	
