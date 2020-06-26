@@ -18,24 +18,15 @@
         <!-- <div class="card-deck"> -->
         <!-- <div class="card-group"> good way to compare recipes? -->
         <div class="card-columns">
-            <form action={{url_for('db_recipe_page')}} method='POST'>
+            <form action={{url_for('db_movie_page')}} method='POST'>
                 {% for movie_info in movies %}
                 <!-- <div class="col-md-12"> </div>-->
                     <!-- <div class="card" style="width:180px"> -->
                     <div class="card">
-                        <img class="card-img-top" src="http://192.168.1.13:8000/static/recipe/{{movie_info['lead_image']}}"></img>
+                        <img class="card-img-top" src="{{movie_info['image_url']}}"></img>
                         <div class="card-body">
-                            <h5 class="card-title">{{ movie_info['ri_name'] }}</h5>
-                            <p class="card-text">{{ movie_info['description'] }}</p>
-                            <!-- (movie_info['user_rating']|int) user_rating is a float use a filter to covert to int -->
-                            {% for stars in range((movie_info['user_rating']|int)) %}
-                            <!--<i class="fa fa-star recip-star-up-rating"></i>-->
-                            <img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg" class="recip-star-up-rating">
-                            {% endfor %}
-                            {% for stars in range(5 - (movie_info['user_rating']|int)) %}
-                            <!--<i class="fa fa-star recip-star-down-rating"></i>-->
-                            <img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg" class="recip-star-down-rating">
-                            {% endfor %}
+                            <h5 class="card-title">{{ movie_info['title'] }}</h5>
+                            <p class="card-text">{{ movie_info['synopsis'] }}</p>
                             <button type='submit' name="gallery_button_{{ movie_info['ri_id'] }}" value="{{ movie_info['ri_id'] }}" class="btn btn-outline-secondary float-right">Show!</button>
                         </div>
                     </div>

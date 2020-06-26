@@ -63,7 +63,7 @@ class MMedia:
 		else:
 			self.info.update(mmdia_info)
 
-	def as_json_str(self):
+	def as_json(self):
 		media = self.info.copy()
 		#media['cast'] = [ (str(actor), actor.getID()) for actor in media['cast'] ] # name & ID
 		media['cast'] = [ str(actor) for actor in media['cast'] ]
@@ -694,7 +694,7 @@ if __name__ == '__main__':
 				
 	# json check			
 	# for m in new_media_lib:
-	# 	print(m.as_json_str())
+	# 	print(m.as_json())
 	
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
 
