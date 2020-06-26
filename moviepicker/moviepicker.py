@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 from pathlib import Path
-from .helpers import creation_date, hr_readable_from_nix
-from .mp_exceptions import *
+from moviepicker.helpers import creation_date, hr_readable_from_nix
+from moviepicker.exceptions import *
 from collections import Counter
 import re
 # import json

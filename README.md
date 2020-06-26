@@ -87,11 +87,39 @@ The bytecode is platform independent - will run across architectures.
 ![Flow chart of how modules are loaded](https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/dev/peps/pep-3147/pep-3147-1.png)
 
 [Section on packages](https://docs.python.org/3/tutorial/modules.html#packages)  
+```
+from moviepicker import moviepicker
+dir()
+['Flask', '__annotations__', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__',
+ '__package__', '__spec__', 'app', 'render_template', 'request', 'sys']
+
+dir(moviepicker):
+['AUDIO_EXTS', 'Counter', 'DOC_DIST', 'FORWARD', 'IncorrectSortAttributeError', 'Iterable', 'Iterator', 'LOWEST_DOC_DISTANCE',
+  'MMedia', 'MMediaLib', 'MMediaLibError', 'MOVIE', 'MediaLibIter', 'NoDBFileFound', 'NoRootDirectoryOrDBFound',
+  'PICKLED_MEDIA_LIB_FILE_REPO', 'PICKLED_MEDIA_LIB_FILE_V2', 'Path', 'READ_ONLY', 'READ_WRITE', 'REVERSE', 'VIDEO_EXTS',
+  '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'atexit',
+  'creation_date', 'doc_distance', 'get_doc_vector_word', 'get_list_of_file_extensions', 'hr_readable_from_nix', 'imdb',
+  'inner_product', 'json', 'look_in_repo', 'main', 'math', 'mmdia_root2', 'pickle', 'pprint', 're',
+  'select_best_item_from_search_results', 'sys', 'traceback', 'urllib']
+__main__
+./hello.py
+```
+In the end the least noisy, namespace-wise, and for most readable I think the following:
+```
+./hello.py
+from moviepicker.moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
+
+./moviepicker/moviepicker.py
+from moviepicker.helpers import creation_date, hr_readable_from_nix
+from moviepicker.exceptions import *
+```
 
 
 
 REFS:
 https://docs.python.org/3/tutorial/modules.html
+>> Lots anti pattern Examples <<
+http://python-notes.curiousefficiency.org/en/latest/python_concepts/import_traps.html
 https://dev.to/codemouse92/dead-simple-python-project-structure-and-imports-38c6
 https://docs.python-guide.org/writing/structure/
 https://github.com/navdeep-G/samplemod	Is this 2.7? 

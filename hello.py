@@ -9,21 +9,65 @@ import sys
 print(f"Modules searched for here:{sys.path}")
 
 #        dir        file
-from moviepicker.moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
-#from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD               # NO work
+from moviepicker.moviepicker import MMediaLib,MMedia,REVERSE,FORWARD           # WORKS w/o __init__.py
+print("\nfrom moviepicker.moviepicker import MMediaLib,MMedia,REVERSE,FORWARD")
+print("dir()")
+print(dir())            # current name table
+# ['FORWARD', 'Flask', 'MMedia', 'MMediaLib', 'REVERSE', '__annotations__', '__builtins__', '__cached__', '__doc__',
+#  '__file__', '__loader__', '__name__', '__package__', '__spec__', 'app', 'render_template', 'request', 'sys']
+print("__package__")
+print(__package__)
+# None
 
-import moviepicker
+# print("\nimport moviepicker")
+# print("dir(moviepicker):")
+# import moviepicker
+# print(dir(moviepicker))
+# # ['__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__',
+# #  'helpers', 'moviepicker', 'mp_exceptions']
+#
+# print(__name__) # __main__
+# print(__file__) # ./hello.py
+# print("dir(moviepicker.exceptions)")
+# print(dir(moviepicker.exceptions))
+# #['IncorrectSortAttributeError', 'MMediaLibError', 'NoDBFileFound', 'NoRootDirectoryOrDBFound',
+# # '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+
+
+print("\nfrom moviepicker import moviepicker")
 print("dir(moviepicker):")
-print(dir(moviepicker))
-# ['__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__',
-#  'helpers', 'moviepicker', 'mp_exceptions']
+from moviepicker import moviepicker             # a lot on namespace noise!
+
+print(dir())
+# dir()
+# ['Flask', '__annotations__', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__',
+#  '__package__', '__spec__', 'app', 'render_template', 'request', 'sys']
+
+# dir(moviepicker):
+# ['AUDIO_EXTS', 'Counter', 'DOC_DIST', 'FORWARD', 'IncorrectSortAttributeError', 'Iterable', 'Iterator', 'LOWEST_DOC_DISTANCE',
+#   'MMedia', 'MMediaLib', 'MMediaLibError', 'MOVIE', 'MediaLibIter', 'NoDBFileFound', 'NoRootDirectoryOrDBFound',
+#   'PICKLED_MEDIA_LIB_FILE_REPO', 'PICKLED_MEDIA_LIB_FILE_V2', 'Path', 'READ_ONLY', 'READ_WRITE', 'REVERSE', 'VIDEO_EXTS',
+#   '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'atexit',
+#   'creation_date', 'doc_distance', 'get_doc_vector_word', 'get_list_of_file_extensions', 'hr_readable_from_nix', 'imdb',
+#   'inner_product', 'json', 'look_in_repo', 'main', 'math', 'mmdia_root2', 'pickle', 'pprint', 're',
+#   'select_best_item_from_search_results', 'sys', 'traceback', 'urllib']
+# __main__
+# ./hello.py
 
 print(__name__) # __main__
 print(__file__) # ./hello.py
 
-print(dir(moviepicker.mp_exceptions))
-#['IncorrectSortAttributeError', 'MMediaLibError', 'NoDBFileFound', 'NoRootDirectoryOrDBFound',
-# '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+# print("dir(moviepicker.exceptions)")
+# print(dir(moviepicker.exceptions))       # AttributeError: module 'moviepicker.moviepicker' has no attribute 'exceptions'
+
+# print("dir(exceptions)")
+# print(dir(exceptions))                   # NameError: name 'exceptions' is not defined
+
+
+
+
+
+
 
 from pprint import pprint           # giza a look
 import re                           # regex
