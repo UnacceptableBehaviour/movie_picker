@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 from pathlib import Path
-from helpers import creation_date, hr_readable_from_nix
-from mp_exceptions import *
+from .helpers import creation_date, hr_readable_from_nix
+from .mp_exceptions import *
 from collections import Counter
 import re
 # import json
@@ -21,7 +21,7 @@ import json
 
 # TODO remove after refactor \\
 from pprint import pprint
-from movie_info_disk import get_MMdia_lib, MMdia
+#from movie_info_disk import get_MMdia_lib, MMdia
 # TODO remove after refactor ^^
 
 
@@ -374,11 +374,21 @@ class MMediaLib(Iterable):
 
 	def sort_lists(self):
 		# create list of sorted keys - use sorted key for iterators
-		#self._sorted_by_year = sorted(self.media_files, key=lambda k: int(self.media_files[k].info['year']))	# in place media_files.sort(key=lambda x: x.year)
-		#self._sorted_by_title = sorted(self.media_files, key=lambda k: self.media_files[k].info['title'])
-		#self._sorted_by_rating = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['rating']), reverse=True)
-		#self._sorted_by_most_recently_added = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['when_added']), reverse=True)
-		pass
+		self._sorted_by_year = sorted(self.media_files, key=lambda k: int(self.media_files[k].info['year']))	# in place media_files.sort(key=lambda x: x.year)
+		self._sorted_by_title = sorted(self.media_files, key=lambda k: self.media_files[k].info['title'])
+		self._sorted_by_rating = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['rating']), reverse=True)
+		self._sorted_by_most_recently_added = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['when_added']), reverse=True)
+
+	def sorted_lists(self):
+		lists = [self._sorted_by_year,self._sorted_by_title,self._sorted_by_rating,self._sorted_by_most_recently_added]
+		lists_names = ["sorted_by_year","sorted_by_title","sorted_by_rating","sorted_by_most_recently_added"]
+		for idx,l in enumerate(lists):
+			print(f"{lists_names[idx]}- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - S")
+			pprint(l)
+			print(f"{lists_names[idx]}- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - E")
+		return lists
+
+	
 		
 	def __str__(self):	
 		return 'MMediaLib::def __str__'

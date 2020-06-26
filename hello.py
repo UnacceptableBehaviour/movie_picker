@@ -5,8 +5,25 @@ app = Flask(__name__)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+import sys
+print(f"Modules searched for here:{sys.path}")
 
-from movie_info_disk import get_MMdia_lib, MMdia #, MMdia_lib
+#        dir        file
+from moviepicker.moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
+#from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD               # NO work
+
+import moviepicker
+print("dir(moviepicker):")
+print(dir(moviepicker))
+# ['__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__',
+#  'helpers', 'moviepicker', 'mp_exceptions']
+
+print(__name__) # __main__
+print(__file__) # ./hello.py
+
+print(dir(moviepicker.mp_exceptions))
+#['IncorrectSortAttributeError', 'MMediaLibError', 'NoDBFileFound', 'NoRootDirectoryOrDBFound',
+# '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
 
 from pprint import pprint           # giza a look
 import re                           # regex
@@ -22,7 +39,7 @@ def db_hello_world():
  
     # load info if 1st time round
     if len(movies) == 0:
-        fs_tor = get_MMdia_lib()    
+        fs_tor = MMediaLib()    
         #display_list = []
         count = 0
         for movie,media in fs_tor['video'].items():
@@ -53,55 +70,19 @@ if __name__ == '__main__':
     # export FLASK_ENV=development add to ~/.bash_profile
     #app.run(host='0.0.0.0', port=52001)
     
-    fs_tor = get_MMdia_lib()    
-    display_list = []
-    count = 0
-    for movie,media in fs_tor['video'].items():
-        count += 1
+    media_lib = MMediaLib()
+    # print("Lib LOADED, sorted lists:")
+    # media_lib.sorted_lists()    
+    # print("END, sorted lists:")
+    
+    ten_movies = ''
+    for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
+    #for count, movie in enumerate(media_lib):
         if count > 10: break
-        file_size = round(fs_tor['video'][movie].file_stat.st_size / (1024 * 1024),1)
-        if file_size > 400:
-            print(f"\n> - - - - - - - - -  - - - - \ \n{movie}\nfs_tor:{fs_tor['video'][movie]}\n{file_size}MB\n\n")
-            print(type(media))
-            pprint(media.movie_data)
-            display_list.append(movie)
-            print('- - - - - - - - - - - - - - / \n')
+        print(movie)
           
-    print(len(display_list))
-    print(f"fs_tor: {type(fs_tor)}")
 
 # EG:
 # <class 'movie_info_disk.MMdia'>.movie_data
-# {'cast': [<Person id:1165110[http] name:_Chris Hemsworth_>,
-#           <Person id:0788335[http] name:_Michael Shannon_>,
-#                       .
-#                       .
-#           <Person id:9128965[http] name:_Arshia Mandavi_>,
-#           <Person id:0665235[http] name:_Elsa Pataky_>],
-#  'fav': False,
-#  'file_name': PosixPath('/Volumes/time_box_2018/movies/12 Strong (2018) [BluRay] [1080p] [YTS.AM]/12.Strong.2018.1080p.BluRay.x264-[YTS.AM].mp4'),
-#  'file_title': '12 Strong',
-#  'genres': ['Action', 'Drama', 'History', 'War'],
-#  'id': '1413492',
-#  'image_url': 'https://m.media-amazon.com/images/M/MV5BNTEzMjk3NzkxMV5BMl5BanBnXkFtZTgwNjY2NDczNDM@._V1_SY150_CR0,0,101,150_.jpg',
-#  'kind': 'movie',
-#  'rating': 6.5,
-#  'runtime_hm': '2h10m',
-#  'runtime_m': '130',
-#  'seen': False,
-#  'synopsis': 'Mitch Nelson, a US Army Captain with Green Berets Operational '
-#              'Detachment Alpha (ODA) 595, is moving into a new home with his '
-#              'wife and daughter on September 11, 2001, after receiving an '
-#              'assignment to staff duty under LTC Bowers. As news of the '
-#              'devastating terrorist attacks that day break, Nelson volunteers '
-#              'to lead 595 into Afghanistan. Bowers initially refuses, but '
-#              'veteran soldier CW5 Hal Spencer, previously scheduled to retire, '
-#              'persuades Bowers to give Nelson command of 595 again, as well as '
-#              'volunteering himself for the deployment. After leaving their '
-#              'families, 595 travels to Uzbekistan on October 7, 2001. After '
-#              'being briefed and evaluated by COL Mulholland, Commander of 5th '
-#              'Special Forces Group, Nelson and 595 are picked to fight '
-#              'alongside Northern Alliance leader Abdul Rashid Dostum..',
-#  'title': '12 Strong',
-#  'year': '2018'}
+#{"id": "0139809", "title": "The Thirteenth Floor", "synopsis": "Computer scientist Hannon Fuller has discovered something extremely important. He's about to tell the discovery to his colleague, Douglas Hall, but knowing someone is after him, the old man leaves a letter in the computer generated parallel world his company has created (which looks like the 30's with seemingly real people with real emotions). Fuller is murdered in our real world the same night, and his colleague is suspected. Douglas discovers a bloody shirt in his bathroom and he cannot recall what he was doing the night Fuller was murdered. He logs into the system in order to find the letter, but has to confront the unexpected. The truth is harsher than he could ever imagine...::Danny Rosenbluth", "year": "1999", "cast": ["Craig Bierko", "Armin Mueller-Stahl", "Gretchen Mol", "Vincent D'Onofrio", "Dennis Haysbert", "Steven Schub", "Jeremy Roberts", "Rif Hutton", "Leon Rippy", "Janet MacLachlan", "Brad William Henke", "Burt Bulos", "Venessia Valentino", "Howard S. Miller", "Tia Texada", "Shiri Appleby", "Bob Clendenin"], "runtime_m": "100", "runtime_hm": "1h40m", "rating": 7.1, "genres": ["Mystery", "Sci-Fi", "Thriller"], "kind": "movie", "seen": false, "fav": false, "image_url": "https://m.media-amazon.com/images/M/MV5BODYxZTZlZTgtNTM5MC00N2RhLTg3MjUtNGVkMDJjMGY3YzA5L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX101_CR0,0,101,150_.jpg", "hires_image": null, "file_path": "/Volumes/time_box_2018/movies_Chris/__for_chris/movies_recomended/The Thirteenth Floor (1999) [1080p]/The.Thirteenth.Floor.1999.1080p.BluRay.x264.YIFY.mp4", "file_stats": null, "file_name": null, "file_title": "The Thirteenth Floor", "when_added": null, "movie_data_loaded": true}
     

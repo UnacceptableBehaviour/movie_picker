@@ -15,16 +15,17 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 5. [Next steps](#next-steps)  
 6. [Questions / Barriers](#questions--barriers)  
 	1. [What directory structure is required for a module? (python3)](#what-directory-structure-is-required-for-a-module-python3)  
+		1. [Flow chart of how modules are loaded](#flow-chart-of-how-modules-are-loaded)  
 	2. [How do you pickle a class (with it's class variables) and reconstitute it](#how-do-you-pickle-a-class-with-its-class-variables-and-reconstitute-it)  
 7. [How To's](#how-tos)  
 	1. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
 	2. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
 		1. [TIPS](#tips)  
 	3. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
-	4. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
-	5. [Whats the minimum search info required for sensible results?](#whats-the-minimum-search-info-required-for-sensible-results)  
-	6. [How do I mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)  
-	7. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
+	4. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
+	5. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
+	6. [Whats the minimum search info required for sensible results?](#whats-the-minimum-search-info-required-for-sensible-results)  
+	7. [How do I mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)  
 	8. [How do I make a class iterable?](#how-do-i-make-a-class-iterable)  
 8. [REFERENCES](#references)  
 9. [Completed](#completed)  
@@ -45,9 +46,53 @@ Allow toggling of favourite icon, seen it icon
 
 ## Questions / Barriers
 ### What directory structure is required for a module? (python3)
-For multifile module simply add a directory at base of project
+From article "For multifile module simply add a directory at base of project"
+If I do that I get an error when I run:
+```
+File "./hello.py", line 9, in <module>
+    from movie_picker import MMediaLib,MMedia
+ImportError: cannot import name 'MMediaLib' from 'movie_picker' (unknown location)
+```
+to fix this needed to add additional path and relative dots, doesn't feel right!?
+```
+from .helpers import creation_date, hr_readable_from_nix	# movie_picker.py
+from .mp_exceptions import *
+
+from movie_picker.movie_picker import MMediaLib,MMedia 		# hello.py
+```
+Module basics & terminology:
+```
+module			any .py file
+package			group of modules in a directory with __init__.py present
+import mymod	adds mymod to symbol table - allow call mymod.myfunc() my mod.MY_CONST etc
+				each module has its own symbol table (private namespace)
+
+Interpreter looks for modules in sys.path
+import sys
+print(f"Modules searched for here:{sys.path}")
+> Modules searched for here:['/Users/simon/a_syllabus/lang/python/repos/movie_picker',
+'/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/python37.zip',
+'/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/python3.7',
+'/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/python3.7/lib-dynload',
+'/Users/simon/a_syllabus/lang/python/repos/movie_picker/venv/lib/python3.7/site-packages']
+
+Note directory the code runs from is FIRST in the search path giving it priority.  
+
+The interpreter compiles modules into bytecode with is caches in the __pycache__ directory.
+Format: moviepicker.cpython-37.pyc - 37 is the python version number
+The bytecode is platform independent - will run across architectures.
+-OO option size bytecode optimisation 	EG python -OO ./hello.py  produced bytecode 17x smaller 
+```
+#### Flow chart of how modules are loaded  
+![Flow chart of how modules are loaded](https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/dev/peps/pep-3147/pep-3147-1.png)
+
+[Section on packages](https://docs.python.org/3/tutorial/modules.html#packages)  
+
+
 
 REFS:
+https://docs.python.org/3/tutorial/modules.html
+https://dev.to/codemouse92/dead-simple-python-project-structure-and-imports-38c6
 https://docs.python-guide.org/writing/structure/
 https://github.com/navdeep-G/samplemod	Is this 2.7? 
 
