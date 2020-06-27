@@ -13,7 +13,8 @@ import urllib.request                       # API for BeautifulSoup - pip instal
 import shutil                               #
 from bs4 import BeautifulSoup               # https://www.crummy.com/software/BeautifulSoup/bs4/doc/
                                             # 
-#import wikipedia                           # 
+import wikipedia                            # 
+wikipedia.set_lang('en')
 
 # import urllib.request
 # import shutil
@@ -30,7 +31,26 @@ from bs4 import BeautifulSoup               # https://www.crummy.com/software/Be
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 def find_wiki_url_for_movie(title, year):
-    return title
+    moviesearch = f"{title} ({year} film)"
+
+    movie_url = ''    
+    print(f"Finding URL for: {moviesearch}")
+    
+    try:
+        page_result = wikipedia.page(moviesearch)
+        movie_url = page_result.url
+    except:
+        moviesearch = re.sub('(\d\d\d\d film)', 'film', moviesearch)
+        search_results = wikipedia.search(moviesearch)
+        print(f"PAGE FAILED - SEARCHING - - - - - - - -wikipedia.search({moviesearch})")
+        print(search_results[0])
+        print(search_results)
+        page_result = wikipedia.page(search_results[0])  
+        movie_url = page_result.url
+    
+    print(f"movie_url: {movie_url}")
+    
+    return movie_url
 
 
 def get_lead_image_from_wikipedia(url, save_as_path):
@@ -78,17 +98,38 @@ url_targets = ['https://en.wikipedia.org/wiki/Mary_Queen_of_Scots_(2018_film)',
 def get_hires_cover(title, year, save_as_path):
     ret_val = None
     
-    movei_url = find_wiki_url_for_movie(title, year)
+    movei_url = find_wiki_url_for_movie(title, year)    
     
-    for movei_url in url_targets:
-        print(f"retrieving image: {movei_url}")
-        file_path = get_lead_image_from_wikipedia(movei_url, save_as_path)
+    # for movei_url in url_targets:
+    #     print(f"retrieving image: {movei_url}")
+    #     file_path = get_lead_image_from_wikipedia(movei_url, save_as_path)
+    
+    file_path = get_lead_image_from_wikipedia(movei_url, save_as_path)
     
     if Path(file_path).exists():
         ret_val = file_path
     
     return file_path
-    
+
+searches = [('Blade Runner 2049','2020'),
+            ('The Invisible Man','2020'),
+            ('Mary Queen of Scots','2019'),
+            ('The Call of the Wild','2020'),
+            ('The Banker','2020'),
+            ('The Last Thing He Wanted','2020'),
+            ('Star Wars: Episode IX - The Rise of Skywalker','2020'),
+            ('The Hustle','2019'),
+            ('The Great Hack','2019'),
+            ('The Man Who Killed Hitler and Then the Bigfoot','2019'),
+            ('The Irishman','2019'),
+            ('The Art of Self-Defense','2019'),  # 11
+            ('Spider-Man: Far from Home','2019'),
+            ('Shazam!','2019'),
+            ('Shaft','2019'),
+            ('Ready or Not','2019'),
+            ('Parasite','2019'),
+            ('Once Upon a Time... in Hollywood','2019'),
+            ('Men in Black: International','2019')]    
     
     
 
@@ -98,7 +139,9 @@ def main():
 
 if __name__ == '__main__':
     
-    get_hires_cover('THX1238', '1971', Path('/Users/simon/a_syllabus/lang/python/repos/movie_picker/scratch/'))
+    for title, year in searches:    
+        result = get_hires_cover(title, year, Path('/Users/simon/a_syllabus/lang/python/repos/movie_picker/scratch/'))
+        print(f"Saught: {title} - {year} - GOT: {result.name}\n{result}")
     
     sys.exit()
     
