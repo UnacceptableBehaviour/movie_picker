@@ -8,12 +8,19 @@ import sys
 from pathlib import Path
 
 # https://towardsdatascience.com/in-10-minutes-web-scraping-with-beautiful-soup-and-selenium-for-data-professionals-8de169d36319
-from urllib.request import Request, urlopen # API for BeautifulSoup - pip install BeautifulSoup4
-import urllib.request
+
+import urllib.request                       # API for BeautifulSoup - pip install BeautifulSoup4
+import shutil                               #
 from bs4 import BeautifulSoup               # https://www.crummy.com/software/BeautifulSoup/bs4/doc/
                                             # 
 #import wikipedia                           # 
-                  
+
+# import urllib.request
+# import shutil
+# ...
+# # Download the file from `url` and save it locally under `file_name`:
+# with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
+#     shutil.copyfileobj(response, out_file)                  
                   
                   
     
@@ -21,13 +28,79 @@ from bs4 import BeautifulSoup               # https://www.crummy.com/software/Be
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # helpers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-  
+
+def find_wiki_url_for_movie(title, year):
+    return title
+
+
+def get_lead_image_from_wikipedia(url, save_as_path):
+    image_href = ''
+    page = urllib.request.urlopen(url)
+    
+    soup = BeautifulSoup(page, 'html.parser')
+    
+    info_pane = soup.find('table', attrs={'class': 'infobox vevent'})
+    
+    rows = info_pane.find_all('tr')
+    
+    for row in rows:
+        text = row.text.strip().lower()        
+        if ('theatrical release poster' in text) or ('official release poster' in text):
+            print(f"src - {row.a.img.get('src')}")
+            print(f"srcset - {row.a.img.get('srcset')}")
+            if row.a.img.get('srcset') == None:
+                image_href = row.a.img.get('src')
+            else:
+                image_href = row.a.img.get('srcset').split(' ')[0]
+    
+    full_img_url = 'https:' + image_href
+
+    filename = full_img_url.split('/')[-1]
+    
+    save_as_path = save_as_path.joinpath(filename)
+
+    with urllib.request.urlopen(full_img_url) as response, open(save_as_path, 'wb') as out_file:
+        shutil.copyfileobj(response, out_file)      
+    
+    print(f"GOT: {save_as_path.name}")
+    return(save_as_path)
+    
+    
+
+url_targets = ['https://en.wikipedia.org/wiki/Mary_Queen_of_Scots_(2018_film)',
+               'https://en.wikipedia.org/wiki/The_Call_of_the_Wild_(2020_film)',
+               'https://en.wikipedia.org/wiki/The_Banker_(2020_film)',
+               'https://en.wikipedia.org/wiki/The_Last_Thing_He_Wanted_(film)',
+               'https://en.wikipedia.org/wiki/The_Great_Hack',
+               'https://en.wikipedia.org/wiki/The_Art_of_Self-Defense_(2019_film)',
+               'https://en.wikipedia.org/wiki/Ready_or_Not_(2019_film)']
+    
+def get_hires_cover(title, year, save_as_path):
+    ret_val = None
+    
+    movei_url = find_wiki_url_for_movie(title, year)
+    
+    for movei_url in url_targets:
+        print(f"retrieving image: {movei_url}")
+        file_path = get_lead_image_from_wikipedia(movei_url, save_as_path)
+    
+    if Path(file_path).exists():
+        ret_val = file_path
+    
+    return file_path
+    
+    
+    
 
 def main():
     pass
 
 
 if __name__ == '__main__':
+    
+    get_hires_cover('THX1238', '1971', Path('/Users/simon/a_syllabus/lang/python/repos/movie_picker/scratch/'))
+    
+    sys.exit()
     
     #print(sys.path)
     #'/Users/simon/a_syllabus/lang/python/repos/movie_picker/venv/lib/python3.7/site-packages'
@@ -85,7 +158,7 @@ if __name__ == '__main__':
             print(row.get('href'))
             print(row.a.get('href'))
             print(f"src - {row.a.img.get('src')}")
-            print(f"srcset - {row.a.img.get('srcset')}")
+            print(f"srcset - {row.a.img.get('srcset')}")                    # sequence of nodes
             image_href = row.a.img.get('srcset').split(' ')[0]
         print(row.text.strip())
         print(row.a)
