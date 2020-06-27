@@ -5,7 +5,11 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 #        dir        file
 from moviepicker.moviepicker import MMediaLib,MMedia,REVERSE,FORWARD    # WORKS w/o __init__.py
+from pathlib import Path
 import re                                                               # regex
+
+# load info if 1st time round
+media_lib = MMediaLib()
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 #import sys
@@ -28,14 +32,26 @@ def db_hello_world():
     print(f"Vs: {test_version}") 
     headline_py = "movies"
     movies = [] # load jsonfile
- 
-    # load info if 1st time round
-    media_lib = MMediaLib()
-        
+     
+    bad_labels = []
+    genres = set()
+
     for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):        
         print(movie)
-        movies.append(movie.info)
-        if count >= 10: break  
+        genres.update(movie.info['genres'])
+        if movie.info['title'] == 'And Then There Were None':
+            bad_labels.append(movie)
+        else:
+            movies.append(movie.info)
+        #if count >= 10: break  
+    
+    print("Incorrectly classified:")
+    for movie in bad_labels:
+        print(Path(movie.info['file_path']).name)
+    
+    print("Genres encountered:")
+    pprint(genres)
+    print("= = = \n")
     
     return render_template('gallery.html', movies=movies)
 
@@ -66,16 +82,19 @@ def buttons_inputs():
 if __name__ == '__main__':
     # setup notes:
     # http://flask.pocoo.org/docs/1.0/config/
-    # export FLASK_ENV=development add to ~/.bash_profile
+    # export FLASK_ENV=development add to ~/.bash_profile    
     app.run(host='0.0.0.0', port=52001)
     
     # media_lib = MMediaLib()
     # 
     # ten_movies = ''
     # for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):        
-    #     print(movie)
-    #     print(movie.as_json)
-    #     if count >= 1: break
+    #     #print(movie)
+    #     #print(movie.as_json)
+    #     t = movie.info['title']
+    #     y = movie.info['year']
+    #     print(f"'{t} ({y} film)',")
+    #     if count >= 20: break
           
 
 # EG movie:

@@ -25,9 +25,19 @@
                     <div class="card">
                         <img class="card-img-top" src="{{movie_info['image_url']}}"></img>
                         <div class="card-body">
-                            <h5 class="card-title">{{ movie_info['title'] }}</h5>
-                            <p class="card-text">{{ movie_info['synopsis'] }}</p>
+                            <h5 class="card-title">{{ movie_info['title'] }}</h5>                            
                             <button type='submit' name="gallery_button_{{ movie_info['ri_id'] }}" value="{{ movie_info['ri_id'] }}" class="btn btn-outline-secondary float-right">Show!</button>
+                            <p>RATING:{{ movie_info['rating'] }}</p>
+                            <p>RELEASED:{{ movie_info['year'] }}</p>
+                            <p>HEART: {{ movie_info['fav'] }}</p>
+                            <p>SEEN: {{ movie_info['seen'] }}</p>
+                            {% for genre in movie_info['genres'] %}
+                            <button type='submit'
+                                    name="genre_button_{{ genre }}"
+                                    value="{{ genre }}"
+                                    class="btn btn-outline-secondary">{{genre}}</button>
+                            {% endfor %}
+                            <p class="card-text">{{ movie_info['synopsis'] }}</p>
                         </div>
                     </div>
                 {% endfor %}
@@ -38,3 +48,46 @@
 
 {% endblock %}
 
+<!--
+#   "runtime_hm": "1h40m",
+#   "seen": false,
+#   "fav": false,
+#   "rating": 7.1,
+#   "genres": ["Mystery", "Sci-Fi", "Thriller"],
+#   "year": "1999",
+#   "cast": ["Craig Bierko","Armin Mueller-Stahl", "Gretchen Mol", "Vincent D'Onofrio", "Dennis Haysbert", "Steven Schub",
+#            "Jeremy Roberts", "Rif Hutton","Leon Rippy", "Janet MacLachlan", "Brad William Henke", "Burt Bulos",
+#            "Venessia Valentino", "Howard S. Miller","Tia Texada", "Shiri Appleby", "Bob Clendenin"],
+
+# EG movie:
+# <class 'movie_info_disk.MMdia'>.movie_data
+# { "id": "0139809",
+#   "title": "The Thirteenth Floor",
+#   "synopsis": "Computer scientist Hannon Fuller has discovered something extremely important. He's about to tell the
+#               discovery to his colleague, Douglas Hall, but knowing someone is after him, the old man leaves a letter in the
+#               computer generated parallel world his company has created (which looks like the 30's with seemingly real people
+#                                                                          with real emotions). Fuller is murdered in our real
+#               world the same night, and his colleague is suspected. Douglas discovers a bloody shirt in his bathroom and he
+#               cannot recall what he was doing the night Fuller was murdered. He logs into the system in order to find the
+#               letter, but has to confront the unexpected. The truth is harsher than he could ever imagine...::Danny
+#               Rosenbluth",
+#   "year": "1999",
+#   "cast": ["Craig Bierko","Armin Mueller-Stahl", "Gretchen Mol", "Vincent D'Onofrio", "Dennis Haysbert", "Steven Schub",
+#            "Jeremy Roberts", "Rif Hutton","Leon Rippy", "Janet MacLachlan", "Brad William Henke", "Burt Bulos",
+#            "Venessia Valentino", "Howard S. Miller","Tia Texada", "Shiri Appleby", "Bob Clendenin"],
+#   "runtime_m": "100",
+#   "runtime_hm": "1h40m",
+#   "rating": 7.1,
+#   "genres": ["Mystery", "Sci-Fi", "Thriller"],
+#   "kind": "movie",
+#   "seen": false,
+#   "fav": false,
+#   "image_url": "https://m.media-amazon.com/images/M/MV5BODYxZTZlZTgtNTM5MC00N2RhLTg3MjUtNGVkMDJjMGY3YzA5L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX101_CR0,0,101,150_.jpg",
+#   "hires_image": null,
+#   "file_path": "/Volumes/time_box_2018/movies/The Thirteenth Floor (1999) [1080p]/The.Thirteenth.Floor.1999.1080p.BluRay.x264.YIFY.mp4",
+#   "file_stats": null,
+#   "file_name": null,
+#   "file_title": "The Thirteenth Floor",
+#   "when_added": null,
+#   "movie_data_loaded": true}
+-->
