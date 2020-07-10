@@ -138,16 +138,15 @@ def main():
 
 
 if __name__ == '__main__':
+
+    # # comment back in to run image retrieval from (title, year)    
+    # for title, year in searches:    
+    #     result = get_hires_cover(title, year, Path('/Users/simon/a_syllabus/lang/python/repos/movie_picker/scratch/'))
+    #     print(f"Saught: {title} - {year} - GOT: {result.name}\n{result}")
+    # 
+    # sys.exit()
     
-    for title, year in searches:    
-        result = get_hires_cover(title, year, Path('/Users/simon/a_syllabus/lang/python/repos/movie_picker/scratch/'))
-        print(f"Saught: {title} - {year} - GOT: {result.name}\n{result}")
-    
-    sys.exit()
-    
-    #print(sys.path)
-    #'/Users/simon/a_syllabus/lang/python/repos/movie_picker/venv/lib/python3.7/site-packages'
-    # scraping movie info for local app
+
     
     url_targets = ['https://en.wikipedia.org/wiki/Mary_Queen_of_Scots_(2018_film)',
                    'https://en.wikipedia.org/wiki/The_Call_of_the_Wild_(2020_film)',

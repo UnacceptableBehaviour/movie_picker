@@ -23,7 +23,11 @@
                 <!-- <div class="col-md-12"> </div>-->
                     <!-- <div class="card" style="width:180px"> -->
                     <div class="card">
-                        <img class="card-img-top" src="{{movie_info['image_url']}}"></img>
+                        {% if movie_info['hires_image'] == None %}                            
+                            <img class="card-img-top" src="{{ movie_info['image_url'] }}"></img>
+                        {% else %}
+                            <img class="card-img-top" src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></img>
+                        {% endif %}                        
                         <div class="card-body">
                             <h5 class="card-title">{{ movie_info['title'] }}</h5>                            
                             <button type='submit' name="gallery_button_{{ movie_info['ri_id'] }}" value="{{ movie_info['ri_id'] }}" class="btn btn-outline-secondary float-right">Show!</button>

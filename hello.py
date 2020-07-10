@@ -4,21 +4,26 @@
 from flask import Flask, render_template, request
 app = Flask(__name__)
 #        dir        file
-from moviepicker.moviepicker import MMediaLib,MMedia,REVERSE,FORWARD    # WORKS w/o __init__.py
+# this causes __init_.py to execute
+from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
+from moviepicker import PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE_V2_F500,PICKLED_MEDIA_LIB_FILE_REPO
 from pathlib import Path
 import re                                                               # regex
 
+print(dir())
+
 # load info if 1st time round
-media_lib = MMediaLib()
+# media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX)
+# 
+# if MMediaLib.exists(PICKLED_MEDIA_LIB_FILE_V2_F500):
+#     media_lib.join(MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500))
+
+#media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)
+media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
+LOCAL_IMAGE_CACHE = Path('./static/covers')
+media_lib.cache_images_locally(LOCAL_IMAGE_CACHE)
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#import sys
-#print(f"Modules searched for here:{sys.path}")
-# print(dir())            # current name table
-# ['FORWARD', 'Flask', 'MMedia', 'MMediaLib', 'REVERSE', '__annotations__', '__builtins__', '__cached__',
-#  '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'app', 'render_template', 'request', 'sys']
-# print(__name__) # __main__
-# print(__file__) # ./hello.py
 
 # debug
 from pprint import pprint           # giza a look
@@ -41,7 +46,9 @@ def db_hello_world():
         genres.update(movie.info['genres'])
         if movie.info['title'] == 'And Then There Were None':
             bad_labels.append(movie)
-        else:
+        else:            
+            if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
+            movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
             movies.append(movie.info)
         #if count >= 10: break  
     
@@ -49,6 +56,7 @@ def db_hello_world():
     for movie in bad_labels:
         print(Path(movie.info['file_path']).name)
     
+    pprint(movies[33])
     print("Genres encountered:")
     pprint(genres)
     print("= = = \n")
@@ -83,7 +91,8 @@ if __name__ == '__main__':
     # setup notes:
     # http://flask.pocoo.org/docs/1.0/config/
     # export FLASK_ENV=development add to ~/.bash_profile    
-    app.run(host='0.0.0.0', port=52001)
+    #app.run(host='0.0.0.0', port=52001)
+    app.run(host='192.168.1.13', port=52001)
     
     # media_lib = MMediaLib()
     # 
@@ -99,33 +108,36 @@ if __name__ == '__main__':
 
 # EG movie:
 # <class 'movie_info_disk.MMdia'>.movie_data
-# { "id": "0139809",
-#   "title": "The Thirteenth Floor",
-#   "synopsis": "Computer scientist Hannon Fuller has discovered something extremely important. He's about to tell the
-#               discovery to his colleague, Douglas Hall, but knowing someone is after him, the old man leaves a letter in the
-#               computer generated parallel world his company has created (which looks like the 30's with seemingly real people
-#                                                                          with real emotions). Fuller is murdered in our real
-#               world the same night, and his colleague is suspected. Douglas discovers a bloody shirt in his bathroom and he
-#               cannot recall what he was doing the night Fuller was murdered. He logs into the system in order to find the
-#               letter, but has to confront the unexpected. The truth is harsher than he could ever imagine...::Danny
-#               Rosenbluth",
-#   "year": "1999",
-#   "cast": ["Craig Bierko","Armin Mueller-Stahl", "Gretchen Mol", "Vincent D'Onofrio", "Dennis Haysbert", "Steven Schub",
-#            "Jeremy Roberts", "Rif Hutton","Leon Rippy", "Janet MacLachlan", "Brad William Henke", "Burt Bulos",
-#            "Venessia Valentino", "Howard S. Miller","Tia Texada", "Shiri Appleby", "Bob Clendenin"],
-#   "runtime_m": "100",
-#   "runtime_hm": "1h40m",
-#   "rating": 7.1,
-#   "genres": ["Mystery", "Sci-Fi", "Thriller"],
-#   "kind": "movie",
-#   "seen": false,
-#   "fav": false,
-#   "image_url": "https://m.media-amazon.com/images/M/MV5BODYxZTZlZTgtNTM5MC00N2RhLTg3MjUtNGVkMDJjMGY3YzA5L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX101_CR0,0,101,150_.jpg",
-#   "hires_image": null,
-#   "file_path": "/Volumes/time_box_2018/movies/The Thirteenth Floor (1999) [1080p]/The.Thirteenth.Floor.1999.1080p.BluRay.x264.YIFY.mp4",
-#   "file_stats": null,
-#   "file_name": null,
-#   "file_title": "The Thirteenth Floor",
-#   "when_added": null,
-#   "movie_data_loaded": true}
+# {'cast': [<Person id:1165110[http] name:_Chris Hemsworth_>,
+#           <Person id:0788335[http] name:_Michael Shannon_>,
+#           <Person id:0671567[http] name:_Michael Pena_>,
+#               .
+#               .
+#           <Person id:1041023[http] name:_Navid Negahban_>,
+#           <Person id:7540945[http] name:_Matthew Velez_>,
+#           <Person id:8918749[http] name:_Sandra L. Velez_>,
+#           <Person id:8642817[http] name:_David White_>,
+#           <Person id:9001165[http] name:_Sarrett Williams_>],
+#  'fav': False,
+#  'file_name': '12.Strong.2018.1080p.BluRay.mp4',
+#  'file_path': PosixPath('/Volumes/FAITHFUL500/15_rpi_shortlist/12 Strong (2018) [BluRay] [1080p]/12.Strong.2018.1080p.BluRay.mp4'),
+#  'file_stats': os.stat_result(st_mode=33279, st_ino=29718973, st_dev=16777232, st_nlink=1, st_uid=501, st_gid=20, st_size=4096, st_atime=1593471600, st_mtime=1583265248, st_ctime=1583265248),
+#  'file_title': '12 Strong',
+#  'genres': ['Action', 'Drama', 'History', 'War'],
+#  'hires_image': PosixPath('12_Strong_poster.jpg'),
+#  'id': '1413492',
+#  'image_url': 'https://m.media-amazon.com/images/M/MV5BNTEzMjk3NzkxMV5BMl5BanBnXkFtZTgwNjY2NDczNDM@._V1_SY150_CR0,0,101,150_.jpg',
+#  'kind': 'movie',
+#  'movie_data_loaded': True,
+#  'rating': 6.6,
+#  'runtime_hm': '2h10m',
+#  'runtime_m': '130',
+#  'seen': False,
+#  'synopsis': 'Mitch Nelson, a US Army Captain with Green Berets Operational '
+#               .
+#               .
+#              'alongside Northern Alliance leader Abdul Rashid Dostum..',
+#  'title': '12 Strong',
+#  'when_added': None,
+#  'year': '2018'}
     

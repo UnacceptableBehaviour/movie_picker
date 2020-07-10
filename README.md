@@ -14,9 +14,7 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 4. [AIM:](#aim)  
 5. [Next steps](#next-steps)  
 6. [Questions / Barriers](#questions--barriers)  
-	1. [What directory structure is required for a module? (python3)](#what-directory-structure-is-required-for-a-module-python3)  
-		1. [Flow chart of how modules are loaded](#flow-chart-of-how-modules-are-loaded)  
-	2. [How do you pickle a class (with it's class variables) and reconstitute it](#how-do-you-pickle-a-class-with-its-class-variables-and-reconstitute-it)  
+	1. [How do I run package as a script with options, like venv?](#how-do-i-run-package-as-a-script-with-options-like-venv)  
 7. [How To's](#how-tos)  
 	1. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
 	2. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
@@ -27,6 +25,10 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 	6. [Whats the minimum search info required for sensible results?](#whats-the-minimum-search-info-required-for-sensible-results)  
 	7. [How do I mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)  
 	8. [How do I make a class iterable?](#how-do-i-make-a-class-iterable)  
+	9. [What directory structure is required for a module? (python3)](#what-directory-structure-is-required-for-a-module-python3)  
+		1. [Flow chart of how modules are loaded](#flow-chart-of-how-modules-are-loaded)  
+	10. [How to scrape wikipedia for cover art?](#how-to-scrape-wikipedia-for-cover-art)  
+	11. [When is __init__.py called?](#when-is-initpy-called)  
 8. [REFERENCES](#references)  
 9. [Completed](#completed)  
 
@@ -35,27 +37,26 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 A little python practice, scraping, flask, basic web.
 
 ## Next steps
+Enable passing -u option a path in CLI mode
+
+Quick test clone onto a linux target, SB platform agnostic - quick check.
+
+Re-orient cards boostrap (make screen width or width/2?)
+
 Fix Exceptions file - maybe check a few modules for examples.
   /venv/lib/python3.7/site-packages
-POC working. Refactor functionality into a module split into MMediaLib, MMedia (item)	
-- return_block (next 10 items - for JS world)
-- get_n_items(n, json=True) = return keys if json False  
-- return block as json - add flag to above  
+
 Tidy up argument processing, bit flaky - not thought out - exception city!
-Allow toggling of favourite icon, seen it icon  
-Get cover art from wikipedia/google > 
+
+Create JS lib for rest: 
+Allow toggling of favourite icon, seen it icon
+Buttons for order by: year, release, A-Z, most recently added
+
 
 ## Questions / Barriers
-### How to scrape wikipedia for cover art?
-For example a quick search of title: ""
-<a href="/wiki/File:Ant-Man_and_the_Wasp_poster.jpg" class="image"><img alt="Ant-Man and the Wasp poster.jpg" src="//upload.wikimedia.org/wikipedia/en/2/2c/Ant-Man_and_the_Wasp_poster.jpg" decoding="async" width="220" height="326" class="thumbborder" data-file-width="220" data-file-height="326"></a>
-How to Google movie name & year movie tab pick wiki link
-https://stackoverflow.com/questions/20716842/python-download-images-from-google-image-search
-https://pypi.org/project/Google-Images-Search/		depends on 
-	https://developers.google.com/custom-search/	API key needed
-https://github.com/hardikvasa/google-images-download
-https://pypi.org/project/wikipedia/
-https://www.mediawiki.org/wiki/Manual:Pywikibot		more advanced 
+### How do I run package as a script with options, like venv?
+
+
 
 ## How To's
 ### How do I auto generate TOC?
@@ -166,8 +167,6 @@ UUID=564B-5772 /home/pi/MMdia/ vfat defaults,auto,users,rw,nofail 0 0
      ^ID       ^mount point    ^FSTYPE
 ```
 
-
-
 ### How do I make a class iterable?
 Give the calss you need to be iterable a base class of Iterable  
 Create a class to handle iteration and have it inherit from Iterator  
@@ -255,6 +254,113 @@ https://dev.to/codemouse92/dead-simple-python-project-structure-and-imports-38c6
 https://docs.python-guide.org/writing/structure/
 https://github.com/navdeep-G/samplemod	Is this 2.7? 
 
+### How to scrape wikipedia for cover art?
+Initially tried wikipedia package but its pretty flakey when it comes to image retrieval. Its effective at getting the URL for the movie so use it to locat movie info & then use beautiful soup to get url for image and DL it.
+```
+scripts/get_image_from_wikipedia.py 					 # demo of wikipedia package - bit flaky retrieving images 50/50
+scripts/get_image_bsoup4.py 														# beautifulsoup4 super basic demo - retrives image from wikipedia
+scripts/image_from_web.py 														  # 3 ways to download image to local disk
+```
+
+REFS
+https://pypi.org/project/wikipedia/  
+https://www.crummy.com/software/BeautifulSoup/bs4/doc/  
+other  
+https://stackoverflow.com/questions/20716842/python-download-images-from-google-image-search  
+https://pypi.org/project/Google-Images-Search/		depends on  https://developers.google.com/custom-search/	API key needed  
+https://github.com/hardikvasa/google-images-download  
+https://www.mediawiki.org/wiki/Manual:Pywikibot		more advanced   
+
+
+### When is __init__.py called? 
+Problem
+FILE: hello.py
+from moviepicker.moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
+
+FILE: moviepicker/moviepicker.py
+from moviepicker.helpers import creation_date, hr_readable_from_nix
+from moviepicker.exceptions import *
+from moviepicker.retrieval import get_hires_cover, find_wiki_url_for_movie, get_lead_image_from_wikipedia
+
+FILE: __init__.py
+from .moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
+from .exceptions import *
+from .retrieval import get_hires_cover, find_wiki_url_for_movie, get_lead_image_from_wikipedia
+__version__ = (0, 0, 1)
+print(dir())
+
+$ ./hello.py 																									# works
+$ ./moviepicker/moviepicker.py -l     # fails
+Traceback (most recent call last):
+  File "./moviepicker/moviepicker.py", line 4, in <module>
+    from moviepicker.helpers import creation_date, hr_readable_from_nix
+  File "/Users/simon/a_syllabus/lang/python/repos/movie_picker/moviepicker/moviepicker.py", line 4, in <module>
+    from moviepicker.helpers import creation_date, hr_readable_from_nix
+ModuleNotFoundError: No module named 'moviepicker.helpers'; 'moviepicker' is not a package
+
+CHANGE
+$ ./moviepicker/moviepicker.py -l     # fails
+from moviepicker.helpers import creation_date, hr_readable_from_nix
+from moviepicker.exceptions import *
+from moviepicker.retrieval import get_hires_cover, find_wiki_url_for_movie, get_lead_image_from_wikipedia
+FAILS:
+File "/Users/simon/a_syllabus/lang/python/repos/movie_picker/moviepicker/moviepicker.py", line 4, in <module>
+    from moviepicker.helpers import creation_date, hr_readable_from_nix
+ModuleNotFoundError: No module named 'moviepicker.helpers'; 'moviepicker' is not a package
+
+$ ./moviepicker/moviepicker.py -l     # fails
+from .helpers import creation_date, hr_readable_from_nix
+from .exceptions import *
+from .retrieval import get_hires_cover, find_wiki_url_for_movie, get_lead_image_from_wikipedia
+FAILS:
+File "./moviepicker/moviepicker.py", line 4, in <module>
+    from .helpers import creation_date, hr_readable_from_nix
+ImportError: attempted relative import with no known parent package
+
+$ ./moviepicker/moviepicker.py -l     # works
+from helpers import creation_date, hr_readable_from_nix
+from exceptions import *
+from retrieval import get_hires_cover, find_wiki_url_for_movie, get_lead_image_from_wikipedia
+but BREAKS
+$ ./hello.py
+File "/Users/simon/a_syllabus/lang/python/repos/movie_picker/moviepicker/moviepicker.py", line 4, in <module>
+    from helpers import creation_date, hr_readable_from_nix
+ModuleNotFoundError: No module named 'helpers'
+
+ADDED
+$ ./moviepicker/moviepicker.py -l     # works
+if __name__ == '__main__':
+	from helpers import creation_date, hr_readable_from_nix
+	from exceptions import *
+	from retrieval import get_hires_cover, find_wiki_url_for_movie, get_lead_image_from_wikipedia
+
+
+Problem X
+When is __init__.py called? [Whenever package is imported!](https://docs.python.org/3/reference/import.html#regular-packages)  
+
+-----------------------------
+-- __init__.py moviepicker --
+-----------------------------
+['FORWARD', 'IncorrectSortAttributeError', 'MMedia', 'MMediaLib', 'MMediaLibError', 'NoDBFileFound', 'NoRootDirectoryOrDBFound', 'REVERSE', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__', 'exceptions', 'find_wiki_url_for_movie', 'get_hires_cover', 'get_lead_image_from_wikipedia', 'helpers', 'moviepicker', 'retrieval']
+
+
+[__init__.py raison d'etre](https://stackoverflow.com/questions/448271/what-is-init-py-for#:~:text=The%20__init__.py%20file%20makes%20Python%20treat%20directories,the%20submodules%20to%20be%20exported.)  
+[stackexchange note](https://stackoverflow.com/questions/41816973/modulenotfounderror-what-does-it-mean-main-is-not-a-package/41817024#41817024)  
+
+Cant run moviepicker as a script?
+Problem X - rename moviepicker.py mvpicker.py?
+[stackexchange note](https://stackoverflow.com/questions/45446418/modulenotfounderror-no-module-named-main-xxxx-main-is-not-a-packag)  
+However, beware that this absolute import (from package.module import something) fails if, for some reason, the package contains a module file with the same name as the package (at least, on my Python 3.7). So, for example, it would fail if you have (using the OP's example):
+```
+proj/
+    __init__.py (empty)
+    proj.py (same name as package)
+    moduleA.py
+    moduleB.py
+```
+
+
+
 
 ## REFERENCES
 
@@ -275,4 +381,8 @@ https://github.com/navdeep-G/samplemod	Is this 2.7?
 2020.Jun.23 - SF - move imdb query function over to new classes
 2020.Jun.25 - SF - add exceptions file
 2020.Jun.26 - SF - tidy up import python package layout
-2020.Jun.26 - SF - Display information using flask & boostrap cards.  	
+2020.Jun.26 - SF - Display information using flask & boostrap cards.
+2020.Jun.27 - SF - Get cover art from wikipedia/google > retrieval.py
+2020.Jul.05 - SF - Make module runnable
+																		 Add functionality to retrieve image when adding media.  																		 
+																		 Flask prefer load image over low quality href from imdb
