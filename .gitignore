@@ -1,6 +1,7 @@
 # for osx
 .DS_Store
 *.pyc
+.AppleDouble
 
 # ignore directory and contents
 /movie_picker/__pycache__
