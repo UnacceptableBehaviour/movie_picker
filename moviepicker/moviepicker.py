@@ -350,6 +350,8 @@ mmdia_root2b = Path('/Volumes/FAITHFUL500/')
 PICKLED_MEDIA_LIB_FILE_V2_F500 = mmdia_root2b.joinpath('__media_data2','medialib2.pickle')
 look_in_repo = Path('/Volumes/meep/temp_delete/tor/')	# git demo
 PICKLED_MEDIA_LIB_FILE_REPO = look_in_repo.joinpath('__media_data2','medialib2.pickle')
+look_in_linux = Path('/home/pi/MMdia/')
+PICKLED_MEDIA_LIB_FILE_LINUX = look_in_linux.joinpath('__media_data2','medialib2.pickle')
 READ_ONLY = 'r'
 READ_WRITE = 'w'
 class MMediaLib(Iterable):
@@ -441,7 +443,18 @@ class MMediaLib(Iterable):
 			print(f"{lists_names[idx]}- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - E")
 		return lists
 
-	
+	def rebase_media_DB(self, old_root, new_root):
+		# this needs to be OS independant
+		
+		print(f"rebase_media_DB: \nfrom:{old_root} \nto:{new_root}\nself.media_root: {self.media_root}")
+		
+		#if self.media_root == old_root:
+		self.media_root == new_root
+		for key, movie in self.media_files.items():
+			new_file_path = str(movie.info['file_path']).replace(old_root, new_root)
+			movie.info['file_path'] = Path(new_file_path)
+			pprint(movie.info['file_path'])
+			
 		
 	def __str__(self):	
 		return 'MMediaLib::def __str__'
@@ -590,6 +603,7 @@ class MMediaLib(Iterable):
 				
 		if attribute in sort_type:
 			self.sorted_iterator = sort_type[attribute]
+			last = None
 			for m in self.sorted_iterator():			
 				if verbose == True:
 					print(f" - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - S")
@@ -597,6 +611,8 @@ class MMediaLib(Iterable):
 				else:
 					#if m == {} or m.info['title'] == 'And Then There Were None':
 					print(m)
+					last = m
+			pprint(last)
 			print(f"Entries: {len(self.media_files)}")
 		else:
 			print(f"**WARNING** INVALID -l option. Sort types: {' '.join(sort_type.keys())}\n\n")

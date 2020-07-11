@@ -9,19 +9,42 @@ from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
 from moviepicker import PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE_V2_F500,PICKLED_MEDIA_LIB_FILE_REPO
 from pathlib import Path
 import re                                                               # regex
+import socket    
 
 print(dir())
 
 # load info if 1st time round
 # media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX)
-# 
+#
+# check for available discs and merge them
+#
 # if MMediaLib.exists(PICKLED_MEDIA_LIB_FILE_V2_F500):
 #     media_lib.join(MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500))
 
-#media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)
-media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
+hostname = socket.gethostname()    
+IPAddr = socket.gethostbyname(hostname)    
+print("Your Computer Name is:" + hostname)    
+print("Your Computer IP Address is:" + IPAddr)
+
+if IPAddr == '192.168.1.13':    # local - osx box
+    REMOTE_LINUX = Path('/Volumes/Home Directory/MMdia/__media_data2/medialib2.pickle')
+    
+    #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)
+    #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)    
+    media_lib = MMediaLib(REMOTE_LINUX)
+    media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/Volumes/Home Directory/MMdia/')
+
+elif IPAddr == '192.168.1.16':  # remote - linux box    
+    LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')    
+    media_lib = MMediaLib(LOCAL_LINUX)
+    media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/home/pi/MMdia/')
+
+
 LOCAL_IMAGE_CACHE = Path('./static/covers')
+LOCAL_IMAGE_CACHE.mkdir(parents=True, exist_ok=True)
+
 media_lib.cache_images_locally(LOCAL_IMAGE_CACHE)
+print(f"LOADED: {len(media_lib)}")
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -92,7 +115,21 @@ if __name__ == '__main__':
     # http://flask.pocoo.org/docs/1.0/config/
     # export FLASK_ENV=development add to ~/.bash_profile    
     #app.run(host='0.0.0.0', port=52001)
-    app.run(host='192.168.1.13', port=52001)
+    hostname = socket.gethostname()    
+    IPAddr = socket.gethostbyname(hostname)    
+    print("Your Computer Name is:" + hostname)    
+    print("Your Computer IP Address is:" + IPAddr)
+    
+    if IPAddr == '192.168.1.13':
+        app.run(host='192.168.1.13', port=52001)
+    
+    elif IPAddr == '192.168.1.16':
+        app.run(host='192.168.1.16', port=52001)
+    
+    else:
+        pprint(IPAddr)
+        print("WARNING unknown host . . . bailing")
+        sys.exit(0)
     
     # media_lib = MMediaLib()
     # 
