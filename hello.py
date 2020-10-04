@@ -6,7 +6,7 @@ app = Flask(__name__)
 #        dir        file
 # this causes __init_.py to execute
 from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
-from moviepicker import PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE_V2_F500,PICKLED_MEDIA_LIB_FILE_REPO
+from moviepicker import PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE_V2_F500,PICKLED_MEDIA_LIB_FILE_REPO, PICKLED_MEDIA_LIB_FILE_OSX4T
 from pathlib import Path
 import re                                                               # regex
 import socket    
@@ -20,19 +20,38 @@ print(dir())
 #
 # if MMediaLib.exists(PICKLED_MEDIA_LIB_FILE_V2_F500):
 #     media_lib.join(MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500))
+default_library_name = 'medialib2.pickle'
+volume_checklist = ['/time_box_2018/movies/__media_data2/medialib2.pickle',
+ '/Osx4T/tor/__media_data2/medialib2.pickle',
+ '/FAITHFUL500/__media_data2/medialib2.pickle']
+
+
+import platform
+running_os = platform.system()
+# AIX: 'aix', Linux:'linux', Windows: 'win32', Windows/Cygwin: 'cygwin', macOS: 'darwin'
+running_os_release = platform.release()
 
 hostname = socket.gethostname()    
 IPAddr = socket.gethostbyname(hostname)    
 print("Your Computer Name is:" + hostname)    
 print("Your Computer IP Address is:" + IPAddr)
+print(f"OS: {running_os} - {running_os_release}")
+
 
 if IPAddr == '192.168.1.13':    # local - osx box
     REMOTE_LINUX = Path('/Volumes/Home Directory/MMdia/__media_data2/medialib2.pickle')
     
+    # vcl = []
+    # for path in volume_checklist:
+    #     full_path = Path('Volumes', path)
+    #     vcl.append(full_path) if full_path.exists()        
+    # load medialibs & merge TODO
+    
     #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)
     #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)    
-    media_lib = MMediaLib(REMOTE_LINUX)
-    media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/Volumes/Home Directory/MMdia/')
+    #media_lib = MMediaLib(REMOTE_LINUX)
+    #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/Volumes/Home Directory/MMdia/')
+    media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
 
 elif IPAddr == '192.168.1.16':  # remote - linux box    
     LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')    
