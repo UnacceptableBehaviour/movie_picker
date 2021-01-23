@@ -79,7 +79,7 @@ class MMedia:
 		return json.dumps(media)
 
 	def __str__(self):		
-		return f"MMedia: {self.info['year']} {str(self.info['rating']).rjust(4)} {self.info['title']} - Added:{hr_readable_from_nix(self.info['when_added'])}\n\t{self.get_media_size_in_mb()} - {self.info['file_path'].name}"
+		return f"{self.info['year']} {str(self.info['rating']).rjust(4)} {(self.info['title']).ljust(40)} - Added:{hr_readable_from_nix(self.info['when_added'])}\t{self.get_media_size_in_mb()} - {self.info['file_path'].name}"
 
 	def __repr__(self):
 		print('MMedia::def __repr__')
@@ -317,6 +317,9 @@ class MMedia:
 from collections.abc import Iterable, Iterator
 # collection.abc = abstract base class
 # https://docs.python.org/3/library/collections.abc.html
+#
+# See - for __reversed__() method. HowTO
+# class collections.abc.Reversible
 
 FORWARD = 1
 REVERSE = -1
@@ -353,6 +356,13 @@ PICKLED_MEDIA_LIB_FILE_REPO = look_in_repo.joinpath('__media_data2','medialib2.p
 look_in_linux = Path('/home/pi/MMdia/')
 PICKLED_MEDIA_LIB_FILE_LINUX = look_in_linux.joinpath('__media_data2','medialib2.pickle')
 PICKLED_MEDIA_LIB_FILE_OSX4T = Path('/Volumes/Osx4T/tor/__media_data2/medialib2.pickle')
+KNOWN_PATHS = [
+	PICKLED_MEDIA_LIB_FILE_OSX4T,
+	PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,	
+	PICKLED_MEDIA_LIB_FILE_REPO,
+	PICKLED_MEDIA_LIB_FILE_LINUX,
+	PICKLED_MEDIA_LIB_FILE_V2_F500,	
+]
 READ_ONLY = 'r'
 READ_WRITE = 'w'
 class MMediaLib(Iterable):
@@ -408,9 +418,9 @@ class MMediaLib(Iterable):
 		print(" . . . Done")
 			
 
-	def __iter__(self) -> MediaLibIter:									#  -> MediaLibIter is optional guide to coder & toolchain
+	def __iter__(self) -> MediaLibIter:					#  -> MediaLibIter is optional guide to coder & toolchain
 		keys = list(self.media_files.keys())
-		return MediaLibIter(self.media_files, keys)							#                  it indicates the return type
+		return MediaLibIter(self.media_files, keys)		#                  it indicates the return type
 	
 	def reverse_each(self) -> MediaLibIter:
 		keys = list(self.media_files.keys())
@@ -520,12 +530,13 @@ class MMediaLib(Iterable):
 		
 		if re.search(r'([sS]\d+?[eE]\d+?)|(\dx\d\d)', str(media_path)):
 			print("MEDIA LOOK LIKE SERIES - SKIPPING\n{media_path}\n - - - - - ")
-			return				
+			return
 								
 		if self.is_new_media(media_path):
 			print(f"\n\n\nADD NEW MEDIA: {media_path.name} type:{media_path.__class__.__name__}\n{media_path.parent}\n{media_path}")
 
 			if not MMediaLib.is_valid_video(media_path):
+				print(f"SKIPPING MEDIA: {media_path.name} FILE TOO SMALL or NOT recognised video format")
 				return # raise & log TODO
 
 			media = MMedia(media_path, {}, True)
@@ -613,11 +624,13 @@ class MMediaLib(Iterable):
 					#if m == {} or m.info['title'] == 'And Then There Were None':
 					print(m)
 					last = m
-			pprint(last)
+			#pprint(last)
 			print(f"Entries: {len(self.media_files)}")
 		else:
 			print(f"**WARNING** INVALID -l option. Sort types: {' '.join(sort_type.keys())}\n\n")
 			raise IncorrectSortAttributeError(attribute)
+		
+		return(last)
 
 
 	LOCAL_IMAGE_CACHE_DEFAULT = Path('/tmp')
@@ -693,7 +706,7 @@ def select_best_item_from_search_results(kind, query, results):
 	print(f"Found {len(right_kind)} of the right_kind . .")
 	pprint(right_kind)
 	
-	# walk saerch results and find best match  
+	# walk search results and find best match  
 	for sr in right_kind:
 		search_vector = get_doc_vector_word(query)
 	
@@ -784,6 +797,18 @@ if __name__ == '__main__':
 		print(
 '''
 - - Help / Exmple use - -
+$ cd path
+$ .pe										# alias .pe='. venv/bin/activate'
+$ ./moviepicker/moviepicker.py 				# plug in all disks - will report each DB contents & 
+											# DUPLICATES that appear across discs
+											#
+											# list movies in DB - ldb 
+$ ./moviepicker/moviepicker.py -ldb /Volumes/Osx4T/tor/__media_data2/medialib2.pickle
+
+$ ./moviepicker/moviepicker.py -u -d 		# find info about new additions to movie directory
+											# - dummy run (NO WRITE)
+$ ./moviepicker/moviepicker.py -u   		# find info about new additions to movie directory UPDATE DB
+
 option
 -ec 			print list of file extension found on default target
 -ec /path/		print list of file extension found on path
@@ -794,7 +819,7 @@ option
 				NOT IMPLEMENTED - TODO
 
 -ldb /path/medialib2.pickle 	list entries in a pickleDB
--ldr /path/media 				list potential entries in a target directory
+-ldr /path/media 				list potential entries in a target directory ??
 
 '''
 		)
@@ -820,7 +845,7 @@ option
 	# -ec = list file extensions found
 	if '-ec' in sys.argv:
 		try:
-			ec_path = Path(sys.argv[sys.argv.index('-el')+1])
+			ec_path = Path(sys.argv[sys.argv.index('-ec')+1])
 			print(f"option -ec: {ec_path}")
 			if ec_path.exists():				
 				pprint(get_list_of_file_extensions(ec_path))
@@ -898,12 +923,48 @@ option
 				pprint(MMedia._badly_formatted_names)
 
 		except IndexError:
-			print(f"ERROR option -ldr requires a path to check!\n EG: moviepicker.py -ldb /Volumes/media/")
+			print(f"ERROR option -ldr requires a path to check!\n EG: moviepicker.py -ldr /Volumes/media/")
 
 				
 	# json check			
 	# for m in new_media_lib:
 	# 	print(m.as_json())
+
+	mmdbs = []
+	for db_path in KNOWN_PATHS:
+		if db_path.exists():
+			mmdbs.append(MMediaLib(db_path))
+		
+	all_media = {}
+	duplicates = []
+	for mmdb in mmdbs:
+		print(f"\n\nDB Location: {mmdb.media_root} < - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+		for m in mmdb.media_files:
+			#pprint(mmdb.media_files[m])
+			if m not in all_media.keys():
+				all_media[m] = mmdb.media_files[m]
+				print(m)
+			else:
+				splitpath = str(all_media[m].info['file_path']).split('/')
+				report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]).ljust(20)} and {(str(mmdb.media_root).split('/')[2]).ljust(20)}"
+				duplicates.append(report)
+				print(report)
+
+	print("\n\nDUPLICATES:")
+	for d in duplicates:
+		print(d)
+		
+	print("\n\nUnique movies: {len(all_media)}")
+	
+
+	print(f"Available DATABASES:")	
+	# for mmdb in mmdbs:
+	# 	print(f"Lib:{mmdb.media_root} - Movies:{len(mmdb.media_files)}") #		
+	# 	mmdb.list_DB_by_attribute()
+	# 
+	for mmdb in mmdbs:
+		print(f"Lib:{mmdb.media_root} - Movies:{len(mmdb.media_files)}") #
+	
 	
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
 

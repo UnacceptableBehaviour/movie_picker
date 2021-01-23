@@ -83,7 +83,8 @@ def db_hello_world():
     bad_labels = []
     genres = set()
 
-    for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):        
+    for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
+    #for count, movie in enumerate(media_lib.sorted_by_most_recently_added(REVERSE)):        
         print(movie)
         genres.update(movie.info['genres'])
         if movie.info['title'] == 'And Then There Were None':
@@ -149,6 +150,20 @@ if __name__ == '__main__':
         pprint(IPAddr)
         print("WARNING unknown host . . . bailing")
         sys.exit(0)
+        
+    #
+    #
+    #
+    #  have a look at source code for https://pypi.org/project/black/
+    #
+    #  Can run as script or module - w/ options
+    # 
+    #  > black {source_file_or_directory}           # To get started right away with sensible defaults
+    # 
+    # > python -m black {source_file_or_directory}  # You can run Black as a package if running it as a script doesn't work:
+    #
+    #
+    #
     
     # media_lib = MMediaLib()
     # 

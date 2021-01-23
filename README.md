@@ -14,16 +14,16 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 4. [AIM:](#aim)  
 5. [Next steps](#next-steps)  
 6. [Questions / Barriers](#questions--barriers)  
-	1. [How do I run package as a script with options, like venv?](#how-do-i-run-package-as-a-script-with-options-like-venv)  
+	1. [How to run package as a script with options, like venv?](#how-do-i-run-package-as-a-script-with-options-like-venv)
 7. [How To's](#how-tos)  
-	1. [How do I auto generate TOC?](#how-do-i-auto-generate-toc)  
-	2. [How do I insert a TOC?](#how-do-i-insert-a-toc)  
+	1. [How to auto generate TOC?](#how-do-i-auto-generate-toc)
+	2. [How to insert a TOC?](#how-do-i-insert-a-toc)
 		1. [TIPS](#tips)  
 	3. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
-	4. [How do we scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)  
-	5. [How do we access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)  
+	4. [How to scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)
+	5. [How to access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)
 	6. [Whats the minimum search info required for sensible results?](#whats-the-minimum-search-info-required-for-sensible-results)  
-	7. [How do I mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)  
+	7. [How to mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)
 	8. [How do I make a class iterable?](#how-do-i-make-a-class-iterable)  
 	9. [What directory structure is required for a module? (python3)](#what-directory-structure-is-required-for-a-module-python3)  
 		1. [Flow chart of how modules are loaded](#flow-chart-of-how-modules-are-loaded)  
@@ -59,7 +59,7 @@ Buttons for order by: year, release, A-Z, most recently added
 
 
 ## How To's
-### How do I auto generate TOC?
+### How to auto generate TOC?
 ```
 Point script at the right docs			# DEFAULT_FILE (input)
 						# DEFAULT_README(output w TOC)
@@ -69,7 +69,7 @@ Point script at the right docs			# DEFAULT_FILE (input)
 Available here: [create_TOC_for_md.py](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/create_TOC_for_md.py)  
 
 
-### How do I insert a TOC?
+### How to insert a TOC?
 To create a link to a chapter in MD:
 ```
 [Text to Display](#text-from-title)\
@@ -123,7 +123,7 @@ striprtf==0.0.8				# if maintining README.md in and RTF doc
 Werkzeug==0.15.4
 > pip install -r requirements.txt	# gives us the basics for flask, postgres, imdb 
 ```
-### How do we scrape IMDB for movie info to display?  
+### How to scrape IMDB for movie info to display?
 Scraping isnt needed for this task theres an imdb module:  
 ```
 > pip install IMDbPY
@@ -134,7 +134,7 @@ Demo script: [scripts/movie_info_imdb.py](https://github.com/UnacceptableBehavio
 REFS
 https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
 
-### How do we access IMDB for movie info to display?
+### How to access IMDB for movie info to display?
 ```
 import imdb			# use this module
 
@@ -167,7 +167,7 @@ UUID=564B-5772 /home/pi/MMdia/ vfat defaults,auto,users,rw,nofail 0 0
      ^ID       ^mount point    ^FSTYPE
 ```
 
-### How do I make a class iterable?
+### How to make a class iterable?
 Give the calss you need to be iterable a base class of Iterable  
 Create a class to handle iteration and have it inherit from Iterator  
 implement ```__init__``` , ```__iter__``` and ```__next__``` in this class!  
