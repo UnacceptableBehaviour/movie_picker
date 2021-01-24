@@ -150,6 +150,10 @@ if __name__ == '__main__':
         pprint(IPAddr)
         print("WARNING unknown host . . . bailing")
         sys.exit(0)
+     
+    # check this forum - VLC remote contol
+    # https://forum.videolan.org/viewtopic.php?f=11&t=148606
+    # add control interface for post movies select
         
     #
     #

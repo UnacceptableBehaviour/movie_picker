@@ -11,6 +11,36 @@
 
 <h5>offline recipe gallery - add discard button</h5>
 
+    {% for movie_info in movies %}
+    <!--<div class="card mb-3" style="max-width: 540px;">-->
+    <div class="card mb-3" style="width: 100%;">    
+      <div class="row no-gutters">
+        <div class="col-md-3">
+        {% if movie_info['hires_image'] == None %}                            
+            <img src={{ movie_info['image_url'] }} class="card-img" alt="runner">
+        {% else %}
+            <img src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}" class="card-img" alt="runner">
+        {% endif %}                           
+        </div>
+        <div class="col-md-9">
+          <div class="card-body">
+            <h5 class="card-title">{{ movie_info['title'] }} - {{ movie_info['rating'] }} - {{ movie_info['year'] }}</h5>
+            <p class="card-text">{{ movie_info['synopsis'] }}</p>
+            <p>HEART: {{ movie_info['fav'] }}</p>
+            <p>SEEN: {{ movie_info['seen'] }}</p>            
+            {% for genre in movie_info['genres'] %}
+            <button type='submit'
+                    name="genre_button_{{ genre }}"
+                    value="{{ genre }}"
+                    class="btn btn-outline-secondary">{{genre}}</button>
+            {% endfor %}            
+            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
 <div class="container-fluid padding">
     <div class="row padding">
         <!--  -->
