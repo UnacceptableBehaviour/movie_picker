@@ -1,4 +1,65 @@
 <style>
+    /* Keyword value/name of color */
+    
+    .master {
+      display: flex;  
+    }
+    
+    /* selects tag (. select class, # selects id) */
+    #top-text {
+      color: pink;
+    }
+    
+    .div-1 {
+      height: 80px;
+      width: 80px;
+      margin: 20px;
+      border: 5px solid;
+      background-color: #FBD603;        
+    }
 
-
+    /* pseudo selector - mose ove changes size & dims colour*/
+    .div-1:hover {
+      width: 180px;
+      background-color: #A89100;        
+    }
+    
+    .div-2 {
+      height: 80px;
+      width: 70px;
+      margin: 20px;
+      border: 5px solid;
+      background-color: #0BD603;        
+    }
+    
+    /* this would change id-div-4 but id has higher precedence than tag selector */
+    /* precedence: tag, class, id, inline - lowest to highest */
+    div:last-child {
+      color: purple;
+      height: 80px;
+      width: 140px;
+      margin: 20px;
+      border: 5px solid;      
+      background-color: orange;
+    }
+    
+    /* . selects class */    
+    .div-3 {
+        height: 80px;
+        width: 90px;
+        margin: 20px;
+        border: 5px solid;
+        background-color: #0BD6AA;        
+    }
+    
+    /* # selects id */
+    #id-div-4 {
+        height: 110px;
+        width: 90px;
+        margin: 20px;
+        border: 5px solid;
+        color: white;
+        background-color: #0B16AA;              
+    }
+    
 </style>

@@ -24,7 +24,7 @@ default_library_name = 'medialib2.pickle'
 volume_checklist = ['/time_box_2018/movies/__media_data2/medialib2.pickle',
  '/Osx4T/tor/__media_data2/medialib2.pickle',
  '/FAITHFUL500/__media_data2/medialib2.pickle']
-
+test_mode_library_name = Path('/Users/simon/a_syllabus/lang/python/repos/movie_picker/movies/__media_data2/medialib2.pickle')
 
 import platform
 running_os = platform.system()
@@ -51,7 +51,10 @@ if IPAddr == '192.168.1.13':    # local - osx box
     #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)    
     #media_lib = MMediaLib(REMOTE_LINUX)
     #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/Volumes/Home Directory/MMdia/')
-    media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
+    #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
+    
+    # local disc - small library - export FLASK_ENV=development    
+    media_lib = MMediaLib(test_mode_library_name)   
 
 elif IPAddr == '192.168.1.16':  # remote - linux box    
     LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')    
@@ -79,7 +82,13 @@ def db_hello_world():
     print(f"Vs: {test_version}") 
     headline_py = "movies"
     movies = [] # load jsonfile
-     
+    
+    # - - - - - - CSS course - - - - - - -
+    # - - - - - - CSS course - - - - - - -
+    return render_template('css_course_1.html', movies=movies)      # < < < < 
+    # - - - - - - CSS course - - - - - - -
+    # - - - - - - CSS course - - - - - - -
+    
     bad_labels = []
     genres = set()
 
