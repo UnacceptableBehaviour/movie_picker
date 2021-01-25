@@ -111,6 +111,18 @@ def db_movie_page():
     movies = []
     return render_template('index.html', movies=movies)
 
+@app.route('/css_course_1', methods=["GET", "POST"])
+def css_course_1():
+    headline_py = "css_course_1"
+    movies = []
+    return render_template('css_course_1.html', movies=movies)
+
+@app.route('/css_course_2', methods=["GET", "POST"])
+def css_course_2():
+    headline_py = "css_course_2"
+    movies = []
+    return render_template('css_course_2.html', movies=movies)
+
 @app.route('/settings', methods=["GET", "POST"])
 def settings():
     headline_py = "Settings"
