@@ -34,14 +34,14 @@
     
     /* this would change id-div-4 but id has higher precedence than tag selector */
     /* precedence: tag, class, id, inline - lowest to highest */
-    div:last-child {
+/*    div:last-child {
       color: purple;
       height: 80px;
       width: 140px;
       margin: 20px;
       border: 5px solid;      
       background-color: orange;
-    }
+    }*/
     
     /* . selects class */    
     .div-3 {
@@ -61,5 +61,47 @@
         color: white;
         background-color: #0B16AA;              
     }
+    
+    /* attribute selectors */
+    #gallery {
+      display: inline-block;  
+    }
+    
+    img {
+      width: 60px;
+    }
+    
+    span[class~=sf]{ /* scifi */
+        border: 5px solid;
+        color: blue;      
+    }
+    span[class~=ad]{ /* adventure */
+        border: 5px solid;
+        color: yellow;          
+    }
+    span[class~=dr]{ /* drama */
+        border: 5px solid;
+        color: magenta;
+      }
+    span[class~=fa]{ /* fantasy */
+        border: 5px solid;
+        color: darkgreen;    
+    }
+    span[class~=com]{ /* comedy */
+        border: 5px solid;
+        color: cyan;    
+    }
+    span[class~=doc]{ /* documentary */
+        border: 5px solid;
+        color: red;    
+    }    
+    div[class~=sf]{ /* scifi */
+        border: 5px solid;
+        color: blue;      
+    }
+    div[class~=ad]{ /* adventure */
+        border: 5px solid;
+        color: yellow;          
+    }    
     
 </style>
