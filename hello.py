@@ -85,7 +85,7 @@ def db_hello_world():
     
     # - - - - - - CSS course - - - - - - -
     # - - - - - - CSS course - - - - - - -
-    return render_template('css_course_1.html', movies=movies)      # < < < < 
+    return render_template('css_course_2.html', movies=movies)      # < < < < 
     # - - - - - - CSS course - - - - - - -
     # - - - - - - CSS course - - - - - - -
     
@@ -128,9 +128,33 @@ def css_course_1():
 
 @app.route('/css_course_2', methods=["GET", "POST"])
 def css_course_2():
-    headline_py = "css_course_2"
+    headline_py = "css_course_2.html"
     movies = []
     return render_template('css_course_2.html', movies=movies)
+
+@app.route('/css_course_3', methods=["GET", "POST"])
+def css_course_3():
+    headline_py = "css_course_3.html"
+    movies = []
+    return render_template('css_course_3.html', movies=movies)
+
+@app.route('/css_course_4', methods=["GET", "POST"])
+def css_course_4():
+    headline_py = "css_course_4.html"
+    movies = []
+    return render_template('css_course_4.html', movies=movies)
+
+@app.route('/css_course_5', methods=["GET", "POST"])
+def css_course_5():
+    headline_py = "css_course_5.html"
+    movies = []
+    return render_template('css_course_5.html', movies=movies)
+
+@app.route('/css_course_6', methods=["GET", "POST"])
+def css_course_6():
+    headline_py = "css_course_6.html"
+    movies = []
+    return render_template('css_course_6.html', movies=movies)
 
 @app.route('/settings', methods=["GET", "POST"])
 def settings():

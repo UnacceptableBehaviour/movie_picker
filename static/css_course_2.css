@@ -1,4 +1,183 @@
 <style>
+    /* Keyword value/name of color */
+    
+    /* pre bracket is tag selector (name selects tag type . selects class, # selects id) */
+    
+    /* elements of class(.) = master */
+    .master {
+      display: flex;    /* elements in rows adapts to screen */
+    }
+    
+    /* elements of id(#) = top-text */
+    #top-text {
+      color: purple;
+    }
+        
+    /* elements of class(.) = div-1 */
+    .div-1 {
+      height: 80px;
+      width: 80px;
+      margin: 20px;
+      border: 5px solid;
+      background-color: #FBD603;        
+    }
 
+    /* pseudo selector - mouse ove changes size & dims colour*/
+    /* elements of class(.) = div-1 + plus pseudo selector(:) hover (mouse hover over element) */
+    .div-1:hover {
+      width: 180px;
+      background-color: #A89100;        
+    }
+    
+    /* elements of class(.) = div-2 */
+    .div-2 {
+      height: 80px;
+      width: 70px;
+      margin: 20px;
+      border: 5px solid;
+      background-color: #0BD603;        
+    }
+    
+    /* every anchor that follows h2 tag */ 
+    h2 + a {
+      color: red;
+    }
+    /* see table */
+    /* h2 ~ a  would be the same but both items MUST BE IN THE SAME PARENT */
+    /* h2 > a  would be the same but a MUST BE a child */
+    /* h2  a  would be the same but a MUST BE a decendent (can be child of child) */
+    
+    
+    /* CSS precedence: tag, class(.), id(#), inline - lowest to highest */
+    /* inline are in the html element */
+    
+    /* this would change id-div-4 but id has higher precedence than tag selector */    
+/*    div:last-child {
+      color: purple;
+      height: 80px;
+      width: 140px;
+      margin: 20px;
+      border: 5px solid;      
+      background-color: orange;
+    }*/
+    
+    /* . selects class */    
+    .div-3 {
+        height: 80px;
+        width: 90px;
+        margin: 20px;
+        border: 5px solid;
+        background-color: #0BD6AA;        
+    }
+    
+    /* # selects id */
+    #id-div-4 {
+        height: 110px;
+        width: 90px;
+        margin: 20px;
+        border: 5px solid;        
+        color: beige;
+        background-color: #0B16AA;
+    }
+    
+    /* - - - - - - - parent, children, decentants  & table - - - - - - - */
+    /* colors by name */
+    /* https://www.w3schools.com/colors/colors_names.asp */
+    
+    /* simple table format */
+    table, th, td {                     /* , apply same format to all w/ comma */
+        border: 1px solid black;
+        border-collapse: collapse;
+        text-align: center;        
+        font-family: arial;
+        font-size: 24px;
+        font-weight: normal;    
+    }
+    /* h2 ~ a  would be the same but both items MUST BE IN THE SAME PARENT */
+    /* h2 > a  would be the same but a MUST BE a child */
+    /* h2  a  would be the same but a MUST BE a decendent (can be child of child) */
 
+    /* > child - table direct decendent of td - cell*/
+    td > table {  /* make tables in side cell pink */
+        background-color: pink;
+    }
+    
+    /* space li decendant pf tr - can be child, child child etc - in subtree */
+    tr  li {
+        background-color: cyan;
+    }
+    
+    /* + directly follows - should be a sibling not a child*/
+    td + td {
+        background-color: olive;
+    }
+
+    th {
+        background-color: greenyellow;
+    }
+    /* lightcoral, greenyellow, darkorange, olive */
+    
+    
+    
+    
+    /* - - - - - - - controlling the <span> style elements - - - - - - - */
+    img {
+      width: 140px;
+    }
+
+    /* id span_gallery - <div id=span_gallery> of <span id=>s */
+    /*#span_gallery {*/                 /* DOESNT select underlying spans */
+    /*#span_gallery .span-gal-img {*/   /* class .span-gal-img decending from id #span_gallery - works */
+    #span_gallery span {                /* tag span decending from id #span_gallery - works */    
+    /*span {*/                          /* ALL span elements - works - course targeting */
+    /*.span-gal-img { */                /* class span-gal-img - spcific to span images*/
+      display: inline-block;  /* without this the border appears text height behind the image */
+      /*display: inline;*/    /* border appears text height behind the image - span is inline type */
+      /*display: block;*/     /* make span line vertically like block elements - border width of screen? */
+    }
+    
+    /* give each movie tile a different colour border based on its class genre descriptor */
+    span[class~=sf]{ /* scifi */
+        border: 5px solid;
+        color: blue;      
+    }
+    span[class~=ad]{ /* adventure */
+        border: 5px solid;
+        color: yellow;          
+    }
+    span[class~=dr]{ /* drama */
+        border: 5px solid;
+        color: magenta;
+      }
+    span[class~=fa]{ /* fantasy */
+        /*display: inline-block;*/
+        border: 5px solid;
+        color: darkgreen;    
+    }
+    span[class~=com]{ /* comedy */
+        border: 5px solid;
+        color: cyan;    
+    }
+    span[class~=doc]{ /* documentary */
+        border: 5px solid;
+        color: red;    
+    }
+    
+    
+    /* id span_gallery - <div id=span_gallery> of <span id=>s */
+    /*div, .gallery_image{*/     /* */
+    /*span {*/                    /* ALL span elements - works - course targeting */
+    #div_gallery div { 
+      display: inline-block;
+    }        
+    
+    div[class~=sf]{ /* scifi */
+        border: 5px solid;
+        color: blue;      
+    }
+    div[class~=ad]{ /* adventure */
+        border: 5px solid;
+        color: yellow;          
+    }    
+    
 </style>

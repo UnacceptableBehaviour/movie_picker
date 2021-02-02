@@ -8,12 +8,27 @@
 
 {% block content %}
 
-<h5>css course 1</h5>
-
-<body>
-    
-    <div class='master'>
+    <br />
+    <br />
+    <span>I'm Inline!</span>
+    <span>I'm Inline!</span>
+    <span>I'm Inline!</span>    
+    <br />
+    <div>I'm Block!</div>
+    <div>I'm Block!</div>
+    <div>I'm Block!</div>
+    <br />
+    <span class='now_block'>I was Inline!</span>
+    <span class='now_block'>I was Inline!</span>
+    <span class='now_block'>I was Inline!</span>      
+    <div class='now_inline'>I was Block!</div>
+    <div class='now_inline'>I was Block!</div>
+    <div class='now_inline'>I was Block!</div>    
+    <br />
+    <br />
+    <div class='with_flex'>
         <p id='top-text'>Styling priority</p>
+        class='with_flex'
         <br>
         <div class="div-1">
             <p>A1</p>
@@ -30,46 +45,31 @@
         <div id="id-div-4">
             <p>D4</p>
         </div>
+    </div>
+    <div class='without_flex'>
+        <p id='top-text'>Styling priority</p>
+        class='withOUT_flex'
+        <br>
+        <div class="div-1">
+            <p>A1</p>
+        </div>
+    
+        <div class="div-2">
+            <p>B2</p>
+        </div>
+    
+        <div class="div-3" id="id-div-3">
+            <p>C3</p>
+        </div>
 
-    </div>
-    
-    <div>
-        div last child
-    </div>
-        
-
-    <div id='gallery2'>
-        <span class="gallery_image sf">     <image src="/static/covers/Blade_Runner_2049_poster.png"></image> </span>   
-        <span class="gallery_image ad">     <image src="/static/covers/Men_in_Black_International_%28Official_Film_Poster%29.png"></image> </span>   
-        <span class="gallery_image ad">     <image src="/static/covers/Once_Upon_a_Time_in_Hollywood_poster.png"></image> </span>   
-        <span class="gallery_image sf">     <image src="/static/covers/Parasite_%282019_film%29.png"></image> </span>   
-        <span class="gallery_image ad">     <image src="/static/covers/Ready_or_Not_2019_film_poster.jpg"></image> </span>   
-        <span class="gallery_image ad">     <image src="/static/covers/Shaft_%282019%29_film_poster.png"></image> </span>   
-        <span class="gallery_image fa">     <image src="/static/covers/Shazam%21_theatrical_poster.jpg"></image> </span>   
-        <span class="gallery_image fa">     <image src="/static/covers/Spider-Man_Far_From_Home_poster.jpg"></image> </span>   
-        <span class="gallery_image sf">     <image src="/static/covers/Star_Wars_The_Rise_of_Skywalker_poster.jpg"></image> </span>   
-        <span class="gallery_image dr">     <image src="/static/covers/The_Art_of_Self-Defense.jpeg"></image> </span>   
-        <span class="gallery_image dr">     <image src="/static/covers/The_Banker_poster.jpeg"></image> </span>   
-        <span class="gallery_image dr">     <image src="/static/covers/The_Call_of_the_Wild_poster.jpg"></image> </spanspan>   
-        <span class="gallery_image doc">     <image src="/static/covers/The_Great_Hack_poster.jpg"></image> </span>   
-        <span class="gallery_image dr">     <image src="/static/covers/The_Hustle_film_poster.png"></image> </span>   
-        <span class="gallery_image sf">     <image src="/static/covers/The_Invisible_Man_%282020_film%29_-_release_poster.jpg"></image> </span>   
-        <span class="gallery_image dr">     <image src="/static/covers/The_Irishman_poster.jpg"></image> </span>   
-        <span class="gallery_image com">     <image src="/static/covers/The_Last_Thing_He_Wanted.jpg"></image> </span>   
-        <span class="gallery_image com">     <image src="/static/covers/The_Man_Who_Killed_Hitler_and_Then_the_Bigfoot.png    "></image> </span>
-    </div>
-    
-    <div id='gallery' style='display: inline-block'>
-        <div class="gallery_image sf">     <image src="/static/covers/Blade_Runner_2049_poster.png"></image> </div>   
-        <div class="gallery_image sf">     <image src="/static/covers/Parasite_%282019_film%29.png"></image> </div>   
-        <div class="gallery_image ad">     <image src="/static/covers/Ready_or_Not_2019_film_poster.jpg"></image> </div>   
-    </div>
-    /* inline block no work w/ div - use span! */
-    
-    <div>
-        div last child
+        <div id="id-div-4">
+            <p>D4</p>
+        </div>
     </div>    
-</body>
+    
+    <div>
+        div last child
+    </div>  
 
 
 {% endblock %}
