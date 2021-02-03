@@ -1,0 +1,54 @@
+{% extends 'nav_buttons_thin.html' %}
+
+{% block header %}
+<!--Added some external google fonts-->
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Darker+Grotesque:wght@400;700&family=Lato&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for( 'static', filename='css_course_3.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+<h2>css course 3 - <a href='https://youtu.be/1Rs2ND1ryYc'>upto 3h28min</a></h2>
+<img id='rcp_img' src="static/covers/couscous.jpg">
+<div class=text-size>
+    <div class='mm'>text in 10mm</div>
+    <div class='cm'>text in 2cm</div>
+    <div class='px'>text in 20px</div>
+    <div class='pt'>text in 20pt</div>
+    <div class='pc'>text in 1pc</div>
+    <div class='em'>text in 2em - 2x standard font size</div>
+    vh - viewport height, vw - viewport width  
+    <div class='vh'>text in 5vh - change height!</div>
+    <div class='vw'>text in 5vw - change screen width!!</div>
+</div>
+<br>
+<div class='r-menu'>
+    <img id='rcp_img2' src="static/covers/couscous.jpg">
+    <span class='men-title'>roast vegetable & shrimp couscous dressed w/ rocket & blushed tomatoes</span><br>
+    <span class='men-desc'>autumn vegetables, nuts and olives mixed w/ shrimp, chorizo and a lime coriander sauce<br>
+    topped w/ fragrant arugula dressed in a light vinaigrette</span><br>
+    <span class='men-alg'>(contains: nuts, gluten)</span><br><br>
+    <span class='men-title'>wine pairing:</span><span class='men-win'> lacheteau reserve sauvignon blanc</span><br>
+    <br>
+</div>
+<div class='r-spec'>
+    <span class='r-spec-tit'>Method</span><br>
+    <span class='r-spec-copy'>Soften the onion in some oil and drain.<br>
+    Roast the almonds at Gas mark 6 for 15 mins (enough to decorate the serving dish you plan to use)<br>
+    - leave to cool a bit, coat in honey and sprinkle with salt.<br>
+    Stew cherry toms (I do mine in the cast iron pan with a bit of oil and salt) until very soft.<br>
+    Remove and try to keep intact for decoration.</span><br>
+</div>
+<br>
+<div>
+    <div>These fonts are included above the css_course_3.css in < head tag ></div>
+    <div id='hrr' class='horror'>get your newts & toads for the cauldron here today!!</div><br>
+    <span class='pro'>get your newts & toads for the cauldron here today!!</span><br>
+    <span class='support'>get your newts & toads for the cauldron here today!!</span><br>
+</div>
+
+
+
+
+{% endblock %}

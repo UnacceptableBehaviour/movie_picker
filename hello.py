@@ -85,7 +85,7 @@ def db_hello_world():
     
     # - - - - - - CSS course - - - - - - -
     # - - - - - - CSS course - - - - - - -
-    return render_template('css_course_2.html', movies=movies)      # < < < < 
+    return render_template('css_course_3.html', movies=movies)      # < < < < 
     # - - - - - - CSS course - - - - - - -
     # - - - - - - CSS course - - - - - - -
     
