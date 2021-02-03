@@ -121,14 +121,17 @@
     
     
     /* - - - - - - - controlling the <span> style elements - - - - - - - */
-    img {
-      width: 140px;
+    /* img tag decendents of id #span-gallery */
+    #span-gallery img {
+      width: 80px;
+      /*vertical-align: middle;*/ /* this gets rid of white edges INSIDE border */
+      vertical-align: top;        /* as does this*/
     }
 
-    /* id span_gallery - <div id=span_gallery> of <span id=>s */
-    /*#span_gallery {*/                 /* DOESNT select underlying spans */
-    /*#span_gallery .span-gal-img {*/   /* class .span-gal-img decending from id #span_gallery - works */
-    #span_gallery span {                /* tag span decending from id #span_gallery - works */    
+    /* id span-gallery - <div id=span-gallery> of <span id=>s */
+    /*#span-gallery {*/                 /* DOESNT select underlying spans */
+    /*#span-gallery .span-gal-img {*/   /* class .span-gal-img decending from id #span-gallery - works */
+    #span-gallery span {                /* tag span decending from id #span-gallery - works */    
     /*span {*/                          /* ALL span elements - works - course targeting */
     /*.span-gal-img { */                /* class span-gal-img - spcific to span images*/
       display: inline-block;  /* without this the border appears text height behind the image */
@@ -164,20 +167,92 @@
     }
     
     
-    /* id span_gallery - <div id=span_gallery> of <span id=>s */
+    /* id span-gallery - <div id=span-gallery> of <span id=>s */
     /*div, .gallery_image{*/     /* */
     /*span {*/                    /* ALL span elements - works - course targeting */
-    #div_gallery div { 
+    #div-gallery div { 
       display: inline-block;
     }        
+
+    #div-gallery img {
+      width: 120px;
+      vertical-align: middle;
+      border: 8px solid;      
+    }
     
     div[class~=sf]{ /* scifi */
-        border: 5px solid;
-        color: blue;      
+        color: blue;                /* WHY COLOR & NOT BORDER-COLOR ? ? */ 
     }
     div[class~=ad]{ /* adventure */
-        border: 5px solid;
+        /*border: 5px solid;*/
         color: yellow;          
     }    
+    
+    /* othe selector - regexy type notation */
+    /* ing tag w/ attribute src matches string */
+    img[src='peasoup.png']{}
+    
+    /* ing tag w/ attribute src starts w/ string - note caret ^= */
+    img[src^='peasoup.png']{}
+
+    /* ing tag w/ attribute src ends w/ string - note dollar $= */
+    img[src$='soup.png']{}
+
+    /* ing tag w/ attribute src contains string - note star *= */
+    img[src*='soup']{}
+    
+    /* adding a gradient to element - the whole page (body) here */
+    body {        
+        /*background: linear-gradient(#e66465, #9198e5);*/
+        background: linear-gradient(to bottom, #FFFFFF, #e3fff1);
+        /* botoom, top, left, right, */
+    }
+    
+    /* yes no question box */
+
+    .qbox-yn-par {
+        width:auto;
+        height:100px;
+        background:#CCFF33;
+        padding:10px;
+        margin: 20px 50px;
+        position:relative; /* document space left allocated, element position relative to this*/
+    }                      /* using top, bottom, left right */
+        
+    .qbox-yn-menu {
+        width:70px;
+        height:auto;
+        background:#c6eb23;
+        color:#888;
+        padding:5px 2px;
+        /*margin: 5px 5px;*/
+        outline: 1px solid #888888; /*use outline not border: 3px;*/
+        text-align:center;
+        top:5px;
+        right:5px;
+        position:absolute; /* document space not alocated, element position relative to */
+    }                      /* positioned relative to its closest positioned ancestor or */
+                           /* nearted containing block */
+    .qbox-yn {
+        width:70px;
+        height:auto;
+        background:#f0e932;
+        color:#444;
+        padding:5px 2px;
+        /*margin: 5px 5px;*/
+        outline: 1px solid #888888; /*use outline not border: 3px;*/
+        text-align:center;
+        position:absolute;
+        bottom: -10px;
+    }
+    
+    .yes {        
+        left:-10px;        
+    }
+    
+    .no {        
+        right:-10px; 
+    }
+    
     
 </style>

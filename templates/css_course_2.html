@@ -59,7 +59,7 @@
     <br>
     
     <p>id='gallery2' a div of spans</p>
-    <div id='span_gallery'>
+    <div id='span-gallery'>
         <span class="span-gal-img sf">     <image src="/static/covers/Blade_Runner_2049_poster.png"></image> </span>   
         <span class="span-gal-img ad">     <image src="/static/covers/Men_in_Black_International_%28Official_Film_Poster%29.png"></image> </span>   
         <span class="span-gal-img ad">     <image src="/static/covers/Once_Upon_a_Time_in_Hollywood_poster.png"></image> </span>   
@@ -82,18 +82,154 @@
     
     <p>id='gallery a div of divs'</p>
     <!--style='display: inline-block'-->
-    <div id='div_gallery'>
+    <div id='div-gallery'>
         <div class="div-gal-img sf" >     <image src="/static/covers/Blade_Runner_2049_poster.png"></image> </div>   
         <div class="div-gal-img sf" >     <image src="/static/covers/Parasite_%282019_film%29.png"></image> </div>   
         <div class="div-gal-img ad" >     <image src="/static/covers/Ready_or_Not_2019_film_poster.jpg"></image> </div>   
         <div class="div-gal-img sf" >     <image src="/static/covers/Parasite_%282019_film%29.png"></image> </div>   
         <div class="div-gal-img ad" >     <image src="/static/covers/Ready_or_Not_2019_film_poster.jpg"></image> </div>   
     </div>
-    /* inline block no work w/ div - use span! */
+    
     
     <div>
         div last child
     </div>    
+
+    <div id='div-grad' style="position: relative; float: right">  inline    
+      id='div-grad'      
+    </div>
+    <br><br>
+    <!--box div with inner positions boxes-->
+    <!--https://www.encodedna.com/css-tutorials/float-right-using-position-absolute-css.htm-->
+    <div style="width:auto;
+          height:100px;
+          background:#CCFF33;
+          padding:10px;
+          margin: 20px 50px;
+          position:relative;">
+
+      Parent Container
+
+      <div style="padding:20px 0; background:#bcd674;">
+          This is the second element
+      </div>
+
+      <div style="width:70px;
+            height:auto;
+            background:#c6eb23;
+            color:#888;
+            padding:5px 2px;
+            /*margin: 5px 5px;*/
+            outline: 1px solid #888888; /*use outline not border: 3px;*/
+            text-align:center;
+            top:5px;
+            position:absolute;
+            right:5px;">
+            <!-- changing top or right to anything other than 0 (to move box out a little) produces odd results-->
+            <!--need to use px % or em with the number eg: 5px, 5em, 5% not 5 on its own!-->
+            <!--Opt 2: use margin to move box in a little-->
+            <!--effect of right (left, top, bottom) depends on valu of position-->
+            <!--https://developer.mozilla.org/en-US/docs/Web/CSS/right see description-->
+          MENU
+      </div>
+
+      <div style="width:70px;
+            height:auto;
+            background:#f0e932;
+            color:#444;
+            padding:5px 2px;
+            /*margin: 5px 5px;*/
+            outline: 1px solid #888888; /*use outline not border: 3px;*/
+            text-align:center;
+            bottom: -10px;
+            position:absolute;
+            right:-10px;">
+            <!-- changing top or right to anything other than 0 (to move box out a little) produces odd results-->
+            <!--need to use px % or em with the number eg: 5px, 5em, 5% not 5 on its own!-->
+            <!--Opt 2: use margin to move box in a little-->
+          NO
+      </div>
+      <div style="width:70px;
+            height:auto;
+            background:#f0e932;
+            color:#444;
+            padding:5px 2px;
+            /*margin: 5px 5px;*/
+            outline: 1px solid #888888; /*use outline not border: 3px;*/
+            text-align:center;
+            bottom: -10px;
+            position:absolute;
+            left:-10px;">
+            <!-- changing top or right to anything other than 0 (to move box out a little) produces odd results-->
+            <!--need to use px % or em with the number eg: 5px, 5em, 5% not 5 on its own!-->
+            <!--Opt 2: use margin to move box in a little-->
+          YES
+      </div>
+    </div>
+    <!--box div with inner positions boxes broken out into CSS -->
+    <!--https://www.encodedna.com/css-tutorials/float-right-using-position-absolute-css.htm-->
+    <br>
+    <p>STYLE moved into CSS</p>
+    <div class='qbox-yn-par'>
+      Parent Container
+
+      <div style="padding:20px 0; background:#bcd674;">
+          This is the second element
+      </div>
+
+      <div class="qbox-yn-menu">
+          MENU
+      </div>
+
+      <div class='qbox-yn no'>
+          NO
+      </div>
+      <div class='qbox-yn yes'>
+          YES
+      </div>
+      <br>      
+    </div>
+
+    <br>
+    <p>On inside th other</p>
+    <div class='qbox-yn-par'>
+      Parent Container
+
+      <div style="padding:20px 0; background:#bcd674;">
+          This is the second element
+      </div>
+
+      <div class="qbox-yn-menu">
+          MENU
+      </div>
+
+      <div class='qbox-yn no'>
+          NO
+      </div>
+      <div class='qbox-yn yes'>
+          YES
+      </div>
+      
+      <div class='qbox-yn-par'>
+        SUB Parent Container
+  
+        <div style="padding:20px 0; background:#bcd674;">
+            This is the second element
+        </div>
+  
+        <div class="qbox-yn-menu">
+            MENU
+        </div>
+  
+        <div class='qbox-yn no'>
+            NO
+        </div>
+        <div class='qbox-yn yes'>
+            YES
+        </div>
+      </div>
+      
+    </div>
 
 
 
