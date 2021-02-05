@@ -81,6 +81,7 @@
         outline: solid 1px;
     }
 
+    /* GRID container - MOVIE CARD - - - - - - - - - - - - - - - - - - - - GRID */
     .grid-movie-card {
         /* 980x800 each card 14x6 ~ 1-15x1-7 - 70x70 */
         font-family: arial, sans-serif;
@@ -98,14 +99,13 @@
     }
     
     .m_poster {
+        display: inline-flex;
         background-color: #000000;
         padding: 5px;
         /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
         grid-area: 1 / 1 /  9 / 5;            /*3wx6h - block 70px*/
-        /*justify-content: center;         /* HORIZONTAL! start center end  - OPOSITE TO FLEX WTF? */
-        /*align-content: center;*/
-        align-items: right;
-        justify-items: center;
+        justify-content: center;    /* FLEX-HORIZ    center, space-between etc */
+        align-items: center;        /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
     }
     
     .m-title {                        /*contains , .m-year, .m-runtime, .m-rating */
@@ -148,7 +148,63 @@
         grid-area: 8 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */        
     }
 
+    /* maintenance & development nightmare - look into CSS vars - https://www.w3schools.com/css/css3_variables.asp*/
+
+    /* image alignment see post - read 1 & update movie container */
+    /* 1. https://stackoverflow.com/questions/45536537/centering-in-css-grid . . and . */
+    /* 2. https://www.joomlashack.com/blog/tutorials/center-and-align-items-in-css-grid/ */
+    /* << Tasks - grid-movie-card >>
+     * Centre image
+     * Vertically centre Movie Head line & add left margin
+     * Centre rating
+     * Synopsis text x1.5
+     * Make genre buttons bounding box - 3 margins / 2 (allow 2 rows)
+     * Make action buttons right justified full size of bounding box
+     * 
+     * Duplicate this and add variables to replace grid area definintions
+    */
     
-    /* upto 4h44min - https://youtu.be/1Rs2ND1ryYc CSS 6hrs */
+    /*
+     The HTML structure of a grid container has three LEVELS:
+
+        container
+        item
+        content
+
+    Each of these levels is INDEPENDENT from the others, in terms of applying grid properties.
+
+    The SCOPE of a grid container is limited to a PARENT-CHILD relationship.
+        grid contaier (parent)
+          ^
+        grid item     (child) - Descendants of a grid container beyond the children are not part of grid layout and will not accept grid properties.
+                                unless using subgrid
+    
+    */
+    
+    .oxo {
+        display: inline-grid;
+        grid-template-rows: 100px 100px 100px;
+        grid-template-columns: 100px 100px 100px;
+        grid-gap: 3px;
+        /*justify-items: center; /* justify-items on the container centers the grid items, not the content (at least not directly) */
+        /*align-items: center;   /* does the same but vertically */
+
+    }
+    .square {
+        /*background-color: white;*/
+        display: flex;
+        outline: solid;
+        outline-width: 2px;
+        justify-content: center;    /* FLEX-HORIZ    center, space-between etc */
+        align-items: center;        /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
+        
+    }
+    
+
+    /* watchd up to 4h15 - basically flex justification controls & setting up a gri w/ 5 elemnets*/
+    /*https://www.freecodecamp.org/news/learn-css-grid-by-building-5-layouts/*/
+    
+    
+    /* upto 4hmin - https://youtu.be/1Rs2ND1ryYc CSS 6hrs */
 </style>
 
