@@ -1,0 +1,154 @@
+<style>
+    
+    /* CSS Flexbox - 3h26*/                 /* debug understand why? */
+    body {                                  /* TODO - THIS HAS NO EFFECT! WHY - entering color into tools works*/
+        background-color: #f2fcff;
+        font-family: arial, sans-serif;
+        font-size: 0.8em;
+    }
+    
+    #debug_target {                         /* w/ <body id='debug_target'> this now works?????? */
+        background-color: #f2fcff;
+        font-family: arial, sans-serif;
+        font-size: 0.8em;
+    }
+    
+    .container {
+        background-color: #fff8e8;
+        margin: 10px;
+        height: 140px;
+        display: flex;                  /* select FLEX BOX display functionality */
+        /*flex-direction: column;           /* arrange item in col top to bottom */
+        /*flex-direction: column-reverse ;  /* arrange item in col bottom to top */
+        flex-direction: row;                /* default in order left to right */
+        /*flex-direction: row-reverse ;     /* reverse prev */
+        /*flex-wrap: wrap;*/                    /* w/o this it will squeaze elements onto one line */
+        justify-content: space-around;      /* HORIZ center, space-between (sprend to edges w/ space between),
+                                             * space-around (spread even w/ space at ends too) */
+        align-items: center;                /* VERTICAL flex-start (align top), center, flex-end (align bottom)
+                                             * stretch (stretch elemnts top to bottom)
+                                             * baseline (align elements)*/
+    }
+    .container-2 {
+        background-color: #fff8e8;
+        margin: 10px;
+        height: 140px;
+        display: flex;                  /* select FLEX BOX display functionality */
+        flex-direction: row;                
+        flex-wrap: wrap;                /* WRAP ON */
+        justify-content: space-around;                                                  
+        align-items: center;                
+    }    
+    
+
+    /* flex: grow shrink basis - see 4h-4h3m from 3h49 */
+    /* instead of separate flex-grow, flex-shrink, flex-basis */
+    /* see htm code for notes */
+    .container-item {
+        background-color: #0ec758;
+        color: white;
+        text-align: center;
+        width: 70px;
+        line-height: 50px;
+        margin: 5px;        
+    }
+
+    /* GRID container - colums & rows - - - - - - - - - - - - - - - - - - - - GRID */
+    .grid-container {
+        background-color: #f7f2ff;
+        margin:  10px;
+        height: 300px;
+        display: grid;                      /* select GRID BOX functionality */
+        grid-template-columns: repeat(14, 50px); /*auto auto auto auto auto auto auto auto;*/
+        /*grid-column-gap: 10px;*/
+        grid-template-rows: auto auto auto auto;
+        /*grid-row-gap: 10px;*/
+        grid-gap: 10px 10px;         /* grid-gap: row column; specify . . . */
+                                     /* grid-row-gap: 10px;  &  grid-column-gap: 10px; at SAME TIME */
+        justify-content: start;      /* HORIZONTAL! start center end  - OPOSITE TO FLEX WTF? */
+                                            /* space-around, space-evenly, space-between */
+        align-content: space-evenly;    /* VERTICLE start, centre , end, */
+                                        /* space-around, space-evenly, space-between */        
+    }
+    
+    .grid-item {
+        color: black;
+        font-size: 25px;
+        text-align: center;
+        width: 70px;
+        line-height: 40px;         /* vertical line spacing - space betweeen lines */
+        margin:  10px;
+        outline: solid 1px;
+    }
+
+    .grid-movie-card {
+        /* 980x800 each card 14x6 ~ 1-15x1-7 - 70x70 */
+        font-family: arial, sans-serif;
+        font-size: 0.8em;        
+        background-color: #f7f2ff;
+        margin: 5px;
+        height: 430px;
+        display: grid;                      /* select GRID BOX functionality */
+        grid-template-columns: repeat(14, 70px);
+        /*grid-column-gap: 10px;*/
+        grid-template-rows: repeat(8, 50px);        
+        /*grid-row-gap: 10px;*/
+        grid-gap: 4px 4px;         /* grid-gap: row column; specify . . . */
+        
+    }
+    
+    .m_poster {
+        background-color: #000000;
+        padding: 5px;
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 1 / 1 /  9 / 5;            /*3wx6h - block 70px*/
+        /*justify-content: center;         /* HORIZONTAL! start center end  - OPOSITE TO FLEX WTF? */
+        /*align-content: center;*/
+        align-items: right;
+        justify-items: center;
+    }
+    
+    .m-title {                        /*contains , .m-year, .m-runtime, .m-rating */
+        background-color: #FFFFAA;
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 1 / 5 /  2 / 14;            /* grid  width - image width, 1 high */
+    }
+    .m-rating {                        
+        background-color: #FFAAAA;
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 1 / 14 /  2 / 15;              /* TRHC */ 
+    }    
+    .m-title, .m-year, .m-runtime, .m-rating { /* set large font */
+        font-size: 2em;
+    }
+    
+    .m-synop, .m-cast {
+        /* make cast buttons so can guide choices - text for now */
+        font-size: 1.5em;
+        /* grid  width - image, 1*/        
+    }
+    .m-synop {
+        background-color: #FFFFAA;
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 2 / 5 / span 4 / span 10;            /* under title */
+    }
+    .m-cast {
+        background-color: #FFAAFF;
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 6 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
+    }
+    .m-genre {
+        background-color: #AAFFFF;
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 7 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
+    }
+    .m_control {
+        background-color: #AAFFFF;
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 8 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */        
+    }
+
+    
+    /* upto 4h44min - https://youtu.be/1Rs2ND1ryYc CSS 6hrs */
+</style>
+

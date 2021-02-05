@@ -1,0 +1,95 @@
+{% extends 'nav_buttons_thin.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for( 'static', filename='css_course_4.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+<h2>css course 4 - <a href='https://youtu.be/1Rs2ND1ryYc'>upto 4h44min</a></h2>
+<a href='https://css-tricks.com/snippets/css/a-guide-to-flexbox/'>Nice Visual Reminder</a> - <a href='https://tobiasahlin.com/blog/common-flexbox-patterns/'>Common patterns</a><br>
+FLEX BOX - NO WRAP - D shrink 5, C grow 5, B grow 0 (not growable = default), A shrink 0 (not shrinkable - default 1). The point where all boxes are same width = basis setting.
+<div class='container'>
+    <!--style order: place - chooses placing order-->
+    
+    <!--flex: grow shrink basis - see 4h-4h3m from 3h49-->
+    
+    <!--grow & shrink control the proportion of growth between items-->
+    <!--basis - width - force reformat if not enough space IF flex-wrap: wrap else -->
+    <!--basis is the width at which the grow / shrink constraint kicks in-->
+    <div class='container-item' style='order: 4; flex: 1 0 70px;'>A</div>
+    <div class='container-item' style='order: 3; flex: 0 1 70px;'>B</div>
+    <div class='container-item' style='order: 5; flex: 5 1 70px;'>C</div> <!--NOTE 5 in order letter C-->
+    <div class='container-item' style='order: 1; flex: 1 5 70px;'>D</div> <!--NOTE 1 in order letter D-->
+    <div class='container-item' style='order: 2; flex: 1 1 70px;'>E</div>  
+</div>
+FLEX BOX - WRAP - Other setting as above.
+<div class='container-2'> <!--flex-wrap: wrap;-->
+    <div class='container-item' style='order: 4; flex: 1 0 70px;'>A</div>
+    <div class='container-item' style='order: 3; flex: 0 1 70px;'>B</div>
+    <div class='container-item' style='order: 5; flex: 5 1 70px;'>C</div> <!--NOTE 5 in order letter C-->
+    <div class='container-item' style='order: 1; flex: 1 5 70px;'>D</div> <!--NOTE 1 in order letter D-->
+    <div class='container-item' style='order: 2; flex: 1 1 70px;'>E</div>  
+</div>
+FLEX BOX - NO WRAP - <b>align-self:</b> flex-start, center, flex-end (start = top of container end = bottom) 
+<div class='container'>
+    <div class='container-item' style='order: 4; flex: 1 0 70px; align-self: flex-start;'>A</div>
+    <div class='container-item' style='order: 3; flex: 0 1 70px; align-self: center;'>B</div>
+    <div class='container-item' style='order: 5; flex: 5 1 70px; align-self: flex-end;'>C</div> <!--NOTE 5 in order letter C-->
+    <div class='container-item' style='order: 1; flex: 1 5 70px; align-self: flex-end;'>D</div> <!--NOTE 1 in order letter D-->
+    <div class='container-item' style='order: 2; flex: 1 1 70px; align-self: flex-start;'>E</div>  
+</div>
+GRID BOX
+<div class='grid-container'>
+    <div class='grid-item'>1</div>
+    <div class='grid-item'>2</div>
+    <div class='grid-item'>3</div>
+    <div class='grid-item'>4</div>
+    <div class='grid-item'>5</div>
+    <div class='grid-item'>1</div>
+    <div class='grid-item'>2</div>
+    <div class='grid-item'>3</div>
+    <div class='grid-item'>4</div>
+    <div class='grid-item'>5</div>        
+    <div class='grid-item'>4</div>
+    <div class='grid-item'>5</div>
+    <div class='grid-item'>1</div>
+    <div class='grid-item'>2</div>
+    <div class='grid-item'>3</div>
+    <div class='grid-item'>4</div>
+    <div class='grid-item'>5</div>
+</div>
+
+<div class='grid-movie-card'>
+    <div class='m_poster'><image src="/static/covers/The_Art_of_Self-Defense.jpeg"></image></div>
+    <div class='m-title'>Resurection <span id='m-year'>(2023) <span id='m-runtime'>2h32m</span></div>
+    <div class='m-rating'>8.9</div>
+    <div class='m-synop'>Tessa has everything to lose. Hardin has nothing to lose. - except her. After We Collided - Life will never be the same. After a tumultuous beginning to their relationship, Tessa and Hardin were on the path to making things work. Tessa knew Hardin could be cruel, but when a bombshell revelation is dropped about the origins of their relationship - and Hardin's mysterious past - Tessa is beside herself. Hardin will always be - Hardin. But is he really the deep, thoughtful guy Tessa fell madly in love with despite his angry exterior - or has he been a stranger all along? She wishes she could walk away. It's just not that easy. Hardin knows he made a mistake, possibly the biggest one of his life. He's not going down without a fight. But can he change? Will he change - for love? Yes, yes he will.</div>
+    <div class='m-cast'>Craig Bierko, Armin Mueller-Stahl, Gretchen Mol, Vincent D'Onofrio, Dennis Haysbert, Steven Schub, Jeremy Roberts, Rif Hutton, Leon Rippy, Janet MacLachlan, Brad William Henke</div>
+    <div class='m-genre' id='id_genre'><button>Thriller</button><button>Sci-Fi</button><button>Mystery</button></div>
+    <div class='m_control'>
+        <button id='m-bt-rate'>RATE</button>
+        <button id='m-bt-seen'>SEEN</button>
+        <button id='m-bt-short'>+List</button>
+        <button id='m-bt-play'>PLAY</button>
+    </div>
+</div>
+<br>
+<div class='grid-movie-card'>
+</div>
+
+{% endblock %}
+
+
+<!--<div class='container-item'>G</div>
+<div class='container-item'>H</div>
+<div class='container-item'>I</div>
+<div class='container-item'>J</div>
+<div class='container-item'>K</div>-->
+<!--
+    <div class='container-item' style='order: 4; flex: 1 1 70px;'>A</div>
+    <div class='container-item' style='order: 3; flex: 1 1 70px;'>B</div>
+    <div class='container-item' style='order: 5; flex: 5 1 70px;'>C</div> 
+    <div class='container-item' style='order: 1; flex: 1 5 70px;'>D</div> 
+    <div class='container-item' style='order: 2; flex: 1 1 70px;'>E</div>  -->
