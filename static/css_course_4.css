@@ -81,12 +81,13 @@
         outline: solid 1px;
     }
 
-    /* GRID container - MOVIE CARD - - - - - - - - - - - - - - - - - - - - GRID */
+    /* GRID container - MOVIE CARD - - - - - - - - - - - - - - - - - - - - GRID naive */
     .grid-movie-card {
         /* 980x800 each card 14x6 ~ 1-15x1-7 - 70x70 */
+        background-color: #000000;
+        padding: 2px;
         font-family: arial, sans-serif;
         font-size: 0.8em;        
-        background-color: #f7f2ff;
         margin: 5px;
         height: 430px;
         display: grid;                      /* select GRID BOX functionality */
@@ -98,14 +99,11 @@
         
     }
     
-    .m_poster {
-        display: inline-flex;
+    .m-poster {
         background-color: #000000;
         padding: 5px;
         /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
         grid-area: 1 / 1 /  9 / 5;            /*3wx6h - block 70px*/
-        justify-content: center;    /* FLEX-HORIZ    center, space-between etc */
-        align-items: center;        /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
     }
     
     .m-title {                        /*contains , .m-year, .m-runtime, .m-rating */
@@ -142,11 +140,78 @@
         /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
         grid-area: 7 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
     }
-    .m_control {
+    .m-control {
         background-color: #AAFFFF;
         /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
         grid-area: 8 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */        
     }
+    
+    /* GRID container - MOVIE CARD - - - - - - - - - - - - - - - - - - - - GRID improved */
+    .m1-poster {
+        display: inline-flex;
+        background-color: #000000;
+        padding: 5px;
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 1 / 1 /  9 / 5;            /*3wx6h - block 70px*/
+        justify-content: center;    /* FLEX-HORIZ    center, space-between etc */
+        align-items: center;        /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
+    }
+    .m1-img-poster {
+        height: 100%;
+        width: auto;
+    }
+    
+    #m1-ink { color: #f7fdff; background-color: #000000;}
+    .m1-title {                        /*contains , .m1-year, .m1-runtime, .m1-rating */
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 1 / 5 /  2 / 14;            /* grid  width - image width, 1 high */
+        font-size: 3em;        
+    }
+    .m1-rating {                        
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 1 / 14 /  2 / 15;              /* TRHC */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3em;   
+    }    
+    .m1-title, .m1-year, .m1-runtime, .m1-rating { /* set large font */
+        display: flex;
+        align-items: center;
+    }
+    
+    .m1-synop, .m1-cast {
+        /* make cast buttons so can guide choices - text for now */
+        font-size: 1.7em;
+        /* grid  width - image, 1*/        
+    }
+    .m1-synop {
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 2 / 5 / span 4 / span 10;            /* under title */
+    }
+    .m1-cast {
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 6 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
+    }
+    .m1-genre {
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 7 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
+        display: flex;
+        align-items: center;        
+    }
+    .m1-control {
+        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+        grid-area: 8 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    .m1-genre-bt, .m1-control-bt {
+        font-size: 1.7em;
+        height: 80%;
+        margin: 0 0.2vw;
+    }
+
 
     /* maintenance & development nightmare - look into CSS vars - https://www.w3schools.com/css/css3_variables.asp*/
 
