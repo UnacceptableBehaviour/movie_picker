@@ -29,6 +29,9 @@
       background-color: #A89100;        
     }
     
+    /* TODO - add tool tip (https://www.w3schools.com/css/css_pseudo_classes.asp) using a tag & hover */
+    /* add a few more example from this list https://www.w3schools.com/css/css_pseudo_classes.asp */
+    
     /* elements of class(.) = div-2 */
     .div-2 {
       height: 80px;

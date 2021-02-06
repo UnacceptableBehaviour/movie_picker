@@ -1,0 +1,85 @@
+{% extends 'nav_buttons_thin.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for( 'static', filename='gallery_grid.css') }}">
+
+<!--TODO REMOVE temporaritly here from nav_buttons thin-->
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
+
+
+<!--<script src="https://use.fontawesome.com/releases/v5.7.0/js/all.js"></script>-->
+{% endblock %}
+
+
+{% block content %}
+
+<h5>offline recipe gallery - add discard button</h5>
+
+    {% for movie_info in movies %}
+    <div class='grid-movie-card' id='m1-ink'>
+        <div class='m1-poster'><image class='m1-img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>
+        <div class='m1-title'>{{ movie_info['title'] }}<span id='m1-year'>&nbsp({{ movie_info['year'] }}) <span id='m1-runtime'> 2h 32m </span></div>
+        <div class='m1-rating'>{{ movie_info['rating'] }}</div>
+        <div class='m1-synop'>{{ movie_info['synopsis'] }}</div>
+        <div class='m1-cast'>Cast:</div>
+        <div class='m1-genre' id='id_genre'>
+            {% for genre in movie_info['genres'] %}
+                <button class='m1-genre-bt bt_{{genre}}'>{{genre}}</button>
+            {% endfor %} 
+        </div>
+        <div class='m1-control'>
+            <button class='m1-control-bt' id='m1-bt-rate'>RATE</button>
+            <button class='m1-control-bt' id='m1-bt-seen'>SEEN</button>
+            <button class='m1-control-bt' id='m1-bt-short'>+List</button>
+            <button class='m1-control-bt' id='m1-bt-play'>PLAY</button>
+        </div>
+    </div>
+    {% endfor %}
+
+
+{% endblock %}
+
+<!--
+#   "runtime_hm": "1h40m",
+#   "seen": false,
+#   "fav": false,
+#   "rating": 7.1,
+#   "genres": ["Mystery", "Sci-Fi", "Thriller"],
+#   "year": "1999",
+#   "cast": ["Craig Bierko","Armin Mueller-Stahl", "Gretchen Mol", "Vincent D'Onofrio", "Dennis Haysbert", "Steven Schub",
+#            "Jeremy Roberts", "Rif Hutton","Leon Rippy", "Janet MacLachlan", "Brad William Henke", "Burt Bulos",
+#            "Venessia Valentino", "Howard S. Miller","Tia Texada", "Shiri Appleby", "Bob Clendenin"],
+
+# EG movie:
+# <class 'movie_info_disk.MMdia'>.movie_data
+# { "id": "0139809",
+#   "title": "The Thirteenth Floor",
+#   "synopsis": "Computer scientist Hannon Fuller has discovered something extremely important. He's about to tell the
+#               discovery to his colleague, Douglas Hall, but knowing someone is after him, the old man leaves a letter in the
+#               computer generated parallel world his company has created (which looks like the 30's with seemingly real people
+#                                                                          with real emotions). Fuller is murdered in our real
+#               world the same night, and his colleague is suspected. Douglas discovers a bloody shirt in his bathroom and he
+#               cannot recall what he was doing the night Fuller was murdered. He logs into the system in order to find the
+#               letter, but has to confront the unexpected. The truth is harsher than he could ever imagine...::Danny
+#               Rosenbluth",
+#   "year": "1999",
+#   "cast": ["Craig Bierko","Armin Mueller-Stahl", "Gretchen Mol", "Vincent D'Onofrio", "Dennis Haysbert", "Steven Schub",
+#            "Jeremy Roberts", "Rif Hutton","Leon Rippy", "Janet MacLachlan", "Brad William Henke", "Burt Bulos",
+#            "Venessia Valentino", "Howard S. Miller","Tia Texada", "Shiri Appleby", "Bob Clendenin"],
+#   "runtime_m": "100",
+#   "runtime_hm": "1h40m",
+#   "rating": 7.1,
+#   "genres": ["Mystery", "Sci-Fi", "Thriller"],
+#   "kind": "movie",
+#   "seen": false,
+#   "fav": false,
+#   "image_url": "https://m.media-amazon.com/images/M/MV5BODYxZTZlZTgtNTM5MC00N2RhLTg3MjUtNGVkMDJjMGY3YzA5L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX101_CR0,0,101,150_.jpg",
+#   "hires_image": null,
+#   "file_path": "/Volumes/time_box_2018/movies/The Thirteenth Floor (1999) [1080p]/The.Thirteenth.Floor.1999.1080p.BluRay.x264.YIFY.mp4",
+#   "file_stats": null,
+#   "file_name": null,
+#   "file_title": "The Thirteenth Floor",
+#   "when_added": null,
+#   "movie_data_loaded": true}
+-->
