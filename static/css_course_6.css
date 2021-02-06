@@ -20,7 +20,7 @@
 
 
     .submit-button {
-      margin: 20px 10px;
+      margin: 40px 40px;
       padding: 10px 15px;
       border: none;
       text-decoration: none;
@@ -42,14 +42,53 @@
       -moz-transition: background, padding 200ms ease-in-out;    /* firefox */
       -o-transition: background, padding 200ms ease-in-out;      /* opera */
       
+      /*transform: translate(50px, 30px);   /* apply changes to x,y co-ords */
       /*transform: matrix(1, 0.45, 0.45, 1, 100, 50);*/
     }
+    
+    .s-button-egs {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    
+    .bscale {
+      transform: scale(2.5);      /* scale element x 2.5 - Woah - SUBMIT!!!!! Bloody hell! */
+    }
+    .brotate {
+      transform: rotate(-45deg);    /* rotat 45 degree anti clockwise */
+    }
+    
+    .bskew-x {
+      transform: skewX(45deg)
+    }
+
+    .bskew-y {
+      transform: skewY(45deg)
+    }
+    
+    /* matrix( scaleX(), skewY(), skewX(), scaleY(), translateX(), translateY() ) */
+    .bmatrix-1 {
+      /* lean forward at the top - attempt to */
+      /*               ( sCx, sKy, sKx, sC, transX, transY ) */
+      transform: matrix( 1.5, 0.45, 0.45, 1.5, 0,0) ;   /* 0.45 = 45deg */
+    }
+    
+    .bmatrix-2 {
+      /* lean forward at the top - attempt to */
+      /*               ( sCx, sKy, sKx, sC, transX, transY ) */
+      transform: matrix( 1.25, 0.45, -0.45, 1.75, 0, 0) ;   /* 0.45 = 45deg */
+    }
+
+    .bmatrix-3 {
+      /* lean forward at the top - attempt to */
+      /*               ( sCx, sKy, sKx, sC, transX, transY ) */
+      transform: matrix( 1, 0.90, -0.90, 1, 0, 0) ;   /* easier to use rotate no? */
+    }    
     
     .submit-button:hover {
       color: yellow;                       /* change text color */
       background: rgb(47, 87, 55);          /* change button color */
-      padding: 20px 30px;                 /* change button size */
-      
+      padding: 20px 30px;                 /* change button size */            
     }
         
     /* upto ??hmin - https://youtu.be/1Rs2ND1ryYc CSS 6hrs */
