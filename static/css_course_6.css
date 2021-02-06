@@ -1,5 +1,56 @@
 <style>
     
+    body {
+      background: linear-gradient(to bottom, rgb(204, 229, 255), rgba(204, 229, 255, 0.4));
+      font-size: 1.15em;
+      text-align: justify;
+      font-family: "Lato", sans-serif;
+    }
+
+    input, textarea {
+      display: block;
+      margin: 10px;
+    }
+    
+    /* boiler plate to start */
+    .subtitle {
+      color: rgb(200, 148, 30);
+      font-family: "Sarabun", sans-serif;
+    }
+
+
+    .submit-button {
+      margin: 20px 10px;
+      padding: 10px 15px;
+      border: none;
+      text-decoration: none;
+      font-family: "Lato", sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      color: white;
+      background: rgb(89, 150, 255);
+      /*          property   length transistion  profile delay*/
+      /*transition: background 2s ease-in-out 1s;        /* animation of a property */
+      /*transition: background 200ms ease-in-out 300ms;    /* speed it up */
+      /* transistion types: ease, linear, ease-in-out */
+      
+      /* add extra attribute w/ comma */
+      transition: background, padding 200ms ease-in-out; /* 50ms;    /* speed it up */
+                                                            
+                                                                 /* support for legacy / different  browsers*/
+      -webkit-transition: background, padding 200ms ease-in-out; /* chrome & safari */
+      -moz-transition: background, padding 200ms ease-in-out;    /* firefox */
+      -o-transition: background, padding 200ms ease-in-out;      /* opera */
+      
+      /*transform: matrix(1, 0.45, 0.45, 1, 100, 50);*/
+    }
+    
+    .submit-button:hover {
+      color: yellow;                       /* change text color */
+      background: rgb(47, 87, 55);          /* change button color */
+      padding: 20px 30px;                 /* change button size */
+      
+    }
         
     /* upto ??hmin - https://youtu.be/1Rs2ND1ryYc CSS 6hrs */
 </style>
