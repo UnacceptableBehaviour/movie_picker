@@ -13,6 +13,7 @@
 <!--maybe do https://www.youtube.com/watch?v=XXDOUuzzUOY&t=16s&ab_channel=ThuNghiem too!-->
 
 <h2><a href='#pancake'>Pancake Stack 0</a></h2>
+<h2><a href='#fr-auto'>Difference between 'fr' & 'auto'</a></h2>
 <h2><a href='#twelve-col-grid'>Simple 12 Column Grid Layout </a></h2>
 <h2><a href='#grid-templates'>Responsive Layout with & without grid-template-areas</a></h2>
 <h2><a href='#no-media-query'>Responsive Layout WITHOUT? Media Query</a></h2>
@@ -20,131 +21,91 @@
 
 
 
-<div class='item_css' id='pancake'>Pancake Stack</div>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
-<br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
+<div class='item' id='pancake'>Pancake Stack</div>
 
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
+  <div class="task-1 container">
+    <header class="item">header</header>
 
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
-<br>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
-<br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
+    <main class="item">main</main>
 
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
+    <footer class="item">footer</footer>
+  </div>
 
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
-<br>
-<div class='item_css' id='twelve-col-grid'>Simple 12 Column Grid Layout </div>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
-<br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
 
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
 
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
 <br>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
 <br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
+<br>
+<div class='item' id='fr-auto'>Difference between 'fr' & 'auto' - <b>height: 600px</b></div>
+<div class="item wrapper">
+  <div>col<br>auto<br><br>row<br>110px</div>
+  <div>col<br>auto</div>
+  <div>col<br>1fr</div>
+  <div>col<br>1fr</div>
+  <div>row<br>auto</div>
+  <div>bla</div>
+  <div>bla</div>
+  <div>bla</div>
+  <div><b>row<br>1fr</b></div>
+  <div>bla</div>
+  <div>bla</div>
+  <div>bla</div>
+  <div><b>row<br>4fr</b><br><br>thats<br>4x<br>1fr</div>
+  <div>bla</div>
+  <div>bla</div>
+  <div><b>auto</b> fits content<br><br><b>fr</b> is a fraction 1+4 = 5 (remaining width <br>or height)</div>
+</div>
 
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
-
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
 <br>
-<div class='item_css' id='grid-templates'>Responsive Layout with & without grid-template-areas</div>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
 <br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
-
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
-
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
 <br>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
+<div class='item' id='twelve-col-grid'>Simple 12 Column Grid Layout </div>
 <br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
+only 5 columns when 12 specified?
+<div class="task-2 container">
+  <div class="item item-1">1</div>
 
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
-
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
+  <div class="item item-2">2</div>
+  <div class="item item-3">3</div>
+</div>
+    
 <br>
-<div class='item_css' id='no-media-query'>Responsive Layout WITHOUT? Media Query</div>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
 <br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
-
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
-
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
 <br>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
-<br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
+<div class='item' id='grid-templates'>Responsive Layout with & without grid-template-areas</div>
 
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
+<div class="task-3-1 container">
+  <div class="item header">header</div>
 
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
-<br>
-<div class='item_css' id='twelve-grid'>12 x 12 Chess Grid</div>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
-<br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
+  <div class="item navigation">navigation</div>
 
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
+  <div class="item main">main</div>
 
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
-<br>
-150g duck butter [793_crispy_confit_duck_and_toast]<br>
-200g wild garlic (blanched and refreshed)<br>
-1/2 lime (juiced)<br>
-<br>
-Blanch the wild garlic for 10 minutes tops, then drop it into cold water to stop it cooking and preserve the colour.
-Probably best to do all the wild garlic at the same time and keep a third back for the salad!!
+  <div class="item sidebar">sidebar</div>
 
-Chop it up so it doesn't cause problems for the stick blender. Blend the leaves and lime juice in a high side jug
+  <div class="item ads">ads</div>
 
-Once you have a relatively smooth paste add the butter in thirds until you have a loose puree.
-Check it for seasoning, adjusting the salt and lime as necessary, then put it in the fridge to set
+  <div class="item footer">footer</div>
+</div>
+
 <br>
+
+<br>
+<br>
+<br>
+<div class='item' id='no-media-query'>Responsive Layout WITHOUT? Media Query</div>
+
+<br>
+
+
+<br>
+<br>
+<br>
+<div class='item' id='twelve-grid'>12 x 12 Chess Grid</div>
+
+<br>
+
+
 
 {% endblock %}
 

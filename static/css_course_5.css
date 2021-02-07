@@ -3,41 +3,249 @@
   /* https://github.com/devchallenges/CSSGrid-Tutorial - boiler plate for exersize*/
   /* YT vid: https://youtu.be/CC2HkBZuReY */
   /* what are fr units? */
+  /* READ THIS https://www.rawkblog.com/2018/03/css-grid-understanding-grid-gap-and-fr-vs-auto-units/ */
+  /* vocab
+  GRIDS are made up of
+  ROWS &
+  COLUMNS that are separated by
+  GRID LINES
+  rows & cols are also knwon as
+  TRACKS
+  EXPLICIT TRACKS are deifined by user
+  IMPLICIT TRACKS are put in automatically by grid
+  intersection of two track creates a
+  GRID CELL
+  a grid starts w/ a paernt containers and 
+  effects elements ONE LEVEL DOWN
+  INCOMPATIBLE:
+    display: flex and display: grid
+    element cannot be a grid parent and also display: inline-block
+  
+  
+  */
   /* can grid expand to accomodate content - EG synopsis */
   /* Quirks of CSS absolute posistioning: https://webdesign.tutsplus.com/tutorials/the-quirks-of-css-grid-and-absolute-positioning--cms-31437*/
 
-  body {
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap");
+
+/* SET UP */
+
+* {
+  box-sizing: border-box;
+}
+
+ul {
+  padding-left: 1.5rem;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  color: #333;
+  background-color: snow;
+  margin: 0 auto;
+  max-width: 1000px;
+}
+
+.item {
+  padding: 8px;
+  background-color: white;
+  border: 4px solid tomato;
+  border-radius: 6px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+}
+#twelve-col-grid, #pancake, #grid-templates, #no-media-query, #twelve-grid, #fr-auto {
+  background-color: #ffb49c;
+}
+
+.height-50 {
+  /* height: 300px; /*height: 50vh;*/
+  height: 50vh;
+}
+
+/* Task 1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.task-1.container {
+  display: grid;
+  height: 600px; /*height: 100vh;*/
+  grid-template-rows: auto 1fr auto;
+}
+
+/* Task 1a - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/*.wrapper {*/
+.item.wrapper {
+  display: grid;
+  height: 600px;
+    
+  grid-template-columns: auto auto 1fr 1fr; 
+  grid-template-rows: 110px auto 1fr 4fr;
+  /*
+   *
+  */
+}
+.wrapper > div {
+  border: 2px solid #ffec99;
+  border-radius: 5px;
+  background-color: #fff9db;
+  padding: 1em;
+}
+
+
+
+
+/* Task 2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/* TODO - something wrong here grid 12 wide specified but grid accomodated the .item-1 .item-2 width no more!?  */ 
+.task-2.container {
+  display: grid;
+  height: 600px;
+  grid-template-column: repeat(12, 1fr);
+  /* make 12 columns of same width */
+  align-items: center;
+  
+}
+
+.task-2 .item-1 {
+  /*grid-column-start:2;*/
+  /*grid-column-end:6;*/
+  /*or*/
+  height: 300px;
+  grid-column: 2 / span 2;
+  background-color: pink;
+}
+.task-2 .item-2 {
+  grid-column: 4 / span 4;
+  height: 300px;
+  background-color: yellow;
+}
+
+/* Task 3.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.task-3-1.container {
+    display: grid;
+    height:  600px;
+    /*grid-template-rows: auto auto 1fr auto 1fr auto;*/ /* 2 equal sized large sections */
+    grid-template-rows: auto auto 1fr auto auto auto;
+    gap: 24px;
+}
+
+@media (min-width: 720px) {
+  .task-3-1.container {
+    gird-template-columns: repeat(12, 1fr)
+    grid-template-rows: auto auto 1fr auto;
+  }
+
+  .task-3-1 .header {
+    grid-column: 1 / span 12;
     background-color: yellow;
   }
 
+  .task-3-1 .navigation {
+    grid-column: 1 / span 12;
+    background-color: yellow;
+  }
 
-  .items {
-    padding: 8px;
-    background-color: white;
-    border: 4px solid tomato;
-    border-radius: 6px;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+  .task-3-1 .main {
+    grid-column: 3 / span 10;
+    background-color: yellow;
   }
-        
-  #pancake{
-    background-color: beige;
+
+  .task-3-1 .sidebar {
+    grid-column: 1 / span 2;
+    grid-row: 3;
   }
-  
-/*  #twelve-col-grid, #pancake, #grid-templates, #no-media-query, #twelve-grid {
-    padding: 8px;
-    background-color: white;
-    border: 4px solid tomato;
-    border-radius: 6px;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);    
+
+  .task-3-1 .ads {
+    grid-column: 1 / span 2;    
+  }
+
+  .task-3-1 .footer {
+    grid-column: 3 / span 10;
+  }
+}
+
+@media (min-width: 1020px) {
+  /*
+  .task-3-1 .header {
+    same so not needed - DELETED
   }*/
 
-  .item_css {
-    padding: 8px;
-    background-color: white;
-    border: 4px solid tomato;
-    border-radius: 6px;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);    
+  .task-3-1 .navigation {
+    grid-column: 3 / span 8;
   }
+
+  .task-3-1 .main {
+    grid-column: 3 / span 8;
+  }
+
+  .task-3-1 .sidebar {    
+    /*grid-row: 2 / 4;*/ /* same as follows */
+    grid-row: 2 / span 2;
+  }
+
+  .task-3-1 .ads {
+    grid-column: 11 / span 2;
+    grid-row: 2 / span 2;
+  }
+
+  .task-3-1 .footer {
+    grid-column: 1 / span 12;    
+  }
+}
+
+
+
+/* Task 3.2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.task-3-2.container {
+}
+
+.task-3-2 .header {
+}
+
+.task-3-2 .navigation {
+}
+
+.task-3-2 .ads {
+}
+
+.task-3-2 .sidebar {
+}
+
+.task-3-2 .main {
+}
+
+.task-3-2 .footer {
+}
+
+@media (min-width: 720px) {
+}
+
+@media (min-width: 1020px) {
+}
+
+/* Task 4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.task-4.container {
+}
+
+.task-4 .item-5 {
+}
+
+/* Task 5 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.task-5.container {
+}
+
+.task-5 .item-1 {
+}
+
+.task-5 .item-2 {
+}
+
+.task-5 .item-3 {
+}
+
+.task-5 .item-4 {
+}
   
 </style>
 
