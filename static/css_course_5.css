@@ -1,13 +1,43 @@
 <style>
-    /* */
-    /* https://github.com/devchallenges/CSSGrid-Tutorial - boiler plate for exersize*/
-    /* YT vid: https://youtu.be/CC2HkBZuReY */
-    /* what are fr units? */
-    /* can grid expand to accomodate content - EG synopsis */
-    /* Quirks of CSS absolute posistioning: https://webdesign.tutsplus.com/tutorials/the-quirks-of-css-grid-and-absolute-positioning--cms-31437*/
+  /* */
+  /* https://github.com/devchallenges/CSSGrid-Tutorial - boiler plate for exersize*/
+  /* YT vid: https://youtu.be/CC2HkBZuReY */
+  /* what are fr units? */
+  /* can grid expand to accomodate content - EG synopsis */
+  /* Quirks of CSS absolute posistioning: https://webdesign.tutsplus.com/tutorials/the-quirks-of-css-grid-and-absolute-positioning--cms-31437*/
+
+  body {
+    background-color: yellow;
+  }
 
 
+  .items {
+    padding: 8px;
+    background-color: white;
+    border: 4px solid tomato;
+    border-radius: 6px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+  }
         
-    /* upto ??hmin - https://youtu.be/1Rs2ND1ryYc CSS 6hrs */
+  #pancake{
+    background-color: beige;
+  }
+  
+/*  #twelve-col-grid, #pancake, #grid-templates, #no-media-query, #twelve-grid {
+    padding: 8px;
+    background-color: white;
+    border: 4px solid tomato;
+    border-radius: 6px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);    
+  }*/
+
+  .item_css {
+    padding: 8px;
+    background-color: white;
+    border: 4px solid tomato;
+    border-radius: 6px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);    
+  }
+  
 </style>
 
