@@ -1,25 +1,30 @@
 <style>
   /* CSS selectot reference here */
-  /* https://www.w3schools.com/cssref/css_selectors.asp */    
+  /* https://www.w3schools.com/cssref/css_selectors.asp */
+  
+  /* notes on supporting various devices */
+  /* https://stackoverflow.com/questions/13550541/media-min-width-max-width */
+  /* for printability @media print{} */
     
-  /* */
+  /* GRID CSS - https://youtu.be/CC2HkBZuReY */
   /* https://github.com/devchallenges/CSSGrid-Tutorial - boiler plate for exersize*/
-  /* YT vid: https://youtu.be/CC2HkBZuReY */
   /* what are fr units? */
+  /* See Difference between 'fr' & 'auto' section
+     - auto fits content - fr (fraction) fits container */
   /* READ THIS https://www.rawkblog.com/2018/03/css-grid-understanding-grid-gap-and-fr-vs-auto-units/ */
-  /* See Difference between 'fr' & 'auto' section - auto fits content - fr (fraction) fits container*/
+  
   /* vocab
   GRIDS are made up of
   ROWS &
   COLUMNS that are separated by
   GRID LINES
-  rows & cols are also knwon as
+  rows & cols are also known as
   TRACKS
   EXPLICIT TRACKS are deifined by user
   IMPLICIT TRACKS are put in automatically by grid
   intersection of two track creates a
   GRID CELL
-  a grid starts w/ a paernt containers and 
+  a grid starts w/ a parent containers and 
   effects elements ONE LEVEL DOWN
   INCOMPATIBLE:
     display: flex and display: grid
@@ -30,13 +35,13 @@
   .element .symbol {}   any DESCENDANTS of class element of type class=symbol
   EG
   <div class="element">
-      <div class="symbol" />    < selected
+      <div class="symbol" />    < SELECTED
   </div>
 
   .element.large .symbol {}
   EG
   <div class="element large">
-      <div class="symbol" />    < selected
+      <div class="symbol" />    < SELECTED
   </div>  
   
   */
@@ -58,7 +63,7 @@ ul {
 body {
   font-family: "Poppins", sans-serif;
   color: #333;
-  background-color: snow;
+  background-color: #DDDDDD;
   margin: 0 auto;
   max-width: 1000px;
 }
@@ -110,8 +115,8 @@ body {
 
 
 /* Task 2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-/* TODO - something wrong here grid 12 wide specified but grid accomodated the .item-1 .item-2 width no more!?  */ 
 .task-2.container {
+  background-color: #f4e8ff;
   display: grid;
   height: 600px;
   grid-template-columns: repeat(12, 1fr);
@@ -140,6 +145,7 @@ body {
 /* Task 3.1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .task-3-1.container {
+    background-color: #fffce8;
     display: grid;
     height:  600px;
     /*grid-template-rows: auto auto 1fr auto 1fr auto;*/ /* 2 equal sized large sections */
@@ -147,6 +153,7 @@ body {
     gap: 24px;
 }
 
+/* media laregr than 719px wide */ /* implies .task-3-1.container covers antything smaller than 720px */
 @media (min-width: 720px) {
   .task-3-1.container {
     gird-template-columns: repeat(12, 1fr);
@@ -184,9 +191,6 @@ body {
   }
 }
 
-/* notes on supporting various devices */
-/* https://stackoverflow.com/questions/13550541/media-min-width-max-width */
-/* for printability @media print{} */
 
 @media (min-width: 1020px) {
   /*
@@ -222,56 +226,129 @@ body {
 /* Task 3.2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .task-3-2.container {
+  display: grid;
+  height: 600px; /*height: 100vh;*/
+  background-color: navajowhite;
+  /*font-family: Poppins, sans-serif;   /* No effect - try diferent fonts */
+  gap: 24px;
+  
+  grid-template-rows: auto auto 1fr auto auto auto;
+  /* NOTE NO **CKING comma between items!*/
+  grid-template-areas: "header"
+    "navigation"
+    "main"
+    "sidebar"
+    "ads"
+    "footer";
 }
 
 .task-3-2 .header {
+  grid-area: header;
 }
 
 .task-3-2 .navigation {
-}
-
-.task-3-2 .ads {
-}
-
-.task-3-2 .sidebar {
+  grid-area: navigation;
 }
 
 .task-3-2 .main {
+  grid-area: main;
+}
+
+.task-3-2 .sidebar {
+  grid-area: sidebar;
+}
+
+.task-3-2 .ads {
+  grid-area: ads;
 }
 
 .task-3-2 .footer {
+  grid-area: footer;
 }
 
 @media (min-width: 720px) {
+  .task-3-2.container {
+    grid-template-rows: auto auto 1fr auto;
+    
+    grid-template-areas:
+      "header header header"
+      "navigation navigation navigation"
+      "sidebar main main"
+      "ads footer footer";
+  }
 }
 
 @media (min-width: 1020px) {
+  .task-3-2.container {
+    grid-template-rows: auto auto 1fr auto;
+    
+    grid-template-areas:
+      "header header header header"
+      "sidebar navigation navigation ads"
+      "sidebar main main ads "
+      "footer footer footer footer";
+  }
 }
 
 /* Task 4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .task-4.container {
+  background-color: lightblue;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  /* minmax(150px, 1fr) min size 150px, max spread out to 1fr */
+  /* appear to behave like felxbox? - comment maybe naive */
+  
+  /* option auto-fill doesn't expand to fill the container */
+  /*grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));*/
 }
 
-.task-4 .item-5 {
+.task-4 .three {
+  /* span 2 columns */
+  /*grid-column-end: span 2;*/
+}
+
+.task-4 .five {
+  grid-column-end: span 2;
 }
 
 /* Task 5 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .task-5.container {
+  background-color: #defff2;
+  display: grid;
+  height:  600px;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(12, 1fr);
 }
 
 .task-5 .item-1 {
+  /*grid-row-start:1;*/
+  grid-row: 1 / span 4;      /* NO COMMA!! / instead!! grid-row: 1, span 4; */
+  grid-column: 1 / span 4;
 }
 
 .task-5 .item-2 {
+  /*grid-row-start:5;*/
+  grid-row: 3 / span 4;
+  grid-column: 3 / span 4;  
 }
 
 .task-5 .item-3 {
+  grid-row: 8 / span 2;
+  grid-column: 8 / span 2;  
 }
 
 .task-5 .item-4 {
+  grid-row: 11 / span 4;
+  grid-column: 3 / span 8;  
 }
+ 
+ 
   
 </style>
+
+/* More on Grid: https://www.rawkblog.com/2018/03/css-grid-understanding-grid-gap-and-fr-vs-auto-units/ */
+/* Moz: Grid Template Ares: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Grid_Template_Areas */
 
