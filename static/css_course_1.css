@@ -1,8 +1,11 @@
 <style>
+    /* CSS selectot reference here */
+    /* https://www.w3schools.com/cssref/css_selectors.asp */    
+    
 
     /* pre bractet is tag selector (name slects tag type . selects class, # selects id) */
 
-    /* elements of tag = span or div */
+    /* elements of tag = span or(,) div */
     span, div {
       padding: 10px;        /* define attibutes - cmmon to both selectors */
       margin-bottom: 5px;
@@ -16,9 +19,10 @@
       background-color: #aec6cf;
     }
 
-    /* CSS precedence: tag, class(.), id(#), inline - lowest to highest */
+    /* CSS precedence: tag, class(.), id(#), inline - LOWEST to HIGHEST */
     /* inline are in the html element */
 
+    /* elements of class(.) = now_block */
     .now_block {
       display: block;  /* individual attibutes */
     }    

@@ -1,9 +1,13 @@
 <style>
+  /* CSS selectot reference here */
+  /* https://www.w3schools.com/cssref/css_selectors.asp */    
+    
   /* */
   /* https://github.com/devchallenges/CSSGrid-Tutorial - boiler plate for exersize*/
   /* YT vid: https://youtu.be/CC2HkBZuReY */
   /* what are fr units? */
   /* READ THIS https://www.rawkblog.com/2018/03/css-grid-understanding-grid-gap-and-fr-vs-auto-units/ */
+  /* See Difference between 'fr' & 'auto' section - auto fits content - fr (fraction) fits container*/
   /* vocab
   GRIDS are made up of
   ROWS &
@@ -21,6 +25,19 @@
     display: flex and display: grid
     element cannot be a grid parent and also display: inline-block
   
+  NOTES SELECTORS - see css1
+  
+  .element .symbol {}   any DESCENDANTS of class element of type class=symbol
+  EG
+  <div class="element">
+      <div class="symbol" />    < selected
+  </div>
+
+  .element.large .symbol {}
+  EG
+  <div class="element large">
+      <div class="symbol" />    < selected
+  </div>  
   
   */
   /* can grid expand to accomodate content - EG synopsis */
@@ -100,7 +117,7 @@ body {
   grid-template-columns: repeat(12, 1fr);
   /*grid-template-rows: 1fr;*/
   /* make 12 columns of same width */
-  column-gap: 12px;
+  column-gap: 12px;         /* gap: for row-gap: & column-gap: */
   align-items: center;
 }
 
@@ -108,9 +125,10 @@ body {
   /*grid-column-start:2;*/
   /*grid-column-end:6;*/
   /*or*/
-  /*height: 300px;*/
-  height: 75%;
   grid-column: 2 / span 4;
+
+  /*height: 300px;*/
+  height: 75%;  
   background-color: pink;
 }
 .task-2 .item-2 {
@@ -165,6 +183,10 @@ body {
     grid-column: 3 / span 10;
   }
 }
+
+/* notes on supporting various devices */
+/* https://stackoverflow.com/questions/13550541/media-min-width-max-width */
+/* for printability @media print{} */
 
 @media (min-width: 1020px) {
   /*

@@ -1,4 +1,11 @@
 <style>
+    /* CSS selectot reference here */
+    /* https://www.w3schools.com/cssref/css_selectors.asp */    
+
+/* notes on supporting various devices */
+/* https://stackoverflow.com/questions/13550541/media-min-width-max-width */
+/* for PRINTABILITY @media print{} ie MENUS & LABELS */
+    
 
     /* Units - absolute, relative ie percentage based */
     /* absolute -  mm, cm - show up that size on screen - aparently*/
@@ -22,6 +29,7 @@
     
     /* font basics: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Fonts */
     /* formatting - menu item */
+    /* Look into @media print{} for PRINTABILITY ie MENUS & LABELS */ 
     .r-menu { text-align: center; background: #fcf8eb; padding: 20px 0px;}
     .men-title {
         font-family: "Arial", sans-serif; /* if no Arial replace with a similarly clean font */
@@ -75,6 +83,10 @@
     font-family: 'Creepster', cursive;
     font-family: 'Darker Grotesque', sans-serif;
     font-family: 'Lato', sans-serif; */
+    
+    /* Downloading and caching font important for PWA ofline mode */
+    /* but can also be imported in the css file - see css5 */
+    /* @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap"); */
 
     .pro {font-family: 'Darker Grotesque', sans-serif; font-size: 1.2em;}
     .support {font-family: 'Lato', sans-serif; font-size: 1.2em;}    

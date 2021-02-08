@@ -1,4 +1,7 @@
 <style>
+    /* CSS selectot reference here */
+    /* https://www.w3schools.com/cssref/css_selectors.asp */    
+    
     /* Keyword value/name of color */
     
     /* pre bracket is tag selector (name selects tag type . selects class, # selects id) */
@@ -49,7 +52,7 @@
     /* see table */
     /* h2 ~ a  would be the same but both items MUST BE IN THE SAME PARENT */
     /* h2 > a  would be the same but a MUST BE a child */
-    /* h2  a  would be the same but a MUST BE a decendent (can be child of child) */
+    /* h2  a  would be the same but a MUST BE a DESCENDENT (can be child of child) */
     
     
     /* CSS precedence: tag, class(.), id(#), inline - lowest to highest */
@@ -89,7 +92,7 @@
     /* https://www.w3schools.com/colors/colors_names.asp */
     
     /* simple table format */
-    table, th, td {                     /* , apply same format to all w/ comma */
+    table, th, td {                     /* (,) apply same format to all w/ comma */
         border: 1px solid black;
         border-collapse: collapse;
         text-align: center;        
@@ -106,7 +109,7 @@
         background-color: pink;
     }
     
-    /* space li decendant pf tr - can be child, child child etc - in subtree */
+    /* (space) tag li DESCENDANT of tag tr - can be child, child child etc - in subtree */
     tr  li {
         background-color: cyan;
     }
