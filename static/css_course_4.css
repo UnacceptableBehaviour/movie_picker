@@ -99,7 +99,7 @@
 
     /* flex: grow   shrink basis */
     /*       ratio  ratio  size      see _4.html near top */
-    /* rc-row-1 */
+    /* - - - rc-row-1 - - - */
     .rc-start, .rc-back30s, .rc-forward30s, .rc-end {
         flex: 2 0 0;    /* these items will grow ratio 2 2 5 2 2*/
     }
@@ -107,20 +107,62 @@
         flex: 5 0 0;                      /* compared to 5 ^ */
     }
     
-    /* rc-row-2 */
+    /* - - - rc-row-2 - - - */
     .rc-back2x, .rc-forward2x {
         flex: content 0 0;  /* flex-grow: content*/
-        flex
     }
     .rc-volume {
         flex: 1 0 0;
     }
     
-    /* rc-row-3 */
+    /* - - - rc-row-3 - - - */
     .rc-s1, .rc-s2 {
         flex: 1 0 0;        /* flex-grow: 1 = 1:1 equal */
     }
-        
+    
+    /* FOR THE VOLUME SLIDER */
+    .rc-item.rc-volume {
+      margin: 0;
+      border: 0;
+      padding: 0;
+      border: 4px solid tomato;
+      border-radius: 6px;
+    }
+    .slidecontainer {
+      width: 99%;
+      height: 88%;
+    }
+    
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 100%;
+      background: #ffd5b0;
+      outline: none;
+      opacity: 0.7;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+    
+    .slider:hover {
+      opacity: 1;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 25px;
+      height: 2.9em;
+      background: #ff861c;
+      cursor: pointer;
+    }
+    
+    .slider::-moz-range-thumb {
+      width: 25px;
+      height: 2.9em;
+      background: #ff861c;
+      cursor: pointer;
+    }    
 
 
     /* GRID container - colums & rows - - - - - - - - - - - - - - - - - - - - GRID */
