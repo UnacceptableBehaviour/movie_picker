@@ -15,28 +15,34 @@
 {% block content %}
 
 <h5>offline recipe gallery - add discard button</h5>
-
     {% for movie_info in movies %}
-    <div class='grid-movie-card' id='m1-ink'>
-        <div class='m1-poster'><image class='m1-img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>
-        <div class='m1-title'>{{ movie_info['title'] }}<span id='m1-year'>&nbsp({{ movie_info['year'] }}) <span id='m1-runtime'> 2h 32m </span></div>
-        <div class='m1-rating'>{{ movie_info['rating'] }}</div>
-        <div class='m1-synop'>{{ movie_info['synopsis'] }}</div>
-        <div class='m1-cast'>Cast:</div>
-        <div class='m1-genre' id='id_genre'>
-            {% for genre in movie_info['genres'] %}
-                <button class='m1-genre-bt bt_{{genre}}'>{{genre}}</button>
-            {% endfor %} 
+    <div class='grid-movie-card-v2' id='ink'>
+        <div class='poster'><image class='img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>        
+        <div class='title'>{{ movie_info['title'] }}<span class='year'>&nbsp({{ movie_info['year']}})</span></div>    
+        <span class='runtime'>{{ movie_info['runtime_hm'] }}</span>
+        <div class='rating'>{{ movie_info['rating'] }}</div>
+        <div class='synop'>{{ movie_info['synopsis'] }}</div>
+        <div class='allcast'>            
+            {% for n in range(7) %}
+                <!--TODO: add more button - or add this to a settings file-->
+                <span class='cast'>{{ movie_info['cast'][n] }}, </span>
+            {% endfor %}
+            <span class='more_cast' id="{{movie_info['id']}}">more...</span>
         </div>
-        <div class='m1-control'>
-            <button class='m1-control-bt' id='m1-bt-rate'>RATE</button>
-            <button class='m1-control-bt' id='m1-bt-seen'>SEEN</button>
-            <button class='m1-control-bt' id='m1-bt-short'>+List</button>
-            <button class='m1-control-bt' id='m1-bt-play'>PLAY</button>
+        <div class='genre' id='id_genre'>          
+            {% for genre in movie_info['genres'] %}
+                <button class='genre-bt bt_{{genre}}'>{{ genre }}</button>
+            {% endfor %}           
+        </div>
+        <div class='control'>
+            <button class='control-bt' id='bt-rate'>RATE</button>
+            <button class='control-bt' id='bt-seen'>SEEN</button>
+            <button class='control-bt' id='bt-short'>+List</button>
+            <button class='control-bt' id='bt-play'>PLAY</button>
         </div>
     </div>
     {% endfor %}
-
+    <br>
 
 {% endblock %}
 
