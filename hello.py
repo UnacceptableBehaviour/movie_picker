@@ -51,10 +51,10 @@ if IPAddr == '192.168.1.13':    # local - osx box
     #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)    
     #media_lib = MMediaLib(REMOTE_LINUX)
     #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/Volumes/Home Directory/MMdia/')
-    #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
+    media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
     
     # local disc - small library - export FLASK_ENV=development    
-    media_lib = MMediaLib(test_mode_library_name)   
+    #media_lib = MMediaLib(test_mode_library_name)   < DOESNT exit & files too small to recreate!
 
 elif IPAddr == '192.168.1.16':  # remote - linux box    
     LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')    
@@ -83,16 +83,11 @@ def db_hello_world():
     headline_py = "movies"
     movies = [] # load jsonfile
     
-    # - - - - - - CSS course - - - - - - -
-    # - - - - - - CSS course - - - - - - -
-    return render_template('css_course_3.html', movies=movies)      # < < < < 
-    # - - - - - - CSS course - - - - - - -
-    # - - - - - - CSS course - - - - - - -
-    
     bad_labels = []
     genres = set()
 
-    for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
+    for count, movie in enumerate(media_lib.sorted_by_year()):
+    #for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
     #for count, movie in enumerate(media_lib.sorted_by_most_recently_added(REVERSE)):        
         print(movie)
         genres.update(movie.info['genres'])
@@ -108,12 +103,70 @@ def db_hello_world():
     for movie in bad_labels:
         print(Path(movie.info['file_path']).name)
     
-    pprint(movies[33])
+    pprint(movies[18])
+    print(" - - - - ")
     print("Genres encountered:")
     pprint(genres)
     print("= = = \n")
     
-    return render_template('gallery.html', movies=movies)
+    #return render_template('gallery.html', movies=movies)
+    return render_template('gallery_grid.html', movies=movies)
+
+@app.route('/play_movie', methods=["GET", "POST"])
+def play_movie():        
+    movie = {'cast': ["George Clooney",
+                    "Natascha McElhone",
+                    "Viola Davis",
+                    "Jeremy Davies",
+                    "Ulrich Tukur",
+                    "John Cho",
+                    "Morgan Rusler",
+                    "Shane Skelton",
+                    "Donna Kimball",
+                    "Michael Ensign",
+                    "Elpidia Carrillo",
+                    "Kent Faulcon",
+                    "Lauren Cohn",
+                    "Tony Clemons",
+                    "Jennie Baek",
+                    "Dale Hawes",
+                    "Annie Morgan",
+                    "Antonio Rochira",
+                    "Jude S. Walko"],
+        'fav': False,
+        'file_name': 'Solaris.2002.BluRay.1080p.x264.AC3-REFLECTIONS.mkv',
+        'file_path': Path('/Volumes/Osx4T/tor/Solaris.2002.BluRay.1080p.x264.AC3-REFLECTIONS/Solaris.2002.BluRay.1080p.x264.AC3-REFLECTIONS.mkv'),
+        #'file_stats': os.stat_result(st_mode=33188, st_ino=221109, st_dev=16777231, st_nlink=1, st_uid=501, st_gid=20, st_size=3105562210, st_atime=1601653994, st_mtime=1598036403, st_ctime=1598036403),
+        'file_title': 'Solaris',
+        'genres': ['Drama', 'Mystery', 'Romance', 'Sci-Fi'],
+        'hires_image': 'Solaris2002poster.jpg',
+        'id': '0307479',
+        'image_url': 'https://m.media-amazon.com/images/M/MV5BNzlkNGE0MmMtMzU4YS00ZDU1LWFhMTktZDRjMGU5MjI1MzRlXkEyXkFqcGdeQXVyNDk3NzU2MTQ@._V1_SY150_CR0,0,101,150_.jpg',
+        'kind': 'movie',
+        'movie_data_loaded': True,
+        'rating': 6.2,
+        'runtime_hm': '1h39m',
+        'runtime_m': '99',
+        'seen': False,
+        'synopsis': 'Psychologist Chris Kelvin flies to a space station circling near '
+                    'the planet Solaris. At the station are scientists who have long '
+                    'been out of touch. Kelvin needs to know what exactly happened at '
+                    'the station, and whether it is possible to continue the '
+                    'scientific study of the planet. Arriving at the station, he '
+                    'learns that most of the crew, and among them his old friend '
+                    'Gibaryan, committed suicide or disappeared, and the two '
+                    'remaining scientists are clearly not in their minds. At night, '
+                    'Kelvin realizes that strange things are really happening at the '
+                    'station: his dead wife appears in his cabin. Kelvin does not '
+                    'believe what is happening and tricks her into a shuttle and '
+                    'sends her into space.',
+        'title': 'Solaris',
+        'when_added': None,
+        'year': '2002'}
+    movie['file_path'] = str(movie['file_path'])
+    movies = [movie]
+    
+    return render_template('play_movie.html', movies=movies)
 
 @app.route('/db_movie_page', methods=["GET", "POST"])
 def db_movie_page():        
@@ -186,7 +239,8 @@ if __name__ == '__main__':
     print("Your Computer IP Address is:" + IPAddr)
     
     if IPAddr == '192.168.1.13':
-        app.run(host='192.168.1.13', port=52001)
+        #app.run(host='192.168.1.13', port=52001)
+        app.run(host='0.0.0.0', port=52001)
     
     elif IPAddr == '192.168.1.16':
         app.run(host='192.168.1.16', port=52001)
@@ -228,7 +282,7 @@ if __name__ == '__main__':
 
 # EG movie:
 # <class 'movie_info_disk.MMdia'>.movie_data
-# {'cast': [<Person id:1165110[http] name:_Chris Hemsworth_>,
+# {'cast': ["Chris Hemsworth",
 #           <Person id:0788335[http] name:_Michael Shannon_>,
 #           <Person id:0671567[http] name:_Michael Pena_>,
 #               .
