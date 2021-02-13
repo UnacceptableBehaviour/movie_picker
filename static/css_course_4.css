@@ -80,15 +80,13 @@
         gap: 4px;   /* space between lines */
     }
     .remote-control .rc-item {
-        background-color: #ffc28c;
+        background-color: #ffedde;
         font-size: 2em;
         padding: 8px;
-        background-color: white;
         border: 4px solid tomato;
         border-radius: 6px;
         /*width: auto; - taken care of by flex-grow / flex:*/
         text-align: center;
-        
     }
     .rc-row-1, .rc-row-2, .rc-row-3 {
         display: flex;
@@ -127,10 +125,11 @@
       padding: 0;
       border: 4px solid tomato;
       border-radius: 6px;
+      background-color: #ffd5b0;
     }
     .slidecontainer {
       width: 99%;
-      height: 88%;
+      height: 90%;
     }
     
     .slider {
@@ -164,6 +163,47 @@
       cursor: pointer;
     }    
 
+    /* GRID container - REMOTE CONTROL EG - colums & rows - - - - - - - - - - - - - - - - - - - - GRID */
+    .remote-control-gd {
+        display: grid;
+        grid-template-columns: repeat(18, 1fr);
+        grid-template-rows: auto auto auto;
+        gap: 2px;
+    }
+    
+    /* same as flex box general button design */
+    .remote-control-gd .rcg-item {   
+        background-color: #ffe1c7;
+        font-size: 2em;
+        padding: 8px;
+        border: 4px solid tomato;
+        border-radius: 6px;
+        text-align: center;
+    }
+    /* FOR THE VOLUME SLIDER */    
+    .rcg-item.rc-volume {
+      margin: 0;
+      border: 0;
+      padding: 0;
+      border: 4px solid tomato;
+      border-radius: 6px;
+      background-color: #ffd5b0;
+    }
+    /* row-1 */
+    .rcg-item.rc-start      {grid-row: 1 / span 1; grid-column:  1 / span 3;}
+    .rcg-item.rc-back30s    {grid-row: 1 / span 1; grid-column:  4 / span 3;}
+    .rcg-item.rc-play       {grid-row: 1 / span 1; grid-column:  7 / span 6;}
+    .rcg-item.rc-forward30s {grid-row: 1 / span 1; grid-column:  13 / span 3;}
+    .rcg-item.rc-end        {grid-row: 1 / span 1; grid-column:  16 / span 3;}
+    /* row-2 */
+    .rcg-item.rc-back2x     {grid-row: 2 / span 1; grid-column:  1 / span 2;}
+    .rcg-item.rc-volume     {grid-row: 2 / span 1; grid-column:  3 / span 14;}
+    .rcg-item.rc-forward2x  {grid-row: 2 / span 1; grid-column:  17 / span 2;}
+    /* row-3 */
+    .rcg-item.rc-s1         {grid-row: 3 / span 1; grid-column:  1 / span 9;}
+    .rcg-item.rc-s2         {grid-row: 3 / span 1; grid-column:  10 / span 9;}
+
+    
 
     /* GRID container - colums & rows - - - - - - - - - - - - - - - - - - - - GRID */
     .grid-container {
