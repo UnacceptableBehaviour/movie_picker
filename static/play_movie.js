@@ -3,12 +3,7 @@ console.log(`RUNNING: ${movie_display_name}`);
 
 // assign movie info to local parameter
 console.log(`JS movie local ${movie['title']} - ${movie['genres']} - inline`); 
-
-// register each remote button to a function thot console parameters to send to server
-
-var btNav2Start, btBack30Sec, btPlay, btFwd30Sec, btNav2End, btRewind2x;
-var btVolume, btForward2x, btSpare1, btSpare2;   
-
+  
 const ST_PAUSED = 10;
 const ST_PLAYING = 20;
 const ST_FF2X = 30;
@@ -17,6 +12,7 @@ const ST_RR2X = 40;
 var Remote = {};
 Remote.state = ST_PAUSED;
 
+// map button id to functions
 var idToFunc = {
   'rcbt-start':   buttonStart,
   'rcbt-bak30s':  buttonBak30s,
@@ -39,15 +35,19 @@ function buttonStart(){
 function buttonBak30s(){
   console.log('func: button REWIND 30 secs');
 }
+
 function buttonPlay(){
   if ((Remote.state === ST_PAUSED) ||
       (Remote.state === ST_FF2X)   ||
       (Remote.state === ST_RR2X))  {
     Remote.state = ST_PLAYING ;
-    console.log('func: button PLAY');    
+    console.log(`func: button PLAY - state:${Remote.state}`);
+    document.getElementById("rcbt-play").innerText = 'PAUSE';
+    
   } else if (Remote.state === ST_PLAYING) {
     Remote.state = ST_PAUSED ;
-    console.log('func: button PAUSED');        
+    console.log(`func: button PAUSED - state:${Remote.state}`);
+    document.getElementById("rcbt-play").innerText = 'PLAY';
   }
 
   // PLAY / PAUSE based on state
@@ -97,60 +97,20 @@ function consoleButton(e){
   idToFunc[e.srcElement.id]();
 }
 
+// register button click events
 document.addEventListener("DOMContentLoaded", function(event) {
-  btNav2Start = document.querySelector('.rc-item.rc-start');  
-  btBack30Sec = document.querySelector('.rc-item.rc-back30s');
-  btPlay      = document.querySelector('.rc-item.rc-play');
-  btFwd30Sec  = document.querySelector('.rc-item.rc-forward30s');
-  btNav2End   = document.querySelector('.rc-item.rc-end');
+  document.querySelector('.rc-item.rc-start').addEventListener('click', consoleButton);
+  document.querySelector('.rc-item.rc-back30s').addEventListener('click', consoleButton);
+  btPlay      = document.querySelector('.rc-item.rc-play').addEventListener('click', consoleButton);
+  btFwd30Sec  = document.querySelector('.rc-item.rc-forward30s').addEventListener('click', consoleButton);;
+  btNav2End   = document.querySelector('.rc-item.rc-end').addEventListener('click', consoleButton);
   
-  btRewind2x  = document.querySelector('.rc-item.rc-back2x');
-  btVolume    = document.querySelector('.rc-item.rc-volume');
-  btForward2x = document.querySelector('.rc-item.rc-forward2x');
+  btRewind2x  = document.querySelector('.rc-item.rc-back2x').addEventListener('click', consoleButton);
+  btVolume    = document.querySelector('.rc-item.rc-volume').addEventListener('click', consoleButton);
+  btForward2x = document.querySelector('.rc-item.rc-forward2x').addEventListener('click', consoleButton);
   
-  btSpare1    = document.querySelector('.rc-item.rc-s1');
-  btSpare2    = document.querySelector('.rc-item.rc-s2');
-
-  btNav2Start.addEventListener('click', consoleButton);
-  btBack30Sec.addEventListener('click', consoleButton);
-  btPlay.addEventListener('click', consoleButton);
-  btFwd30Sec.addEventListener('click', consoleButton);
-  btNav2End.addEventListener('click', consoleButton);
-  
-  btRewind2x.addEventListener('click', consoleButton);
-  btVolume.addEventListener('click', consoleButton);
-  btForward2x.addEventListener('click', consoleButton);
-  
-  btSpare1.addEventListener('click', consoleButton);
-  btSpare2.addEventListener('click', consoleButton);  
+  btSpare1    = document.querySelector('.rc-item.rc-s1').addEventListener('click', consoleButton);
+  btSpare2    = document.querySelector('.rc-item.rc-s2').addEventListener('click', consoleButton);
 });
 
 
-
-
-//switch (button_id){
-//  case 'rcbt-start':
-//    break;
-//  case 'rcbt-bak30s':
-//    break;
-//  case 'rcbt-play':
-//    break;
-//  case 'rcbt-fwd30s':
-//    break;
-//  case 'rcbt-end':
-//    break;
-//  case 'rcbt-bak2x':
-//    break;
-//  case 'rcbt-vol':
-//    break;
-//  case 'rcslid-vol':
-//    break;
-//  case 'rcbt-fwd2x':
-//    break;
-//  case 'rcbt-s1':
-//    break;
-//  case 'rcbt-s2':
-//    break;
-//  default: 
-//    consoleButton.log("ERROR!");
-//}
