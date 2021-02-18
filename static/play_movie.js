@@ -35,9 +35,11 @@ var idToFunc = {
 // ROW 1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function buttonStart(){
   console.log('func: button Back to START');
+  sendCommand('start');
 }
 function buttonBak30s(){
   console.log('func: button REWIND 30 secs');
+  sendCommand('bak30s');
 }
 
 function buttonPlay(){
@@ -47,47 +49,59 @@ function buttonPlay(){
     Remote.state = ST_PLAYING ;
     console.log(`func: button PLAY - state:${Remote.state}`);
     document.getElementById("rcbt-play").innerText = 'PAUSE';
+    sendCommand('play');
     
   } else if (Remote.state === ST_PLAYING) {
     Remote.state = ST_PAUSED ;
     console.log(`func: button PAUSED - state:${Remote.state}`);
     document.getElementById("rcbt-play").innerText = 'PLAY';
+    sendCommand('pause');
   }
-
+  console.log('buttonPlay: movie');
+  console.log(movie);
   // PLAY / PAUSE based on state
   // update state & button ICON
+  
 }
 function buttonFwd30s(){  
   console.log('func: button FORWARD 30 secs');
+  sendCommand('fwd30s');
 }
 function buttonEnd(){
   console.log('func: button Goto END');
+  sendCommand('end');
 }
 
 // ROW 2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function buttonBak2x(){
   Remote.state = ST_RR2X;
   console.log('func: button REWIND 2x');
+  sendCommand('bak2x');
 }
 function buttonVol(){
-  var volume = document.getElementById("rcslid-vol").value;
-  console.log(`func: button VOL -  ${volume}`);
+  Remote.vol = document.getElementById("rcslid-vol").value;
+  console.log(`func: button VOL -  ${Remote.vol}`);
+  sendCommand('vol'); // TODO add slider move event listener
 }
 function sliderVol(){
-  var volume = document.getElementById("rcslid-vol").value;
-  console.log(`func: button VOL slider ${volume}`);
+  Remote.vol = document.getElementById("rcslid-vol").value;
+  console.log(`func: button VOL slider ${Remote.vol}`);
+  sendCommand('vol'); // TODO add slider move event listener
 }
 function buttonFwd2x(){
   Remote.state = ST_FF2X;
   console.log('func: button FORWARD 2x');
+  sendCommand('fwd2x');
 }
 
 // ROW 3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function buttonS1(){
   console.log('func: button S1');
+  sendCommand('s1');
 }
 function buttonS2(){
   console.log('func: button S2');
+  sendCommand('s2');
 }
 
 function consoleButton(e){
@@ -105,16 +119,56 @@ function consoleButton(e){
 document.addEventListener("DOMContentLoaded", function(event) {
   document.querySelector('.rc-item.rc-start').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-back30s').addEventListener('click', consoleButton);
-  btPlay      = document.querySelector('.rc-item.rc-play').addEventListener('click', consoleButton);
-  btFwd30Sec  = document.querySelector('.rc-item.rc-forward30s').addEventListener('click', consoleButton);;
-  btNav2End   = document.querySelector('.rc-item.rc-end').addEventListener('click', consoleButton);
+  document.querySelector('.rc-item.rc-play').addEventListener('click', consoleButton);
+  document.querySelector('.rc-item.rc-forward30s').addEventListener('click', consoleButton);;
+  document.querySelector('.rc-item.rc-end').addEventListener('click', consoleButton);
   
-  btRewind2x  = document.querySelector('.rc-item.rc-back2x').addEventListener('click', consoleButton);
-  btVolume    = document.querySelector('.rc-item.rc-volume').addEventListener('click', consoleButton);
-  btForward2x = document.querySelector('.rc-item.rc-forward2x').addEventListener('click', consoleButton);
+  document.querySelector('.rc-item.rc-back2x').addEventListener('click', consoleButton);
+  document.querySelector('.rc-item.rc-volume').addEventListener('click', consoleButton);
+  document.querySelector('.rc-item.rc-forward2x').addEventListener('click', consoleButton);
+  Remote.vol = document.getElementById("rcslid-vol").value;  
   
-  btSpare1    = document.querySelector('.rc-item.rc-s1').addEventListener('click', consoleButton);
-  btSpare2    = document.querySelector('.rc-item.rc-s2').addEventListener('click', consoleButton);
+  document.querySelector('.rc-item.rc-s1').addEventListener('click', consoleButton);
+  document.querySelector('.rc-item.rc-s2').addEventListener('click', consoleButton);
 });
 
+// S1
+function sendCommand (cmd) {
+  json_cmd = {
+    id: movie.id,
+    path: movie.file_path,
+    vol: Remote.vol,
+    cmd: cmd
+  };
+  console.log(`sendCommand: ${cmd}`);
+  
+  fetch(`${window.origin}/play_movie/${movie.id}`, {
+  //fetch(`/play_movie/${movie.id}`, {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(json_cmd),
+      cache: "no-cache",
+      headers: new Headers({
+        "content-type": "application/json"
+      })
+    })
+    .then(function(response) {
+      if (response.status !== 200) {
+        console.log(`Looks like there was a problem. Status code: ${response.status}`);
+        return;
+      }
+      response.json().then(function(data) {
+        console.log(`sendCommand RX: ${data}`);
+      });
+    })
+    .catch(function(error) {
+      console.log("Fetch error: " + error);
+  });    
+    
+}
+
+// S2
+function getStatus ( route=`/play_movie/${movie.id}` ) {
+  
+}
 

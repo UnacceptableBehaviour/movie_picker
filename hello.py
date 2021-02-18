@@ -1,8 +1,9 @@
 #! /usr/bin/env python
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify, make_response
 app = Flask(__name__)
+
 #        dir        file
 # this causes __init_.py to execute
 from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
@@ -10,6 +11,7 @@ from moviepicker import PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE
 from pathlib import Path
 import re                                                               # regex
 import socket    
+import copy
 
 print(dir())
 
@@ -76,8 +78,20 @@ import inspect
 
 
 # each app.route is an endpoint
-@app.route('/')
+@app.route('/', methods=["GET", "POST"])
 def db_hello_world():
+    if request.method == 'POST':
+        print("db_hello_world: request.method == 'POST'")
+        pprint(request.args)
+        for key in request.args.keys():
+            print(f"{key} - {request.args[key]}")
+        #print(request.form['bt-short'])
+        print(request.form.get('bt-short'))
+    else:
+        print(f"db_hello_world: request.method == {request.method}")
+        pprint(request)
+    print(f"db_hello_world: - - - - - - - - debug")
+    
     test_version = '0.0.0'
     print(f"Vs: {test_version}") 
     headline_py = "movies"
@@ -89,6 +103,7 @@ def db_hello_world():
     for count, movie in enumerate(media_lib.sorted_by_year()):
     #for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
     #for count, movie in enumerate(media_lib.sorted_by_most_recently_added(REVERSE)):        
+        if count >= 10: break
         print(movie)
         genres.update(movie.info['genres'])
         if movie.info['title'] == 'And Then There Were None':
@@ -97,72 +112,44 @@ def db_hello_world():
             if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
             movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
             movies.append(movie.info)
-        #if count >= 10: break  
+        
     
-    print("Incorrectly classified:")
-    for movie in bad_labels:
-        print(Path(movie.info['file_path']).name)
-    
-    pprint(movies[18])
-    print(" - - - - ")
-    print("Genres encountered:")
-    pprint(genres)
-    print("= = = \n")
+    # print("Incorrectly classified:")
+    # for movie in bad_labels:
+    #     print(Path(movie.info['file_path']).name)
+    # 
+    # pprint(movies[9])
+    # print(" - - - - ")
+    # print("Genres encountered:")
+    # pprint(genres)
+    # print("= = = \n")
     
     #return render_template('gallery.html', movies=movies)
     return render_template('gallery_grid.html', movies=movies)
 
-@app.route('/play_movie', methods=["GET", "POST"])
-def play_movie():        
-    movie = {'cast': ["George Clooney",
-                    "Natascha McElhone",
-                    "Viola Davis",
-                    "Jeremy Davies",
-                    "Ulrich Tukur",
-                    "John Cho",
-                    "Morgan Rusler",
-                    "Shane Skelton",
-                    "Donna Kimball",
-                    "Michael Ensign",
-                    "Elpidia Carrillo",
-                    "Kent Faulcon",
-                    "Lauren Cohn",
-                    "Tony Clemons",
-                    "Jennie Baek",
-                    "Dale Hawes",
-                    "Annie Morgan",
-                    "Antonio Rochira",
-                    "Jude S. Walko"],
-        'fav': False,
-        'file_name': 'Solaris.2002.BluRay.1080p.x264.AC3-REFLECTIONS.mkv',
-        'file_path': Path('/Volumes/Osx4T/tor/Solaris.2002.BluRay.1080p.x264.AC3-REFLECTIONS/Solaris.2002.BluRay.1080p.x264.AC3-REFLECTIONS.mkv'),
-        #'file_stats': os.stat_result(st_mode=33188, st_ino=221109, st_dev=16777231, st_nlink=1, st_uid=501, st_gid=20, st_size=3105562210, st_atime=1601653994, st_mtime=1598036403, st_ctime=1598036403),
-        'file_title': 'Solaris',
-        'genres': ['Drama', 'Mystery', 'Romance', 'Sci-Fi'],
-        'hires_image': 'Solaris2002poster.jpg',
-        'id': '0307479',
-        'image_url': 'https://m.media-amazon.com/images/M/MV5BNzlkNGE0MmMtMzU4YS00ZDU1LWFhMTktZDRjMGU5MjI1MzRlXkEyXkFqcGdeQXVyNDk3NzU2MTQ@._V1_SY150_CR0,0,101,150_.jpg',
-        'kind': 'movie',
-        'movie_data_loaded': True,
-        'rating': 6.2,
-        'runtime_hm': '1h39m',
-        'runtime_m': '99',
-        'seen': False,
-        'synopsis': 'Psychologist Chris Kelvin flies to a space station circling near '
-                    'the planet Solaris. At the station are scientists who have long '
-                    'been out of touch. Kelvin needs to know what exactly happened at '
-                    'the station, and whether it is possible to continue the '
-                    'scientific study of the planet. Arriving at the station, he '
-                    'learns that most of the crew, and among them his old friend '
-                    'Gibaryan, committed suicide or disappeared, and the two '
-                    'remaining scientists are clearly not in their minds. At night, '
-                    'Kelvin realizes that strange things are really happening at the '
-                    'station: his dead wife appears in his cabin. Kelvin does not '
-                    'believe what is happening and tricks her into a shuttle and '
-                    'sends her into space.',
-        'title': 'Solaris',
-        'when_added': None,
-        'year': '2002'}
+@app.route('/play_movie/<movie_id>', methods=["GET", "POST"])
+def play_movie(movie_id):
+    
+    # https://pythonise.com/series/learning-flask/flask-and-fetch-api
+    if request.method == 'POST':
+        print("play_movie: request.method == 'POST'")
+        
+        req = request.get_json()
+    
+        print(req)
+    
+        res = make_response(jsonify({"message": "OK"}), 200)
+    
+        return res        
+
+    else:
+        print(f"play_movie: request.method == {request.method}")
+    
+    print(f"play_movie: movie ID:{movie_id}")
+    
+    # copy so as not to change objects in media ilb to strings
+    movie = copy.copy(media_lib.media_with_id(movie_id)) 
+    movie['cast'] = [ str(mv) for mv in movie['cast'] ] 
     movie['file_path'] = str(movie['file_path'])
     movies = [movie]
     

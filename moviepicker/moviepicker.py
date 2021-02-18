@@ -412,9 +412,11 @@ class MMediaLib(Iterable):
 		self._sorted_by_title = []
 		self._sorted_by_rating = []
 		self._sorted_by_most_recently_added = []
+		self._id_to_movie_keys = {}
 		
 		print("MMediaLib: building sorted lists . . .")
 		self.sort_lists()
+		self.build_id_lookup()
 		print(" . . . Done")
 			
 
@@ -453,6 +455,15 @@ class MMediaLib(Iterable):
 			pprint(l)
 			print(f"{lists_names[idx]}- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - E")
 		return lists
+	
+	def build_id_lookup(self):		
+		for media_key in self.media_files.keys():
+			media_id = self.media_files[media_key].info['id']
+			self._id_to_movie_keys[media_id] = media_key
+	
+	def media_with_id(self, media_id):
+		media_key = self._id_to_movie_keys[media_id]
+		return self.media_files[media_key].info
 
 	def rebase_media_DB(self, old_root, new_root):
 		# this needs to be OS independant
@@ -801,7 +812,7 @@ $ cd path
 $ .pe										# alias .pe='. venv/bin/activate'
 $ ./moviepicker/moviepicker.py 				# plug in all disks - will report each DB contents & 
 											# DUPLICATES that appear across discs
-											#
+											
 											# list movies in DB - ldb 
 $ ./moviepicker/moviepicker.py -ldb /Volumes/Osx4T/tor/__media_data2/medialib2.pickle
 
@@ -817,6 +828,8 @@ option
 -u 				udate entries on default target
 -u /path/		udate entries on default target with path
 				NOT IMPLEMENTED - TODO
+				
+-udev	update from local repo movie directory
 
 -ldb /path/medialib2.pickle 	list entries in a pickleDB
 -ldr /path/media 				list potential entries in a target directory ??
@@ -838,7 +851,7 @@ option
 	# print(f"** movie picker main() - new_media_lib: {new_media_lib.media_root} **")
 
 
-
+	
 	# 
 	# 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -867,6 +880,13 @@ option
 	# - querie imdb with None and the closest result is 'And Then There Were None'
 	
 	pprint(sys.argv)
+
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# -udev update dev directory
+	if '-udev' in sys.argv:
+		new_media_lib = MMediaLib(None, Path('/Users/simon/a_syllabus/lang/python/repos/movie_picker/movies'))		
+		new_media_lib.add_directory_to_library()	
+
 	
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# -u dir_name = update searching in directory for media
@@ -904,7 +924,8 @@ option
 			print(f"option -ldb: {db_path}")
 			if db_path.exists():
 				new_media_lib = MMediaLib(db_path)
-				new_media_lib.list_DB_by_attribute()
+				last_movie = new_media_lib.list_DB_by_attribute()
+				pprint(last_movie)
 		except IndexError:
 			print(f"ERROR option -ldb requires a path to check!\n EG: moviepicker.py -ldb /Volumes/media/__media_data2/medialib2.pickle")
 
@@ -949,22 +970,32 @@ option
 				report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]).ljust(20)} and {(str(mmdb.media_root).split('/')[2]).ljust(20)}"
 				duplicates.append(report)
 				print(report)
-
+	
+	import random
+	print("\n\n\nMedia Object\n\n\n:")
+	pprint( random.choice(list(all_media.items())) ) # pprint a randon dict item to look at object
+	
 	print("\n\nDUPLICATES:")
 	for d in duplicates:
 		print(d)
 		
-	print("\n\nUnique movies: {len(all_media)}")
+	print(f"\n\nUnique movies: {len(all_media)}")
 	
 
 	print(f"Available DATABASES:")	
 	# for mmdb in mmdbs:
 	# 	print(f"Lib:{mmdb.media_root} - Movies:{len(mmdb.media_files)}") #		
 	# 	mmdb.list_DB_by_attribute()
-	# 
+	#
+	mmdb_any = None
 	for mmdb in mmdbs:
+		mmdb_any = mmdb
 		print(f"Lib:{mmdb.media_root} - Movies:{len(mmdb.media_files)}") #
-	
+
+	# # test get media byt ID	
+	# print("- - - - - - - - - - - - - - - - - - - - - - - - -  mmdb_any.media_with_id('0076929') - - - - - - - - - - - - - - - - - - - - - - - - - " )
+	# print( mmdb_any.media_with_id('0076929') )
+	# print("- - - - - - - - - - - - - - - - - - - - - - - - -  mmdb_any.media_with_id('0076929') - - - - - - - - - - - - - - - - - - - - - - - - - " )
 	
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
 

@@ -35,10 +35,13 @@
             {% endfor %}           
         </div>
         <div class='control'>
+            <button class='control-bt' id='bt-rate'>NI</button>
             <button class='control-bt' id='bt-rate'>RATE</button>
             <button class='control-bt' id='bt-seen'>SEEN</button>
-            <button class='control-bt' id='bt-short'>+List</button>
-            <button class='control-bt' id='bt-play'>PLAY</button>
+            <form action="" method="POST">            
+                <button class='control-bt' id='bt-short' type='submit' value="{{  movie_info['title']  }}">+List</button>
+                <button class='control-bt' id='bt-play' type="submit"  value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
+            </form>
         </div>
     </div>
     {% endfor %}
