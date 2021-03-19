@@ -14,29 +14,30 @@ from movie_info_disk import MMdia, get_MMdia_lib
 
 import copy
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # helpers
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 PATH_TO_LIB = Path('/Volumes/time_box_2018/movies/')
-PATH_TO_TOR = Path('/Volumes/meep/temp_delete/tor')
+#PATH_TO_TOR = Path('/Volumes/meep/temp_delete/tor') # new TOR /Volumes/Osx4T/tor/
+PATH_TO_TOR = Path('/Volumes/Osx4T/tor/')
 
 def main():
   pass
 
 
 if __name__ == '__main__':
-    
+
     print("LOADING TBOX")
     time_box = copy.deepcopy(MMdia.refresh_media_files_information(PATH_TO_LIB))
     print("TBOX LOADED")
-    
+
     print("LOADING FSTOR")
     fs_tor   = MMdia.refresh_media_files_information(PATH_TO_TOR) # , True) to rebuild lib - SLOOOW
     print("FSTOR LOADED")
-    
+
     removal_list = []
-    
+
     for movie,media in fs_tor['video'].items():
       file_size = round(fs_tor['video'][movie].file_stat.st_size / (1024 * 1024),1)
       if file_size > 400:
@@ -47,9 +48,8 @@ if __name__ == '__main__':
         else:
           print(f"\nunique:{movie} on fs_tor")
           print(f"{file_size}MB")
-    
+
     for m in removal_list:
       print(m)
-      
+
     print(len(removal_list))
-    

@@ -1,17 +1,21 @@
 #! /usr/bin/env python
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 from flask import Flask, render_template, request, jsonify, make_response
 app = Flask(__name__)
 
 #        dir        file
 # this causes __init_.py to execute
 from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
-from moviepicker import PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE_V2_F500,PICKLED_MEDIA_LIB_FILE_REPO, PICKLED_MEDIA_LIB_FILE_OSX4T
+from moviepicker import PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE_V2_F500,PICKLED_MEDIA_LIB_FILE_REPO
+from moviepicker import PICKLED_MEDIA_LIB_FILE_OSX4T, KNOWN_PATHS
 from pathlib import Path
+import random
 import re                                                               # regex
-import socket    
+import socket
 import copy
+import vlc
+media_player = None
 
 print(dir())
 
@@ -23,43 +27,47 @@ print(dir())
 # if MMediaLib.exists(PICKLED_MEDIA_LIB_FILE_V2_F500):
 #     media_lib.join(MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500))
 default_library_name = 'medialib2.pickle'
-volume_checklist = ['/time_box_2018/movies/__media_data2/medialib2.pickle',
- '/Osx4T/tor/__media_data2/medialib2.pickle',
- '/FAITHFUL500/__media_data2/medialib2.pickle']
-test_mode_library_name = Path('/Users/simon/a_syllabus/lang/python/repos/movie_picker/movies/__media_data2/medialib2.pickle')
+
+volume_checklist = KNOWN_PATHS
+test_mode_library_name = Path('/Users/simon/a_syllabus/lang/python/movie_picker/movies/__media_data2/medialib2.pickle')
 
 import platform
 running_os = platform.system()
 # AIX: 'aix', Linux:'linux', Windows: 'win32', Windows/Cygwin: 'cygwin', macOS: 'darwin'
 running_os_release = platform.release()
 
-hostname = socket.gethostname()    
-IPAddr = socket.gethostbyname(hostname)    
-print("Your Computer Name is:" + hostname)    
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+print("Your Computer Name is:" + hostname)
 print("Your Computer IP Address is:" + IPAddr)
 print(f"OS: {running_os} - {running_os_release}")
 
 
 if IPAddr == '192.168.1.13':    # local - osx box
     REMOTE_LINUX = Path('/Volumes/Home Directory/MMdia/__media_data2/medialib2.pickle')
-    
+
     # vcl = []
     # for path in volume_checklist:
     #     full_path = Path('Volumes', path)
-    #     vcl.append(full_path) if full_path.exists()        
+    #     vcl.append(full_path) if full_path.exists()
     # load medialibs & merge TODO
-    
-    #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)
-    #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)    
-    #media_lib = MMediaLib(REMOTE_LINUX)
-    #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/Volumes/Home Directory/MMdia/')
-    media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
-    
-    # local disc - small library - export FLASK_ENV=development    
+
+    for media_path in volume_checklist:
+        if media_path.exists():
+            media_lib = MMediaLib(media_path)
+            #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)
+            #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
+            #media_lib = MMediaLib(REMOTE_LINUX)
+            #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/Volumes/Home Directory/MMdia/')
+            #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
+            if media_path == PICKLED_MEDIA_LIB_FILE_OSX4T:
+                media_lib.rebase_media_DB('/Volumes/meep/temp_delete/','/Volumes/Osx4T/')
+
+    # local disc - small library - export FLASK_ENV=development
     #media_lib = MMediaLib(test_mode_library_name)   < DOESNT exit & files too small to recreate!
 
-elif IPAddr == '192.168.1.16':  # remote - linux box    
-    LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')    
+elif IPAddr == '192.168.1.16':  # remote - linux box
+    LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')
     media_lib = MMediaLib(LOCAL_LINUX)
     media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/home/pi/MMdia/')
 
@@ -91,72 +99,93 @@ def db_hello_world():
         print(f"db_hello_world: request.method == {request.method}")
         pprint(request)
     print(f"db_hello_world: - - - - - - - - debug")
-    
+
     test_version = '0.0.0'
-    print(f"Vs: {test_version}") 
+    print(f"Vs: {test_version}")
     headline_py = "movies"
     movies = [] # load jsonfile
-    
+    all_movies = []
     bad_labels = []
     genres = set()
 
+
     for count, movie in enumerate(media_lib.sorted_by_year()):
     #for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
-    #for count, movie in enumerate(media_lib.sorted_by_most_recently_added(REVERSE)):        
-        if count >= 10: break
-        print(movie)
+    #for count, movie in enumerate(media_lib.sorted_by_most_recently_added(REVERSE)):
+        #if count >= 10: break
+        #print(movie)
         genres.update(movie.info['genres'])
         if movie.info['title'] == 'And Then There Were None':
             bad_labels.append(movie)
-        else:            
+        else:
             if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
             movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
-            movies.append(movie.info)
-        
-    
+            all_movies.append(movie.info)
+
+    # choose a small random set of movies - for quick debug
+    num_of_random_movies = 10
+    for i in range(num_of_random_movies):
+        movies.append(random.choice(all_movies))
+
+
     # print("Incorrectly classified:")
     # for movie in bad_labels:
     #     print(Path(movie.info['file_path']).name)
-    # 
+    #
     # pprint(movies[9])
     # print(" - - - - ")
-    # print("Genres encountered:")
-    # pprint(genres)
-    # print("= = = \n")
-    
+    print("Genres encountered:")
+    print(','.join(genres))
+    print("= = = \n")
+
     #return render_template('gallery.html', movies=movies)
     return render_template('gallery_grid.html', movies=movies)
 
 @app.route('/play_movie/<movie_id>', methods=["GET", "POST"])
 def play_movie(movie_id):
-    
+    global media_player
+
     # https://pythonise.com/series/learning-flask/flask-and-fetch-api
     if request.method == 'POST':
         print("play_movie: request.method == 'POST'")
-        
         req = request.get_json()
-    
         print(req)
-    
+        print('- - - - PLAYING')
+        if media_player != None and Path(req['path']).exists():
+            media_player = vlc.MediaPLayer(req['path'])
+
+        print(f"media_player LOADED?: {type(media_player)} <")
+        print(f"media_player file path: { req['path'] } <")
+        print(f"media_player file exists: { Path(req['path']).exists() } <")
+        #print(f"media_player : { } <")
+
+
+        if req['cmd'] == 'play':
+            media_player.play()
+
+        if req['cmd'] == 'pause':
+            media_player.pause()
+
+
+
         res = make_response(jsonify({"message": "OK"}), 200)
-    
-        return res        
+        return res
 
     else:
         print(f"play_movie: request.method == {request.method}")
-    
+
     print(f"play_movie: movie ID:{movie_id}")
-    
+
     # copy so as not to change objects in media ilb to strings
-    movie = copy.copy(media_lib.media_with_id(movie_id)) 
-    movie['cast'] = [ str(mv) for mv in movie['cast'] ] 
+    movie = copy.copy(media_lib.media_with_id(movie_id))
+    movie['cast'] = [ str(mv) for mv in movie['cast'] ]
     movie['file_path'] = str(movie['file_path'])
     movies = [movie]
-    
+
     return render_template('play_movie.html', movies=movies)
 
 @app.route('/db_movie_page', methods=["GET", "POST"])
-def db_movie_page():        
+def db_movie_page():
     movies = []
     return render_template('index.html', movies=movies)
 
@@ -218,54 +247,54 @@ def buttons_inputs():
 if __name__ == '__main__':
     # setup notes:
     # http://flask.pocoo.org/docs/1.0/config/
-    # export FLASK_ENV=development add to ~/.bash_profile    
+    # export FLASK_ENV=development add to ~/.bash_profile
     #app.run(host='0.0.0.0', port=52001)
-    hostname = socket.gethostname()    
-    IPAddr = socket.gethostbyname(hostname)    
-    print("Your Computer Name is:" + hostname)    
+    hostname = socket.gethostname()
+    print("Your Computer Name is:" + hostname)
+    IPAddr = socket.gethostbyname(hostname)
     print("Your Computer IP Address is:" + IPAddr)
-    
+
     if IPAddr == '192.168.1.13':
         #app.run(host='192.168.1.13', port=52001)
         app.run(host='0.0.0.0', port=52001)
-    
+
     elif IPAddr == '192.168.1.16':
         app.run(host='192.168.1.16', port=52001)
-    
+
     else:
         pprint(IPAddr)
         print("WARNING unknown host . . . bailing")
         sys.exit(0)
-     
+
     # check this forum - VLC remote contol
     # https://forum.videolan.org/viewtopic.php?f=11&t=148606
     # add control interface for post movies select
-        
+
     #
     #
     #
     #  have a look at source code for https://pypi.org/project/black/
     #
     #  Can run as script or module - w/ options
-    # 
+    #
     #  > black {source_file_or_directory}           # To get started right away with sensible defaults
-    # 
+    #
     # > python -m black {source_file_or_directory}  # You can run Black as a package if running it as a script doesn't work:
     #
     #
     #
-    
+
     # media_lib = MMediaLib()
-    # 
+    #
     # ten_movies = ''
-    # for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):        
+    # for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
     #     #print(movie)
     #     #print(movie.as_json)
     #     t = movie.info['title']
     #     y = movie.info['year']
     #     print(f"'{t} ({y} film)',")
     #     if count >= 20: break
-          
+
 
 # EG movie:
 # <class 'movie_info_disk.MMdia'>.movie_data
@@ -301,4 +330,3 @@ if __name__ == '__main__':
 #  'title': '12 Strong',
 #  'when_added': None,
 #  'year': '2018'}
-    
