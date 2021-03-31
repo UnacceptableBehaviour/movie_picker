@@ -8,7 +8,7 @@ idna==2.10
 IMDbPY==2020.9.25
 itsdangerous==1.1.0
 Jinja2==2.11.3
-lxml==4.6.2
+lxml==4.6.3
 MarkupSafe==1.1.1
 pathlib==1.0.1
 python-vlc==3.0.11115
