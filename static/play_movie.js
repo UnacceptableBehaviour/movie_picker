@@ -6,15 +6,15 @@ var movie_display_name='movie odyssey v0.0';
 console.log(`RUNNING: ${movie_display_name}`);
 
 // assign movie info to local parameter
-console.log(`JS movie local ${movie['title']} - ${movie['genres']} - inline`); 
-  
+console.log(`JS movie local ${movie['title']} - ${movie['genres']} - inline`);
+
 const ST_PAUSED = 10;
 const ST_PLAYING = 20;
 const ST_FF2X = 30;
 const ST_RR2X = 40;
 
 var Remote = {};
-Remote.state = ST_PAUSED;
+Remote.state = ST_PLAYING;
 
 // map button id to functions
 var idToFunc = {
@@ -23,12 +23,12 @@ var idToFunc = {
   'rcbt-play':    buttonPlay,
   'rcbt-fwd30s':  buttonFwd30s,
   'rcbt-end':     buttonEnd,
-  
+
   'rcbt-bak2x':   buttonBak2x,
   'rcbt-vol':     buttonVol,
   'rcslid-vol':   sliderVol,
   'rcbt-fwd2x':   buttonFwd2x,
-  
+
   'rcbt-s1':      buttonS1,
   'rcbt-s2':      buttonS2
 }
@@ -50,7 +50,7 @@ function buttonPlay(){
     console.log(`func: button PLAY - state:${Remote.state}`);
     document.getElementById("rcbt-play").innerText = 'PAUSE';
     sendCommand('play');
-    
+
   } else if (Remote.state === ST_PLAYING) {
     Remote.state = ST_PAUSED ;
     console.log(`func: button PAUSED - state:${Remote.state}`);
@@ -61,9 +61,9 @@ function buttonPlay(){
   console.log(movie);
   // PLAY / PAUSE based on state
   // update state & button ICON
-  
+
 }
-function buttonFwd30s(){  
+function buttonFwd30s(){
   console.log('func: button FORWARD 30 secs');
   sendCommand('fwd30s');
 }
@@ -111,7 +111,7 @@ function consoleButton(e){
   console.log(e.srcElement);
   console.log(e.srcElement.classList);
   console.log('> - - - - - - - - - - - - - - - - - - - - - - - - - - - E');
-  
+
   idToFunc[e.srcElement.id]();
 }
 
@@ -122,12 +122,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.querySelector('.rc-item.rc-play').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-forward30s').addEventListener('click', consoleButton);;
   document.querySelector('.rc-item.rc-end').addEventListener('click', consoleButton);
-  
+
   document.querySelector('.rc-item.rc-back2x').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-volume').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-forward2x').addEventListener('click', consoleButton);
-  Remote.vol = document.getElementById("rcslid-vol").value;  
-  
+  Remote.vol = document.getElementById("rcslid-vol").value;
+
   document.querySelector('.rc-item.rc-s1').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-s2').addEventListener('click', consoleButton);
 });
@@ -141,7 +141,7 @@ function sendCommand (cmd) {
     cmd: cmd
   };
   console.log(`sendCommand: ${cmd}`);
-  
+
   fetch(`${window.origin}/play_movie/${movie.id}`, {
   //fetch(`/play_movie/${movie.id}`, {
       method: "POST",
@@ -163,12 +163,11 @@ function sendCommand (cmd) {
     })
     .catch(function(error) {
       console.log("Fetch error: " + error);
-  });    
-    
+  });
+
 }
 
 // S2
 function getStatus ( route=`/play_movie/${movie.id}` ) {
-  
-}
 
+}

@@ -4,6 +4,11 @@
 from flask import Flask, render_template, request, jsonify, make_response
 app = Flask(__name__)
 
+# debug
+from pprint import pprint           # giza a look
+import inspect                      # inspect.getmembers(object[, predicate])
+
+
 #        dir        file
 # this causes __init_.py to execute
 from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
@@ -14,10 +19,56 @@ import random
 import re                                                               # regex
 import socket
 import copy
+
+import sys
+from PyQt5 import QtWidgets, QtGui, QtCore
+
+import subprocess
+from time import sleep
 import vlc
-media_player = None
+
+# for this to work need to start QTApp in separate process and controll it w/ sockets
+# from moviepicker import Player, display_test
+# display_app = QtWidgets.QApplication(sys.argv)
+# media_player = Player()
+# media_player.load_file(file_to_play)
+# display_app.exec_()  # <- crashes python!
+
+# different approach using the web interface
+from moviepicker import vlc_http          #- TODO REMOVE
+print('vlc_http_channel - - - - - - - - - - - S1')
+vlc_http_channel = vlc_http()
+print(f'vlc_http_channel debug: return from clc_http():{type(vlc_http_channel)}')
+# vlc_http_channel.play_pause()
+# vlc_http_channel.seek(5)  #Seek 5 seconds from current position
+# vlc_http_channel.set_volume(100) #Set volume to 100%
+print('vlc_http_channel attributes')
+pprint(vlc_http_channel.get_attributes())
+vlc_http_channel.play_pause()
+print('vlc_http_channel - - - - - - - - - - - E1')
+
+
+from python_vlc_http import HttpVLC
+
+vlc_client = None #HttpVLC('http://localhost:8080', '', 'p1')
+now_playing = ''
+movie_process = None
+
+#
+# fullscreen_status = vlc_client.is_fullscreen()
+#
+# print('vlc_client - - - - - - - - - - - S')
+# print(f"vlc_client: VLC API v:{vlc_client.api_version()}")
+# if(fullscreen_status):
+#    print('VLC is running on fullscreen!')
+# else:
+#    print('VLC is NOT on fullscreen!')
+# print('vlc_client - - - - - - - - - - - E')
+
 
 print(dir())
+
+
 
 # load info if 1st time round
 # media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX)
@@ -36,12 +87,13 @@ running_os = platform.system()
 # AIX: 'aix', Linux:'linux', Windows: 'win32', Windows/Cygwin: 'cygwin', macOS: 'darwin'
 running_os_release = platform.release()
 
-hostname = socket.gethostname()
-IPAddr = socket.gethostbyname(hostname)
-print("Your Computer Name is:" + hostname)
-print("Your Computer IP Address is:" + IPAddr)
-print(f"OS: {running_os} - {running_os_release}")
-
+# hostname = socket.gethostname()
+# print("Your Computer Name is:" + hostname)
+# IPAddr = socket.gethostbyname(hostname)
+# print("Your Computer IP Address is:" + IPAddr)
+# print(f"OS: {running_os} - {running_os_release}")
+IPAddr = '192.168.1.13' # TODO FIX - aBOVE
+hostname = 'dtk.health'
 
 if IPAddr == '192.168.1.13':    # local - osx box
     REMOTE_LINUX = Path('/Volumes/Home Directory/MMdia/__media_data2/medialib2.pickle')
@@ -80,14 +132,21 @@ print(f"LOADED: {len(media_lib)}")
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
-# debug
-from pprint import pprint           # giza a look
-import inspect
 
 
 # each app.route is an endpoint
 @app.route('/', methods=["GET", "POST"])
 def db_hello_world():
+
+    # catch this in JS land - if multiple devices connect
+    # TODO - think through multiuser use cases
+    # back to selections menu - kill movie window
+    global movie_process
+    if movie_process:
+        # record movie and place in movie - if reselected restart where left off!! MVTODO
+        movie_process.kill()
+        movie_process = None
+
     if request.method == 'POST':
         print("db_hello_world: request.method == 'POST'")
         pprint(request.args)
@@ -143,7 +202,34 @@ def db_hello_world():
 
 @app.route('/play_movie/<movie_id>', methods=["GET", "POST"])
 def play_movie(movie_id):
-    global media_player
+    # copy so as not to change objects in media lib to strings
+    movie = copy.copy(media_lib.media_with_id(movie_id))
+    movie['cast'] = [ str(mv) for mv in movie['cast'] ]
+    movie['file_path'] = str(movie['file_path'])
+    movies = [movie]
+
+    global vlc_client
+    global movie_process
+
+
+    # fire up VLC and a connection to it
+    if movie_process == None:
+        print(f"\n\n\n-=-=-=-=- STARTING MOVIE -=-=-=-=-\n")
+        movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC -f '{movie['file_path']}' --extraintf http", shell=True)
+        # how to get a callback on processed termination
+        # https://wiki.videolan.org/Documentation:Advanced_Use_of_VLC/
+        # how to open in full screen mode - need to check first? & toggle
+        # direct command better
+        #now_playing = movie['file_path']
+        sleep(0.5)
+        print(f"\n-=-=-=-=- STARTING MOVIE -=-=-=-=-\n\n\n")
+
+    if vlc_client == None:
+        print(f"\n\n\n-=-=-=-=- CONNECTING -=-=-=-=-\n")
+        vlc_client = HttpVLC('http://localhost:8080', '', 'p1')
+        print(type(vlc_client))
+        print(f"\n-=-=-=-=- CONNECTING -=-=-=-=-\n\n\n")
+
 
     # https://pythonise.com/series/learning-flask/flask-and-fetch-api
     if request.method == 'POST':
@@ -151,20 +237,48 @@ def play_movie(movie_id):
         req = request.get_json()
         print(req)
         print('- - - - PLAYING')
-        if media_player != None and Path(req['path']).exists():
-            media_player = vlc.MediaPLayer(req['path'])
+        print(f"vlc_client PRESENT?: {type(vlc_client)} <")
+        print(f"media file path: { req['path'] } <")
+        print(f"file exists: { Path(req['path']).exists() } <")
 
-        print(f"media_player LOADED?: {type(media_player)} <")
-        print(f"media_player file path: { req['path'] } <")
-        print(f"media_player file exists: { Path(req['path']).exists() } <")
-        #print(f"media_player : { } <")
+        if vlc_client != None and Path(req['path']).exists():
 
+            if req['cmd'] == 'play':
+                print('--: play')
+                vlc_client.play()
 
-        if req['cmd'] == 'play':
-            media_player.play()
+            if req['cmd'] == 'pause':
+                print('--: pause')
+                vlc_client.pause()
 
-        if req['cmd'] == 'pause':
-            media_player.pause()
+            if req['cmd'] == 'vol':
+                #convert vol from 0-100 to 0-320 < volume range reported by vlc_client.volume()
+                # 0-1
+                new_vol = int(req['vol']) / 100.0
+                print(f'--: vol:{new_vol}')
+                vlc_client.set_volume(new_vol)
+
+            if req['cmd'] == 'fwd2x':
+                print('--: fwd2x')
+                vlc_client.set_rate(2.0)
+
+            print(f"CMD: {req['cmd']}")
+            print(f"VOL:   {vlc_client.volume()}")
+            print(f"TITLE: {vlc_client.title()}")
+            print(f"FILE:  {vlc_client.filename()}")
+            print(f"RATE:  {vlc_client.rate()}")
+            print(f"FULLSC:{vlc_client.is_fullscreen()}")
+            secs = int(vlc_client.media_length())
+            m, s = divmod(secs, 60)     # / 60 ret div & mod into m, s
+            h, m = divmod(m, 60)
+            print(f"LEN:   {secs} - {h}h{m}m")
+            pos = vlc_client.position()
+            pos_secs = int(secs * float(pos))
+            m, s = divmod(pos_secs, 60)     # / 60 ret div & mod into m, s
+            h, m = divmod(m, 60)
+            print(f"POS:   {pos} - {h}h{m}m")
+
+            #print(f" {vlc_client.}")
 
 
 
@@ -175,12 +289,6 @@ def play_movie(movie_id):
         print(f"play_movie: request.method == {request.method}")
 
     print(f"play_movie: movie ID:{movie_id}")
-
-    # copy so as not to change objects in media ilb to strings
-    movie = copy.copy(media_lib.media_with_id(movie_id))
-    movie['cast'] = [ str(mv) for mv in movie['cast'] ]
-    movie['file_path'] = str(movie['file_path'])
-    movies = [movie]
 
     return render_template('play_movie.html', movies=movies)
 
@@ -249,9 +357,9 @@ if __name__ == '__main__':
     # http://flask.pocoo.org/docs/1.0/config/
     # export FLASK_ENV=development add to ~/.bash_profile
     #app.run(host='0.0.0.0', port=52001)
-    hostname = socket.gethostname()
+    #hostname = socket.gethostname()
     print("Your Computer Name is:" + hostname)
-    IPAddr = socket.gethostbyname(hostname)
+    #IPAddr = socket.gethostbyname(hostname)
     print("Your Computer IP Address is:" + IPAddr)
 
     if IPAddr == '192.168.1.13':

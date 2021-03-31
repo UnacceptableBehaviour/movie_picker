@@ -238,7 +238,7 @@ class Player(QtWidgets.QMainWindow):
             if not self.is_paused:
                 self.stop()
 
-def main():
+def display_test():
     import random
     from time import sleep
 
@@ -251,15 +251,15 @@ def main():
     file_to_play = random.choice(files)
     print(file_to_play.split('/').pop())
 
-    app = QtWidgets.QApplication(sys.argv)  # fire up PyQt application framework
+    display_app = QtWidgets.QApplication(sys.argv)  # fire up PyQt application framework
     player = Player()                       # instantiate a Player(QtWidgets.QMainWindow)
     player.show()
-    player.resize(640, 480)
-    #player.showFullScreen()
+    #player.resize(640, 480)
+    player.showFullScreen()
     player.load_file(file_to_play)
 
-    #sleep(5) # < does this actually wait 5s ?
-    player.resize(800, 600)
+    sleep(0.2) # < does this actually wait 5s ?
+    #player.resize(800, 600)
 
     # POC for controls
     # PyQt - https://wiki.python.org/moin/PyQt/Tutorials
@@ -280,12 +280,11 @@ def main():
         # QWidget::showFullScreen()
         # QWidget::showMaximized()
 
-    print("examples_pyqt5vlc.py:  - - BUG: need to resize window so it displays corectly")
-    app.exec_()
+    display_app.exec_()
 
-    print("EXITING: examples_pyqt5vlc.py")
 
-    sys.exit(0)
+
+    sys.exit()
 
 if __name__ == "__main__":
-    main()
+    display_test()
