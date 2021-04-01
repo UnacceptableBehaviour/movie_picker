@@ -35,6 +35,7 @@ from time import sleep
 from pprint import pprint
 
 # import psutil
+# make these two function DRY and integrat into class
 # def kill_running_vlc():
 #     # is vlc running yet?  for this # pip install psutil
 #
