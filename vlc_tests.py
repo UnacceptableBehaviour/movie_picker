@@ -33,8 +33,9 @@ def vlc_module(media_file=None):
     else:
         print(f"FILE NOT FOUND {media_file}")
 
+import psutil
+# make these two functions DRY
 def kill_running_vlc():
-    import psutil
     # is vlc running yet?  for this # pip install psutil
     # https://thispointer.com/python-get-list-of-all-running-processes-and-sort-by-highest-memory-usage/
     targets = []
@@ -44,7 +45,7 @@ def kill_running_vlc():
             processID = proc.pid
             if 'vlc' in processName.lower():
                 targets.append(proc)
-                print(processName , ' ::: ', processID)
+                print(processName , ' :!: ', processID)
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
 
@@ -53,6 +54,21 @@ def kill_running_vlc():
         print(f"kill_running_vlc: {p.name()} \t {p.pid} \t {p.create_time}")
         p.kill()
 
+def vlc_is_running():  # is vlc running yet?
+    targets = []
+    for proc in psutil.process_iter():
+        try:
+            processName = proc.name()   # get name & id
+            processID = proc.pid
+            if 'vlc' in processName.lower():
+                targets.append(proc)
+                print(processName , ' :?: ', processID)
+                return True
+
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+    return False
 
 
 INSTRUCTION_WAIT = 1
@@ -237,23 +253,27 @@ def vlc_http_py_moviepicker(media_file=None):
     # window
     movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC    '{media_file}' --extraintf http", shell=True)
 
-    # wait for http interface to come live
-    sleep(0.2)
-
-    vlc_http_channel = vlc_http()
+    vlc_http_channel = vlc_http(user='', pwd='p1')
 
     print(f"vlc_http_channel: {type(vlc_http_channel)}")
 
     sleep(1)
-    print(f"vlc_http_channel: toggle fullscreen")
-    vlc_http_channel.fullscreen()
+    print(f"vlc_http_channel: toggle fullscreen - currently fullscree = {vlc_http_channel.is_fullscreen()}")
+    vlc_http_channel.toggle_fullscreen()
     sleep(2)
-    print(f"vlc_http_channel: toggle fullscreen")
-    vlc_http_channel.fullscreen()
-    sleep(2)
-    print(f"vlc_http_channel: toggle playback")
-    vlc_http_channel.play_pause()
+    print(f"vlc_http_channel: toggle fullscreen - currently fullscree = {vlc_http_channel.is_fullscreen()}")
+    vlc_http_channel.toggle_fullscreen()
+
+    # +400sec
+    # print(f"vlc_http_channel: +400sec")
+    # vlc_http_channel.seek(400)
+    # sleep(1)
+
+    # pause
+    print(f"vlc_http_channel: pause")
+    vlc_http_channel.pause()
     sleep(1)
+
     print(f"vlc_http_channel: VOL:0")
     vlc_http_channel.set_volume(0)
     sleep(1)
@@ -262,9 +282,54 @@ def vlc_http_py_moviepicker(media_file=None):
     sleep(1)
     print(f"vlc_http_channel: VOL:50")
     vlc_http_channel.set_volume(50)
-    sleep(2)
-    print(f"vlc_http_channel: toggle playback")
-    vlc_http_channel.play_pause()
+    sleep(1)
+
+    # play
+    print(f"vlc_http_channel: play")
+    vlc_http_channel.play()
+    sleep(1)
+
+    # # -20sec
+    # for i in range(6):
+    #     sleep(1)
+    #     print(f"vlc_http_channel: -20sec")
+    #     #vlc_http_channel.seek(-20)
+    #     vlc_http_channel.seek(+20)
+
+    # seek to
+
+    # # ff
+    # sleep(INSTRUCTION_WAIT)
+    # #print(f"vlc: {vlc_http_channel.rate()}")
+    # print(f"vlc: FF x2")
+    # vlc_http_channel.set_rate(2.0)
+    #
+    # # ff
+    # sleep(INSTRUCTION_WAIT)
+    # #print(f"vlc: {vlc_http_channel.rate()}")
+    # print(f"vlc: FF x2.5")
+    # vlc_http_channel.set_rate(2.5)
+    #
+    # # ff
+    # sleep(INSTRUCTION_WAIT)
+    # #print(f"vlc: {vlc_http_channel.rate()}")
+    # print(f"vlc: FF x3")
+    # vlc_http_channel.set_rate(3.0)
+    #
+    # # ff
+    # sleep(INSTRUCTION_WAIT)
+    # #print(f"vlc: {vlc_http_channel.rate()}")
+    # print(f"vlc: FF x3.5")
+    # vlc_http_channel.set_rate(3.5)
+
+
+    # sleep(2)
+    # print(f"vlc_http_channel: toggle playback")
+    # vlc_http_channel.play_pause()
+    # sleep(1)
+    #
+    # print(f"vlc_http_channel: toggle playback")
+    # vlc_http_channel.play_pause()
 
     sleep(2)
     print(f"vlc_http_channel: get_attributes . . .")
@@ -272,10 +337,38 @@ def vlc_http_py_moviepicker(media_file=None):
     pprint(vlc_state)
 
     # find volume range as define by vlc attributes
-    while True:
-        vlc_state = vlc_http_channel.get_attributes()
-        print(f"vlc_state['volume']: {vlc_state['volume']}")    # 0-320
-        sleep(1)
+    # while True:
+    #     vlc_state = vlc_http_channel.get_attributes()
+    #     print(f"vlc_state['volume']: {vlc_state['volume']}")    # 0-320
+    #     sleep(1)
+
+    print(f"vlc_http_channel: playback normal - goto 52m 1440secs")
+    vlc_http_channel.set_rate(1)
+    vlc_http_channel.seek(1440, vlc_http.SEEK_BEGIN) # absolute seek (from beginning)
+    sleep(2)
+    vlc_http_channel.seek_from_start(2880) # absolute seek (from beginning)
+    sleep(2)
+    # ff x2 x3 x4
+    # seek - position of vol bar
+    # goto start
+    # goto end
+
+    # rr x2 x3 x4 - periodic -Ns -4sec/sec, -3sec/sec, -2sec/sec - double up /2sec see what works
+
+    print(f"vlc_http_channel: simulate REWIND x4")
+    # rr x4
+    # works but not a convincing rewind - not obvious its rewinind - big jumps
+    # for i in range(20):
+    #     sleep(1)
+    #     print(f"vlc_http_channel: rr x4")
+    #     vlc_http_channel.seek(-30)
+    # better but still plays forward for the fraction of time it's playing - odd visual cues
+    # this would also be blocking from flask
+    for i in range(100):
+        sleep(0.1)
+        print(f"vlc_http_channel: rr x4")
+        vlc_http_channel.seek(-3)
+
 
     sleep(2)
     print(f"vlc_http_channel: EXIT")
@@ -432,3 +525,64 @@ if __name__ == '__main__':
 # [h264 @ 0x7fdd57bb1200] decode_slice_header error
 # [h264 @ 0x7fdd57bb1200] no frame!
 # * * * * * * * FAILURE MODE * * * * * * * *
+
+# EG dictionary from vlc_http.get_attributes()
+# vlc_state =
+# {'apiversion': '3',
+#  'aspectratio': 'default',
+#  'audiodelay': '0',
+#  'audiofilters': {'filter_0': None},
+#  'currentplid': '3',
+#  'equalizer': None,
+#  'fullscreen': 'false',
+#  'information': {'Stream 0': {'Buffer dimensions': '1280x544',
+#                               'Chroma location': 'Left',
+#                               'Codec': 'H264 - MPEG-4 AVC (part 10) (avc1)',
+#                               'Decoded format': None,
+#                               'Frame rate': '23.976024',
+#                               'Orientation': 'Top left',
+#                               'Type': 'Video',
+#                               'Video resolution': '1280x534'},
+#                  'Stream 1': {'Bits per sample': '32',
+#                               'Channels': 'Stereo',
+#                               'Codec': 'MPEG AAC Audio (mp4a)',
+#                               'Sample rate': '48000 Hz',
+#                               'Type': 'Audio'},
+#                  'meta': {'encoded_by': 'Lavf58.38.100',
+#                           'filename': 'test_mv_mp4.mp4'}},
+#  'length': '5592',
+#  'loop': 'false',
+#  'position': '0.00087705912301317',
+#  'random': 'false',
+#  'rate': '1',
+#  'repeat': 'false',
+#  'state': 'playing',
+#  'stats': {'averagedemuxbitrate': '0',
+#            'averageinputbitrate': '0',
+#            'decodedaudio': '565',
+#            'decodedvideo': '246',
+#            'demuxbitrate': '0.28111588954926',
+#            'demuxcorrupted': '0',
+#            'demuxdiscontinuity': '2',
+#            'demuxreadbytes': '1840469',
+#            'demuxreadpackets': '0',
+#            'displayedpictures': '174',
+#            'inputbitrate': '0.21985921263695',
+#            'lostabuffers': '0',
+#            'lostpictures': '0',
+#            'playedabuffers': '282',
+#            'readbytes': '6679279',
+#            'readpackets': '596',
+#            'sendbitrate': '0',
+#            'sentbytes': '0',
+#            'sentpackets': '0'},
+#  'subtitledelay': '0',
+#  'time': '4',
+#  'version': '3.0.12 Vetinari',
+#  'videoeffects': {'brightness': '1',
+#                   'contrast': '1',
+#                   'gamma': '1',
+#                   'hue': '0',
+#                   'saturation': '1'},
+#  'volume': '160'}
+
