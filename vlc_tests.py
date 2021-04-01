@@ -397,8 +397,8 @@ if __name__ == '__main__':
 
     #code_base = JUST_VLC_MODULE_SND            # WORKS
     #code_base = JUST_VLC_MODULE_VID            # NO work
-    #code_base = PYTHON_VLC_HTTP_PACKAGE        # WORKING - couple of patches - enough for full remote
-    code_base = VLC_HTTP_PY
+    code_base = PYTHON_VLC_HTTP_PACKAGE        # WORKING - couple of patches - enough for full remote
+    #code_base = VLC_HTTP_PY
     #code_base = QT5_APP
 
     if code_base == JUST_VLC_MODULE_SND:
