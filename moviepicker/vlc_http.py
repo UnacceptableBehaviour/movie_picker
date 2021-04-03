@@ -24,6 +24,15 @@ vlc_http_channel.seek_from_start(2880)              # absolute seek (goto 2880 s
 vlc_http_channel.seek(2880, vlc_http.SEEK_BEGIN)    # same as seek_from_start < alias
 vlc_http_channel.play_pause()                       # toggle play/pause
 vlc_state = vlc_http_channel.get_attributes()       # get vlc / media attributes - see comment at bottom for EG
+
+TO IMPLEMENT
+vlc_http_channel.media_length()         # length =  '5592',
+vlc_http_channel.rate()                 # rate = '1',
+vlc_http_channel.pos()                  # position = '0.00087705912301317'
+vlc_http_channel.api_v()                # apiversion = '3'
+vlc_http_channel.is_fullscreen()        # fullscreen = 'false'
+vlc_http_channel.volume()               # volume =  '160'
+
 """
 
 import requests
@@ -34,26 +43,26 @@ from time import sleep
 
 from pprint import pprint
 
-# import psutil
+import psutil
 # make these two function DRY and integrat into class
-# def kill_running_vlc():
-#     # is vlc running yet?  for this # pip install psutil
-#
-#     targets = []
-#     for proc in psutil.process_iter():
-#         try:
-#             processName = proc.name()   # get name & id
-#             processID = proc.pid
-#             if 'vlc' in processName.lower():
-#                 targets.append(proc)
-#                 print(processName , ' ::: ', processID)
-#         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-#             pass
-#
-#     print(len(targets))
-#     for p in targets:
-#         print(f"kill_running_vlc: {p.name()} \t {p.pid} \t {p.create_time}")
-#         p.kill()
+def kill_running_vlc():
+    # is vlc running yet?  for this # pip install psutil
+
+    targets = []
+    for proc in psutil.process_iter():
+        try:
+            processName = proc.name()   # get name & id
+            processID = proc.pid
+            if 'vlc' in processName.lower():
+                targets.append(proc)
+                print(processName , ' ::: ', processID)
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+    print(len(targets))
+    for p in targets:
+        print(f"kill_running_vlc: {p.name()} \t {p.pid} \t {p.create_time}")
+        p.kill()
 
 # def vlc_is_running():  # is vlc running yet?
 #     targets = []
@@ -71,7 +80,7 @@ from pprint import pprint
 #
 #     return False
 
-
+# move to package exceptions file - TODO
 class ConnectionProblem(Exception):
     """ There was a problem connecting with VLC localhost control.
         Make sure that VLC is running and port address is correct. """
@@ -238,13 +247,6 @@ class vlc_http:
         """ Toggle fullscreen."""
         self.send_command("fullscreen")
 
-    def is_fullscreen(self):
-        if self.media_is_loaded:
-            state = self.get_attributes()
-            return(state['fullscreen'] == 'false')
-        else:
-            raise MediaNotLoaded
-
     def next(self):
         """ Next media on the playlist. """
         self.send_command("pl_next")
@@ -252,6 +254,43 @@ class vlc_http:
     def previous(self):
         """ Previous media on the playlist. """
         self.send_command("pl_previous")
+
+# Getters
+# create decorator for
+#         if self.media_is_loaded:
+#             state = self.get_attributes()
+#             return(state['fullscreen'] == 'false')
+#         else:
+#             raise MediaNotLoaded
+
+
+    def is_fullscreen(self):
+        if self.media_is_loaded:
+            state = self.get_attributes()
+            return(state['fullscreen'] == 'false')
+        else:
+            raise MediaNotLoaded
+
+    def media_length(self):         # length =  '5592'
+        state = self.get_attributes()
+        return( int(state['length']) )
+
+    def rate(self):                 # rate = '1'
+        state = self.get_attributes()
+        return( float(state['rate']) )
+
+    def pos(self):                  # position = '0.00087705912301317'
+        state = self.get_attributes()
+        return( float(state['position']) )
+
+    def api_v(self):                # apiversion = '3'
+        state = self.get_attributes()
+        return( int(state['apiversion']) )
+
+    def volume(self):               # volume =  '160'
+        state = self.get_attributes()
+        return( (int(state['volume']) / 320) * 100 )
+
 
 # EG dictionary from vlc_http.get_attributes()
 # vlc_state =
@@ -312,4 +351,3 @@ class vlc_http:
 #                   'hue': '0',
 #                   'saturation': '1'},
 #  'volume': '160'}
-

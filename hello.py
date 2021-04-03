@@ -26,48 +26,11 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import subprocess
 from time import sleep
 import vlc
+from moviepicker import vlc_http, kill_running_vlc    # needs an instance of vlc running
 
-# for this to work need to start QTApp in separate process and controll it w/ sockets
-# from moviepicker import Player, display_test
-# display_app = QtWidgets.QApplication(sys.argv)
-# media_player = Player()
-# media_player.load_file(file_to_play)
-# display_app.exec_()  # <- crashes python!
-
-# different approach using the web interface
-from moviepicker import vlc_http          #- TODO REMOVE
-print('vlc_http_channel - - - - - - - - - - - S1')
-vlc_http_channel = vlc_http()
-print(f'vlc_http_channel debug: return from clc_http():{type(vlc_http_channel)}')
-# vlc_http_channel.play_pause()
-# vlc_http_channel.seek(5)  #Seek 5 seconds from current position
-# vlc_http_channel.set_volume(100) #Set volume to 100%
-print('vlc_http_channel attributes')
-pprint(vlc_http_channel.get_attributes())
-vlc_http_channel.play_pause()
-print('vlc_http_channel - - - - - - - - - - - E1')
-
-
-from python_vlc_http import HttpVLC
-
-vlc_client = None #HttpVLC('http://localhost:8080', '', 'p1')
-now_playing = ''
+vlc_http_channel = None
 movie_process = None
-
-#
-# fullscreen_status = vlc_client.is_fullscreen()
-#
-# print('vlc_client - - - - - - - - - - - S')
-# print(f"vlc_client: VLC API v:{vlc_client.api_version()}")
-# if(fullscreen_status):
-#    print('VLC is running on fullscreen!')
-# else:
-#    print('VLC is NOT on fullscreen!')
-# print('vlc_client - - - - - - - - - - - E')
-
-
-print(dir())
-
+media_lib = None
 
 
 # load info if 1st time round
@@ -123,6 +86,9 @@ elif IPAddr == '192.168.1.16':  # remote - linux box
     media_lib = MMediaLib(LOCAL_LINUX)
     media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/home/pi/MMdia/')
 
+if not media_lib:
+    print("EXITIING - NO media libraries were found")
+    sys.exit(0)
 
 LOCAL_IMAGE_CACHE = Path('./static/covers')
 LOCAL_IMAGE_CACHE.mkdir(parents=True, exist_ok=True)
@@ -142,10 +108,15 @@ def db_hello_world():
     # TODO - think through multiuser use cases
     # back to selections menu - kill movie window
     global movie_process
+    global vlc_http_channel
+
+
     if movie_process:
         # record movie and place in movie - if reselected restart where left off!! MVTODO
         movie_process.kill()
         movie_process = None
+    kill_running_vlc()
+    vlc_http_channel = None
 
     if request.method == 'POST':
         print("db_hello_world: request.method == 'POST'")
@@ -208,9 +179,8 @@ def play_movie(movie_id):
     movie['file_path'] = str(movie['file_path'])
     movies = [movie]
 
-    global vlc_client
+    global vlc_http_channel
     global movie_process
-
 
     # fire up VLC and a connection to it
     if movie_process == None:
@@ -220,14 +190,13 @@ def play_movie(movie_id):
         # https://wiki.videolan.org/Documentation:Advanced_Use_of_VLC/
         # how to open in full screen mode - need to check first? & toggle
         # direct command better
-        #now_playing = movie['file_path']
         sleep(0.5)
         print(f"\n-=-=-=-=- STARTING MOVIE -=-=-=-=-\n\n\n")
 
-    if vlc_client == None:
+    if vlc_http_channel == None:
         print(f"\n\n\n-=-=-=-=- CONNECTING -=-=-=-=-\n")
-        vlc_client = HttpVLC('http://localhost:8080', '', 'p1')
-        print(type(vlc_client))
+        vlc_http_channel = vlc_http(user='', pwd='p1')
+        print(type(vlc_http_channel))
         print(f"\n-=-=-=-=- CONNECTING -=-=-=-=-\n\n\n")
 
 
@@ -237,50 +206,87 @@ def play_movie(movie_id):
         req = request.get_json()
         print(req)
         print('- - - - PLAYING')
-        print(f"vlc_client PRESENT?: {type(vlc_client)} <")
+        print(f"vlc_http_channel PRESENT?: {type(vlc_http_channel)} <")
         print(f"media file path: { req['path'] } <")
         print(f"file exists: { Path(req['path']).exists() } <")
 
-        if vlc_client != None and Path(req['path']).exists():
+        if vlc_http_channel != None and Path(req['path']).exists():
+            if req['cmd'] == 'start':
+                print('--: start: goto begining after opening sequences')
+                vlc_http_channel.seek_from_start(210) # got 3m30
+
+            if req['cmd'] == 'bak30s':
+                print('--: bak30s')
+                vlc_http_channel.seek(-30)
 
             if req['cmd'] == 'play':
                 print('--: play')
-                vlc_client.play()
+                vlc_http_channel.play()
 
             if req['cmd'] == 'pause':
                 print('--: pause')
-                vlc_client.pause()
+                vlc_http_channel.pause()
+
+            if req['cmd'] == 'fwd30s':
+                print('--: fwd30s')
+                vlc_http_channel.seek(30)
+
+
+# vlc_http_channel.media_length()         # length =  '5592',
+# vlc_http_channel.rate()                 # rate = '1',
+# vlc_http_channel.pos()                  # position = '0.00087705912301317'
+# vlc_http_channel.api_v()                # apiversion = '3'
+# vlc_http_channel.is_fullscreen()        # fullscreen = 'false'
+# vlc_http_channel.volume()               # volume =  '160'
+
+            if req['cmd'] == 'end':
+                print('--: end: button Goto END before credits')
+                movie_length = vlc_http_channel.media_length()
+                near_end_of_flick = movie_length - 360
+                vlc_http_channel.seek_from_start(near_end_of_flick) # got end - 6m
+
+            if req['cmd'] == 'bak4x':
+                print('--: bak2x - NOT IMPLEMENTED')
+                #vlc_http_channel.set_rate(-4.0)
 
             if req['cmd'] == 'vol':
-                #convert vol from 0-100 to 0-320 < volume range reported by vlc_client.volume()
-                # 0-1
-                new_vol = int(req['vol']) / 100.0
+                # 0-100
+                new_vol = int(req['vol'])
                 print(f'--: vol:{new_vol}')
-                vlc_client.set_volume(new_vol)
+                vlc_http_channel.set_volume(new_vol)
 
-            if req['cmd'] == 'fwd2x':
-                print('--: fwd2x')
-                vlc_client.set_rate(2.0)
+            if req['cmd'] == 'fwd2x':       # if click second time return to normal speed
+                if vlc_http_channel.rate() > 3.5:
+                    print('--: fwd4x - playback NORMAL')
+                    vlc_http_channel.set_rate(1)
+                else:
+                    print('--: fwd4x - playback x4')
+                    vlc_http_channel.set_rate(4.0)
+
+            if req['cmd'] == 's1':
+                print('--: s1')
+
+            if req['cmd'] == 's2':
+                print('--: s2')
+
 
             print(f"CMD: {req['cmd']}")
-            print(f"VOL:   {vlc_client.volume()}")
-            print(f"TITLE: {vlc_client.title()}")
-            print(f"FILE:  {vlc_client.filename()}")
-            print(f"RATE:  {vlc_client.rate()}")
-            print(f"FULLSC:{vlc_client.is_fullscreen()}")
-            secs = int(vlc_client.media_length())
-            m, s = divmod(secs, 60)     # / 60 ret div & mod into m, s
-            h, m = divmod(m, 60)
-            print(f"LEN:   {secs} - {h}h{m}m")
-            pos = vlc_client.position()
-            pos_secs = int(secs * float(pos))
-            m, s = divmod(pos_secs, 60)     # / 60 ret div & mod into m, s
-            h, m = divmod(m, 60)
-            print(f"POS:   {pos} - {h}h{m}m")
+            #print(f"VOL:   {vlc_http_channel.volume()}")  # TODO implement functionality
+            #print(f"TITLE: {vlc_http_channel.title()}")
+            #print(f"FILE:  {vlc_http_channel.filename()}")
+            #print(f"RATE:  {vlc_http_channel.rate()}")
+            # print(f"FULLSC:{vlc_http_channel.is_fullscreen()}")
+            # secs = int(vlc_http_channel.media_length())
+            # m, s = divmod(secs, 60)     # / 60 ret div & mod into m, s
+            # h, m = divmod(m, 60)
+            # print(f"LEN:   {secs} - {h}h{m}m")
+            # pos = vlc_http_channel.position()
+            # pos_secs = int(secs * float(pos))
+            # m, s = divmod(pos_secs, 60)     # / 60 ret div & mod into m, s
+            # h, m = divmod(m, 60)
+            # print(f"POS:   {pos} - {h}h{m}m")
 
-            #print(f" {vlc_client.}")
-
-
+            #print(f" {vlc_http_channel.}")
 
         res = make_response(jsonify({"message": "OK"}), 200)
         return res
