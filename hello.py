@@ -303,41 +303,19 @@ def db_movie_page():
     movies = []
     return render_template('index.html', movies=movies)
 
-@app.route('/css_course_1', methods=["GET", "POST"])
-def css_course_1():
-    headline_py = "css_course_1"
+@app.route('/short_list', methods=["GET", "POST"])
+def short_list():
+    headline_py = "short_list"
     movies = []
-    return render_template('css_course_1.html', movies=movies)
+    return render_template('short_list.html', movies=movies)
 
-@app.route('/css_course_2', methods=["GET", "POST"])
-def css_course_2():
-    headline_py = "css_course_2.html"
+@app.route('/tile_view', methods=["GET", "POST"])
+def tile_view():
+    headline_py = "tile_view.html"
     movies = []
-    return render_template('css_course_2.html', movies=movies)
+    return render_template('tile_view.html', movies=movies)
 
-@app.route('/css_course_3', methods=["GET", "POST"])
-def css_course_3():
-    headline_py = "css_course_3.html"
-    movies = []
-    return render_template('css_course_3.html', movies=movies)
 
-@app.route('/css_course_4', methods=["GET", "POST"])
-def css_course_4():
-    headline_py = "css_course_4.html"
-    movies = []
-    return render_template('css_course_4.html', movies=movies)
-
-@app.route('/css_course_5', methods=["GET", "POST"])
-def css_course_5():
-    headline_py = "css_course_5.html"
-    movies = []
-    return render_template('css_course_5.html', movies=movies)
-
-@app.route('/css_course_6', methods=["GET", "POST"])
-def css_course_6():
-    headline_py = "css_course_6.html"
-    movies = []
-    return render_template('css_course_6.html', movies=movies)
 
 @app.route('/settings', methods=["GET", "POST"])
 def settings():
