@@ -25,7 +25,7 @@ vlc_http_channel.seek(2880, vlc_http.SEEK_BEGIN)    # same as seek_from_start < 
 vlc_http_channel.play_pause()                       # toggle play/pause
 vlc_state = vlc_http_channel.get_attributes()       # get vlc / media attributes - see comment at bottom for EG
 
-TO IMPLEMENT
+TO IMPLEMENT - TODO CHECK & UPDATE
 vlc_http_channel.media_length()         # length =  '5592',
 vlc_http_channel.rate()                 # rate = '1',
 vlc_http_channel.pos()                  # position = '0.00087705912301317'
