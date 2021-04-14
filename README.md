@@ -14,43 +14,61 @@ Turn and old tv (without a remote) and a 2.5 inch usb hard disc with DVD collect
 4. [AIM:](#aim)  
 5. [Next steps](#next-steps)  
 6. [Questions / Barriers](#questions--barriers)  
-	1. [How to run package as a script with options, like venv?](#how-do-i-run-package-as-a-script-with-options-like-venv)
+	1. [How do I run package as a script with options, like venv?](#how-do-i-run-package-as-a-script-with-options-like-venv)  
 7. [How To's](#how-tos)  
-	1. [How to auto generate TOC?](#how-do-i-auto-generate-toc)
-	2. [How to insert a TOC?](#how-do-i-insert-a-toc)
+	1. [How to auto generate TOC?](#how-to-auto-generate-toc)  
+	2. [How to insert a TOC?](#how-to-insert-a-toc)  
 		1. [TIPS](#tips)  
 	3. [How to do initial git repo setup for simple Flask app](#how-to-do-initial-git-repo-setup-for-simple-flask-app)  
-	4. [How to scrape IMDB for movie info to display?](#how-do-we-scrape-imdb-for-movie-info-to-display)
-	5. [How to access IMDB for movie info to display?](#how-do-we-access-imdb-for-movie-info-to-display)
+	4. [How to scrape IMDB for movie info to display?](#how-to-scrape-imdb-for-movie-info-to-display)  
+	5. [How to access IMDB for movie info to display?](#how-to-access-imdb-for-movie-info-to-display)  
 	6. [Whats the minimum search info required for sensible results?](#whats-the-minimum-search-info-required-for-sensible-results)  
-	7. [How to mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)
-	8. [How do I make a class iterable?](#how-do-i-make-a-class-iterable)  
+	7. [How do I mount the media disk (on rPi) R/W locally on mac for development](#how-do-i-mount-the-media-disk-on-rpi-rw-locally-on-mac-for-development)  
+	8. [How to make a class iterable?](#how-to-make-a-class-iterable)  
 	9. [What directory structure is required for a module? (python3)](#what-directory-structure-is-required-for-a-module-python3)  
 		1. [Flow chart of how modules are loaded](#flow-chart-of-how-modules-are-loaded)  
 	10. [How to scrape wikipedia for cover art?](#how-to-scrape-wikipedia-for-cover-art)  
 	11. [When is __init__.py called?](#when-is-initpy-called)  
+	12. [How to do argument parsing w/ argparse module?](#how-to-do-argument-parsing-w-argparse-module)  
 8. [REFERENCES](#references)  
 9. [Completed](#completed)  
 
 
-## AIM:
+## AIM:  
+
 A little python practice, scraping, flask, basic web.
 
 ## Next steps
-Enable passing -u option a path in CLI mode
+* * *   
+Show shortlisted item on shortlist page (should work same as gallery but media list from shortlist not DB).  
+Add super basic Preferences class inc shortlist / genre prefs.  
+Add sort buttons basics: year, recently added, title, rating  
+Buttons for order by: year, release, A-Z, most recently added  
+* * *   
 
-Quick test clone onto a linux target, SB platform agnostic - quick check.
+Quick test clone onto a linux target, SB platform agnostic - quick check.  
+- add supporting vid files to test create DB, fetch info etc.  
+  
+Comment out superfluous code, add TODOs to code make tidy up list.  
 
-Re-orient cards boostrap (make screen width or width/2?)
-
-Fix Exceptions file - maybe check a few modules for examples.
-  /venv/lib/python3.7/site-packages
-
-Tidy up argument processing, bit flaky - not thought out - exception city!
-
+Enable passing -u option a path in CLI mode - Check if done.  
+Tidy up argument processing - use argparse. See cli_parse.py(https://github.com/UnacceptableBehaviour/movie_picker/blob/master/scripts/cli_parse.py)   
+  
+  
 Create JS lib for rest: 
-Allow toggling of favourite icon, seen it icon
-Buttons for order by: year, release, A-Z, most recently added
+Identify different devices - use JS fingerprint?  
+Change reshuffle button icon to back button icon in play remote mode  
+Add DEBUG - detected display size - debug mobile remote - look like in desktop mode?  
+How to debug CSS media detect  
+  
+  
+Require user profile:  
+Allow toggling of favourite icon, seen it icon.  
+  
+Add genre blocking - click on genre button cycle gm_grey (last), normal (no opinion), light(favour)
+  
+
+
 
 
 ## Questions / Barriers
@@ -360,6 +378,13 @@ proj/
 ```
 
 
+### How to do argument parsing w/ argparse module?  
+[demo of argparse in repo - /scripts/cli_parse.py](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/scripts/cli_parse.py)   
+[Python docs - argparse - tutorial](https://docs.python.org/3/howto/argparse.html)   
+[ArgumentParser - docs](https://docs.python.org/3/library/argparse.html#type)   
+[Real Python](https://realpython.com/command-line-interfaces-python-argparse/#how-to-use-the-python-argparse-library-to-create-a-command-line-interface)  
+
+
 
 
 ## REFERENCES
@@ -384,5 +409,6 @@ proj/
 2020.Jun.26 - SF - Display information using flask & boostrap cards.
 2020.Jun.27 - SF - Get cover art from wikipedia/google > retrieval.py
 2020.Jul.05 - SF - Make module runnable
+2021.Apr.14 - SF - Re-orient cards boostrap (make screen width or width/2?)
 																		 Add functionality to retrieve image when adding media.  																		 
 																		 Flask prefer load image over low quality href from imdb
