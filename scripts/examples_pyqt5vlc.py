@@ -242,8 +242,15 @@ def main():
     import random
     from time import sleep
 
-    """Entry point for our simple vlc player
     """
+    Entry point for our simple vlc player
+    mov.txt is a list of paths to video files
+    /path/to/file/1.mp4
+    /path/to/file/2.mp4
+    /path/to/file/3.mp4
+    etc
+    """
+
     with open('./scratch/mov.txt') as file:
         lines = file.read()
 

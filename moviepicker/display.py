@@ -18,6 +18,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
 #
 """
+* * * *
+to integrate this w/ movipicker requires it be started at a separate
+non blocking task/process and controlled remotely using a socket for EG
+
+dropped for now - REMOVE or IMPLEMENT sockets
+* * * *
+
+
 A simple example for VLC python bindings using PyQt5.
 
 Author: Saveliy Yusufov, Columbia University, sy2685@columbia.edu

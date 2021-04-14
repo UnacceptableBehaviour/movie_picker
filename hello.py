@@ -1,5 +1,8 @@
 #! /usr/bin/env python
 
+# buil a simple movie DB using
+# https://www.google.com/search?q=list+of+movies+w%2F+expired+copyrights&oq=list+of+movies+w%2F+expired+copyrights&aqs=chrome..69i57.10974j0j7&sourceid=chrome&ie=UTF-8
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 from flask import Flask, render_template, request, jsonify, make_response
 app = Flask(__name__)

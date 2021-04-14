@@ -1,5 +1,25 @@
 #! /usr/bin/env python
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# prototyping tests
+#   how to run control vlc from flask (manage & communicate w/ vlc process)
+#
+# options investigated - see Select approach to test
+#
+#   python-vlc  - python binding to vlc - NO work solo! :/
+#               - requires a windows framework - working EG examples_pyqt5vlc.py using Qt5
+#
+#   python_vlc_http - Http Inteface package
+#               - couple of bugs so creted an internal module
+#               - PULL request submitted
+#
+#   internal package - using vlc http interface
+#               - from moviepicker import vlc_http
+#
+#   Qt5 example - using python-vlc fires up a samll Qt5 app - examples_pyqt5vlc.py
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 # compare two MMdia paths for duplicates - EG multiple external discs or room remotes
 
 # from pathlib import Path
@@ -379,7 +399,7 @@ def vlc_http_py_moviepicker(media_file=None):
 JUST_VLC_MODULE_SND     = 10
 JUST_VLC_MODULE_VID     = 15
 PYTHON_VLC_HTTP_PACKAGE = 20
-VLC_HTTP_PY             = 30
+MOVIEPICKER_VLC_HTTP_PY = 30
 QT5_APP                 = 40
 
 if __name__ == '__main__':
@@ -394,12 +414,12 @@ if __name__ == '__main__':
     media_file = PATH_TO_MP4
     #media_file = PATH_TO_MP3 # works fine
 
-
+    # Select approach to test - - - - - - - - comment in!
     #code_base = JUST_VLC_MODULE_SND            # WORKS
-    #code_base = JUST_VLC_MODULE_VID            # NO work
-    code_base = PYTHON_VLC_HTTP_PACKAGE        # WORKING - couple of patches - enough for full remote
-    #code_base = VLC_HTTP_PY
-    #code_base = QT5_APP
+    #code_base = JUST_VLC_MODULE_VID            # NO work - requires a canvas to work - see QT5_APP
+    #code_base = PYTHON_VLC_HTTP_PACKAGE        # WORKING - couple of patches - enough for full remote - PULL requst commited
+    #code_base = MOVIEPICKER_VLC_HTTP_PY
+    code_base = QT5_APP
 
     if code_base == JUST_VLC_MODULE_SND:
         print("running codebase: JUST_VLC_MODULE_SND")
@@ -423,8 +443,8 @@ if __name__ == '__main__':
         # Works fine
         sys.exit(0)
 
-    if code_base == VLC_HTTP_PY:
-        print("running codebase: VLC_HTTP_PY")
+    if code_base == MOVIEPICKER_VLC_HTTP_PY:
+        print("running codebase: MOVIEPICKER_VLC_HTTP_PY")
         vlc_http_py_moviepicker(media_file)
         sys.exit(0)
 
@@ -435,6 +455,8 @@ if __name__ == '__main__':
         print("EXITING: vlc_tests.py")
         # TODO
         # pass resize/any msg to Qt5 app - emulate button press - hooks?
+        # get this working w/ sockets maybe?
+        # no good as it is.
         sys.exit(0)
 
 
@@ -585,4 +607,3 @@ if __name__ == '__main__':
 #                   'hue': '0',
 #                   'saturation': '1'},
 #  'volume': '160'}
-
