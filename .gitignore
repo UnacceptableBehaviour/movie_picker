@@ -2,6 +2,7 @@
 .DS_Store
 *.pyc
 .AppleDouble
+./moviepicker/userDB.txt
 
 # ignore directory and contents
 /movie_picker/__pycache__
