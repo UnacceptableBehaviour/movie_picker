@@ -40,10 +40,9 @@ A little python practice, scraping, flask, basic web.
 
 ## Next steps
 * * *   
-Show shortlisted item on shortlist page (should work same as gallery but media list from shortlist not DB).  
-Add super basic Preferences class inc shortlist / genre prefs.  
-Add sort buttons basics: year, recently added, title, rating  
-Buttons for order by: year, release, A-Z, most recently added  
+- implement todays pseudo code / UML - genre concept / NI /fav
+- Show shortlisted item on shortlist page (should work same as gallery but media list from shortlist not DB).  
+- Add super basic Preferences class inc shortlist / genre prefs.  
 * * *   
 
 Quick test clone onto a linux target, SB platform agnostic - quick check.  
@@ -52,7 +51,7 @@ Quick test clone onto a linux target, SB platform agnostic - quick check.
 Comment out superfluous code, add TODOs to code make tidy up list.  
 
 Enable passing -u option a path in CLI mode - Check if done.  
-Tidy up argument processing - use argparse. See cli_parse.py(https://github.com/UnacceptableBehaviour/movie_picker/blob/master/scripts/cli_parse.py)   
+Tidy up argument processing - use argparse. See [cli_parse.py](https://github.com/UnacceptableBehaviour/movie_picker/blob/master/scripts/cli_parse.py)   
   
   
 Create JS lib for rest: 
@@ -396,19 +395,20 @@ proj/
 2020.Mar.05 - SF - Add disc scan, to find movie (and audio) files.  
 2020.Mar.05 - SF - Query IMDB for movie info.  
 2020.Mar.07 - SF - Integrate IMDB queries into MMdia class (was Pass the information to scraper, gather information.)  
-2020.Mar.08 - SF - Check search results for kind = movie  
-2020.Mar.13 - SF - X-ref search result and query using doc_ditsance to get best match  
-2020.Mar.14 - SF - Build DB / non-valatile storage (used pickle to start).  
-2020.Apr.10 - SF - Added __repr__ to class.
+2020.Mar.08 - SF - Check search results for kind = movie    
+2020.Mar.13 - SF - X-ref search result and query using doc_ditsance to get best match    
+2020.Mar.14 - SF - Build DB / non-valatile storage (used pickle to start).    
+2020.Apr.10 - SF - Added __repr__ to class.  
 2020.Jun.19 - SF - POC working. Refactored functionality into a module split into MMediaLib, MMedia (item)
-	added MMedia items, added iterator functionality MMediaLib
-2020.Jun.22 - SF - Added beginings of script interface, some basic option processing
-2020.Jun.23 - SF - move imdb query function over to new classes
-2020.Jun.25 - SF - add exceptions file
-2020.Jun.26 - SF - tidy up import python package layout
-2020.Jun.26 - SF - Display information using flask & boostrap cards.
-2020.Jun.27 - SF - Get cover art from wikipedia/google > retrieval.py
-2020.Jul.05 - SF - Make module runnable
-2021.Apr.14 - SF - Re-orient cards boostrap (make screen width or width/2?)
-																		 Add functionality to retrieve image when adding media.  																		 
-																		 Flask prefer load image over low quality href from imdb
+  	added MMedia items, added iterator functionality MMediaLib  
+2020.Jun.22 - SF - Added beginings of script interface, some basic option processing  
+2020.Jun.23 - SF - move imdb query function over to new classes  
+2020.Jun.25 - SF - add exceptions file  
+2020.Jun.26 - SF - tidy up import python package layout  
+2020.Jun.26 - SF - Display information using flask & boostrap cards.  
+2020.Jun.27 - SF - Get cover art from wikipedia/google > retrieval.py  
+2020.Jul.05 - SF - Make module runnable  
+2021.Apr.14 - SF - Re-orient cards boostrap (make screen width or width/2?)    
+Add functionality to retrieve image when adding media.  
+Flask prefer load image over low quality href from imdb  
+2021.Apr.14 - SF - Added Buttons for order by: year, release, A-Z, most recently added  
