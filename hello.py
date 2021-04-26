@@ -6,10 +6,12 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 from flask import Flask, render_template, request, jsonify, make_response
 app = Flask(__name__)
+import json                         # JSON tools
 
 # debug
 from pprint import pprint           # giza a look
 import inspect                      # inspect.getmembers(object[, predicate])
+
 
 
 #        dir        file
@@ -101,38 +103,256 @@ print(f"LOADED: {len(media_lib)}")
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# users / prefs proto - move into module
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+USER_DB_FILE = Path('./moviepicker/userDB.json')
+user_device_DB = {}
+
+# TODO mov into exceptions
+class UserUuidMismatch(Exception): #UserUuidMismatch(MMediaLibError):
+    '''could not update user with prefs_info UUID does NOT match'''
+    pass
+
+class UserPrefs:
+    fingerprints = {}
+
+    def __init__(self, uuid, name=None, info={}):
+        self.prefs_info = {'uuid':'uu_id',
+                           'name':'user_name',
+                           'fingerprints':[],
+                           'ni_list':[],
+                           'ratings':{},
+                           'prefs_genre': {'genres_neg':[],
+                                          #"genres_all":["History","War","Sci-Fi","Music","Sport","Romance","Adventure","Action","Mystery","Thriller","Documentary","Musical","Biography","News","Fantasy","Animation","Family","Crime","Drama","Comedy","Horror","Western"],
+                                          'genres_pos':[]},
+                           'prefs_actors':{'actors_neg':[],
+                                          'actors_pos':[]}
+                           }
+        self.prefs_info.update(info)
+        print(type(info))
+        print(type(self.prefs_info))
+
+        self.prefs_info['uuid'] = uuid
+        if name: self.prefs_info['name'] = name
+
+    def get_prefs(self):
+        return self.prefs_info
+
+    def update_prefs(self, new_prefs):
+        if new_prefs['uuid'] == self.prefs_info['uuid']:
+            print("UserPrefs.update_prefs succeed")
+            self.prefs_info.update(new_prefs)
+        else:
+            raise UserUuidMismatch
+
+
+
+    def uuid(self):
+        return self.prefs_info['uuid']
+
+    def name(self):
+        return self.prefs_info['name']
+
+    def add_fingerprint(self, fingerprint):
+        if fingerprint not in self.prefs_info['fingerprints']:
+            self.prefs_info['fingerprints'].append(fingerprint)
+
+    def filter_list(self, movie_list):
+        scored_and_sorted_movies = []
+        #print(f"UserPrefs.filter_list: {len(movie_list)}")
+        #movie_list[20]['prefScore'] = 10000
+        #pprint( movie_list[20] )
+        for m in movie_list:
+            m['prefScore'] = 10000
+            # add 100 pointe per positive genre match in movie
+            pos = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['genres_pos']) )) * 100
+            neg = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['genres_neg']) )) * 100
+            m['prefScore'] += pos
+            m['prefScore'] -= neg
+
+        scored_and_sorted_movies  = sorted(movie_list, key=lambda k: k['prefScore'], reverse=True)
+
+        # for m in scored_and_sorted_movies :
+        #     print(f"score:{m['prefScore']} - {m['file_title']}")
+
+
+        return scored_and_sorted_movies
+        # allocate score of 10K points as baseline
+        # for each genre neg - 100 points
+        # for each genre pos + 100 points
+
+
+
+
+
+
+def load_dict_data_from_DB(uDB):
+    '''
+    load user & device data from text file - json format
+    '''
+
+    if USER_DB_FILE.exists():
+        with open(USER_DB_FILE, 'r') as f:
+            json_db = f.read()
+            db = json.loads(json_db)
+            print(f"USER database LOADED ({len(db)})")
+
+        for i in db.keys():
+            uDB[i] = UserPrefs(i,info=db[i])
+
+        print(f"USER database json > objects COMPLETE ({len(uDB)})")
+        return 0
+
+    else:
+        db = {}  # create a blank file
+        commit_dict_to_DB(db)
+        return -1
+
+
+
+def commit_dict_to_DB(commit_db):
+    '''
+    commit user & device data to text file - json format
+    '''
+    db = {}
+    for i in commit_db.keys():
+        db[i] = commit_db[i].get_prefs()
+
+    with open(USER_DB_FILE, 'w') as f:
+        #pprint(db)
+        db_as_json = json.dumps(db)
+        f.write(db_as_json)
+
+
+load_dict_data_from_DB(user_device_DB)
+
+import uuid
+print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - JSON DB - S")
+new_uuid = str(uuid.uuid4())
+new_uuid = list(user_device_DB.keys())[3]     # dont add any more users!
+current_user = None
+print("users:")
+for k in user_device_DB.keys():
+    user = user_device_DB[k]
+    print(f"u: {user.uuid()} n:{user.name()} t:{type(user)}")
+
+print(f"New UUID: {new_uuid}")
+
+if new_uuid not in user_device_DB:
+    u = UserPrefs(new_uuid, f"U{len(user_device_DB.keys())}")
+    user_device_DB[u.uuid()] = u
+    pprint(user_device_DB)
+    commit_dict_to_DB(user_device_DB)
+else:
+    print(f"FOUND USER: {new_uuid}")
+    pprint(user_device_DB[new_uuid].get_prefs())
+    current_user = user_device_DB[new_uuid]
+
+print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - JSON DB - E")
+
+
+#commit_dict_to_DB(user_device_DB)
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 
 
 # each app.route is an endpoint
 @app.route('/', methods=["GET", "POST"])
-def db_hello_world():
+def movie_gallery_home():
 
-    # catch this in JS land - if multiple devices connect
-    # TODO - think through multiuser use cases
-    # back to selections menu - kill movie window
-    global movie_process
-    global vlc_http_channel
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
+    # reset vlc process                                                                             #
+    #                                                                                               #
+    # catch this in JS land - if multiple devices connect                                           #
+    # TODO - think through multiuser use cases                                                      #
+    # back to selections menu - kill movie window                                                   #
+    global movie_process                                                                            #
+    global vlc_http_channel                                                                         #
+                                                                                                    #
+    # TODO - is this used anymore? or is it just kill_running_vlc()                                 #
+    # REMOVE?                                                                                       #
+    if movie_process:                                                                               #
+        # record movie and place in movie - if reselected restart where left off!! MVTODO           #
+        movie_process.kill()                                                                        #
+        movie_process = None                                                                        #
+                                                                                                    #
+    kill_running_vlc()                                                                              #
+    vlc_http_channel = None                                                                         #
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
 
 
-    if movie_process:
-        # record movie and place in movie - if reselected restart where left off!! MVTODO
-        movie_process.kill()
-        movie_process = None
-    kill_running_vlc()
-    vlc_http_channel = None
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
+    # processing incoming msgs                                                                     #
+    # https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
+    sort_by = 'year'
+    chosen_sort = {
+        'year':     media_lib.sorted_by_year,
+        'rating':   media_lib.sorted_by_rating,
+        'title':    media_lib.sorted_by_title,
+        'added':    media_lib.sorted_by_rating                   # TODO - return to correct sort
+        #'added':    media_lib.sorted_by_most_recently_added     # TODO - fix this sort
+    }
 
-    if request.method == 'POST':
-        print("db_hello_world: request.method == 'POST'")
-        pprint(request.args)
-        for key in request.args.keys():
-            print(f"{key} - {request.args[key]}")
-        #print(request.form['bt-short'])
-        print(request.form.get('bt-short'))
-    else:
-        print(f"db_hello_world: request.method == {request.method}")
-        pprint(request)
-    print(f"db_hello_world: - - - - - - - - debug")
+    print(f"\nmovie_gallery_home: - - - - - - - - debug - - - - - - - - - - - - - - - - S\n")          #
+    if request.method == 'POST':                                                                   #
+        if request.is_json:
+            print("movie_gallery_home: request.method == 'POST_JSON'")
+            settings = request.get_json() # parse JSON into DICT
+            pprint(settings)
 
+            if settings != None  and 'prefs_info' in settings:
+                try:
+                    user_device_DB[settings['prefs_info']['uuid']].update_prefs(settings['prefs_info'])
+                    commit_dict_to_DB(user_device_DB)
+                    # return all good
+                    return json.dumps({}), 201 # created
+                except (UserUuidMismatch, KeyError):
+                    # return - couldnt find user_info!??
+                    return json.dumps({}), 404
+
+
+        else:
+            print("movie_gallery_home: request.method == 'POST' - NOT json ")
+
+            print("\nrequest.args - - - - <")
+            pprint(request.args)
+            for key in request.args.keys():                                                            #
+                print(f"{key} - {request.args[key]}")                                                  #
+
+            print("\nrequest.form - - - - <")
+            pprint(request.form)
+            # cycle through form items
+            for key, val in request.form.items():
+                print(f"{key} - {val}")
+                if re.match(r'user_prefs', key):
+                    print(f"found: {key} movie ID:{val}")
+
+                if 'sort_type' == key:
+                    if request.form['sort_type'] in chosen_sort:
+                        sort_by = request.form['sort_type']
+
+            # #print(request.form['bt-short'])                                                           #
+            # if 'bt-short' in request.form.keys(): print(request.form.get('bt-short'))                                                        #
+            # print("> - - - - - vars(request.form) - - - - s")
+            # if 'sort_type' in request.form.keys():
+            #     print(request.form['sort_type'])
+            #     if request.form['sort_type'] in chosen_sort:
+            #         sort_by = request.form['sort_type']
+            # print("> - - - - - vars(request.form) - - - - e")
+
+
+    else:                                                                                          #
+        print(f"movie_gallery_home: request.method == {request.method}")                           #
+        #pprint(request)                                                                            #
+    print(f"\nmovie_gallery_home: - - - - - - - - debug - - - - - - - - - - - - - - - - E\n")          #
+    #                                                                                              #
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # generate galery sorted by request
+    #
     test_version = '0.0.0'
     print(f"Vs: {test_version}")
     headline_py = "movies"
@@ -142,9 +362,8 @@ def db_hello_world():
     genres = set()
 
 
-    for count, movie in enumerate(media_lib.sorted_by_year()):
-    #for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
-    #for count, movie in enumerate(media_lib.sorted_by_most_recently_added(REVERSE)):
+    # by year, name, most recent etc
+    for count, movie in enumerate(chosen_sort[sort_by]()):
         #if count >= 10: break
         #print(movie)
         genres.update(movie.info['genres'])
@@ -156,10 +375,13 @@ def db_hello_world():
             all_movies.append(movie.info)
 
     # choose a small random set of movies - for quick debug
-    num_of_random_movies = 10
-    for i in range(num_of_random_movies):
-        movies.append(random.choice(all_movies))
+    # num_of_random_movies = 10
+    # start_from = random.randint(0, len(all_movies)-11)
+    # for i in range(start_from, start_from + num_of_random_movies):
+    #     movies.append(all_movies[i])
 
+
+    movies = current_user.filter_list(all_movies)[0:9]
 
     # print("Incorrectly classified:")
     # for movie in bad_labels:
@@ -171,8 +393,15 @@ def db_hello_world():
     print(','.join(genres))
     print("= = = \n")
 
+    #prefs_info = current_user.prefs_info  # TODO make property
+    prefs_info = current_user.get_prefs()
+    pprint(prefs_info)
+
     #return render_template('gallery.html', movies=movies)
-    return render_template('gallery_grid.html', movies=movies)
+    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info)
+
+
+
 
 @app.route('/play_movie/<movie_id>', methods=["GET", "POST"])
 def play_movie(movie_id):

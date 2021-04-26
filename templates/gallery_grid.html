@@ -6,9 +6,15 @@
 <!--TODO REMOVE temporaritly here from nav_buttons thin-->
 <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
 <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
-
-
 <!--<script src="https://use.fontawesome.com/releases/v5.7.0/js/all.js"></script>-->
+<script id='fp2' src="static/fingerprint2.js"></script>
+<script id='filter'>
+  var prefsInfo = {{ prefs_info|tojson }};
+  console.log(`gallery_grid.html JS prefsInfo uuid:\n ${prefsInfo['uuid']} - inline`);  // sanity check
+  console.log(prefsInfo);
+</script>
+<script id='gg' src="static/gallery_grid2.js"></script>
+<!--<script src="{{ url_for( 'static', filename='gallery_grid.css') }}"></script>-->
 {% endblock %}
 
 
@@ -17,30 +23,30 @@
 <h5>offline recipe gallery - add discard button</h5>
     {% for movie_info in movies %}
     <div class='grid-movie-card-v2' id='ink'>
-        <div class='poster'><image class='img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>        
-        <div class='title'>{{ movie_info['title'] }}<span class='year'>&nbsp({{ movie_info['year']}})</span></div>    
+        <div class='poster'><image class='img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>
+        <div class='title'>{{ movie_info['title'] }}<span class='year'>&nbsp({{ movie_info['year']}})</span></div>
         <span class='runtime'>{{ movie_info['runtime_hm'] }}</span>
         <div class='rating'>{{ movie_info['rating'] }}</div>
         <div class='synop'>{{ movie_info['synopsis'] }}</div>
-        <div class='allcast'>            
+        <div class='allcast'>
             {% for n in range(7) %}
                 <!--TODO: add more button - or add this to a settings file-->
                 <span class='cast'>{{ movie_info['cast'][n] }}, </span>
             {% endfor %}
             <span class='more_cast' id="{{movie_info['id']}}">more...</span>
         </div>
-        <div class='genre' id='id_genre'>          
+        <div class='genre' id='id_genre'>
             {% for genre in movie_info['genres'] %}
                 <button class='genre-bt bt_{{genre}}'>{{ genre }}</button>
-            {% endfor %}           
+            {% endfor %}
         </div>
         <div class='control'>
-            <button class='control-bt' id='bt-rate'>NI</button>
-            <button class='control-bt' id='bt-rate'>RATE</button>
-            <button class='control-bt' id='bt-seen'>SEEN</button>
-            <form action="" method="POST">            
-                <button class='control-bt' id='bt-short' type='submit' value="{{  movie_info['title']  }}">+List</button>
-                <button class='control-bt' id='bt-play' type="submit"  value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
+            <form action="/" method="POST">
+                <button type='submit' class='control-bt' name='user_prefs_ni'   id='bt-ni'    value="{{  movie_info['id']  }}">NI</button>
+                <button type='submit' class='control-bt' name='user_prefs_rate' id='bt-rate'  value="{{  movie_info['id']  }}">RATE</button>
+                <button type='submit' class='control-bt' name='user_prefs_seen' id='bt-seen'  value="{{  movie_info['id']  }}">SEEN</button>
+                <button type='submit' class='control-bt' name='user_prefs_sl'   id='bt-sl'    value="{{  movie_info['id']  }}">+List</button>
+                <button type='submit' class='control-bt' name='user_prefs_play' id='bt-play'  value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
             </form>
         </div>
     </div>

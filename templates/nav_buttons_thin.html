@@ -17,9 +17,7 @@
 
         <!--<script src="https://use.fontawesome.com/releases/v5.7.0/js/all.js"></script>-->
 
-        <!--JS-->
-        <script src='static/dtk_storage.js'></script>
-
+        <!--JS-->        
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Picker Integration</title>
         <style>
@@ -39,8 +37,8 @@
     <body id='debug_target'>
 
         <button id='bt_home'>
-            <!--<a href="{{url_for('db_hello_world')}}"><img src="/static/PNG/check1.png" alt="tick" srcset="/static/SVG/check1.svg"></a>-->
-            <a href="{{url_for('db_hello_world')}}"><img src="/static/PNG/refresh.png" alt="tick" srcset="/static/SVG/refresh.svg"></a>
+            <!--<a href="{{url_for('movie_gallery_home')}}"><img src="/static/PNG/check1.png" alt="tick" srcset="/static/SVG/check1.svg"></a>-->
+            <a href="{{url_for('movie_gallery_home')}}"><img src="/static/PNG/refresh.png" alt="tick" srcset="/static/SVG/refresh.svg"></a>
         </button>
 
         <button id='bt_gallery'>
@@ -52,26 +50,46 @@
             <!--<a href="{{url_for('play_movie', movie_id='0')}}"><img src="/static/PNG/arrow-circle-o-up.png" alt="tick" srcset="/static/SVG/arrow-circle-o-up.svg"></a>-->
         </button>
 
-
         <button>
             <a href="{{url_for('spare_route')}}"><img src="/static/PNG/pencil.png" alt="tick" srcset="/static/SVG/pencil.svg"></a>
         </button>
 
-        <button>
-            <a href="{{url_for('spare_route')}}"><img src="/static/PNG/search.png" alt="tick" srcset="/static/SVG/search.svg"></a>
-        </button>
 
-        <button id='bt_db_snap'>
-            <a href="{{url_for('spare_route')}}"><img src="/static/PNG/camera.png" alt="tick" srcset="/static/SVG/camera.svg"></a>
-        </button>
+        <form action='/'>
+            <p style="color:white; display:inline-block;">SORT BY</p>
+            <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='year'>YEAR</button>
+            <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='rating'>RATING</button>
+            <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='title'>TITLE</button>
+            <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='added'>ADDED</button>
+        </form>
 
-        <button id='bt_weigh_in'>
-            <a href="{{url_for('spare_route')}}"><img src="/static/PNG/balance-scale.png" alt="tick" srcset="/static/SVG/balance-scale.svg"></a>
-        </button>
+        <form action='/'>
+            <p style="color:white; display:inline-block;">GENRE PREFS</p>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='history'>history</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='war'>war</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='sci-fi'>sci-fi</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='music'>music</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='sport'>sport</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='romance'>romance</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='adventure'>adventure</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='action'>action</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='mystery'>mystery</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='thriller'>thriller</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='documentary'>documentary</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='musical'>musical</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='biography'>biography</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='news'>news</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='fantasy'>fantasy</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='animation'>animation</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='family'>family</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='crime'>crime</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='drama'>drama</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='comedy'>comedy</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='horror'>horror</button>
+            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='western'>western</button>
+        </form>
 
-        <button id='bt_settings'>
-            <a href="{{url_for('spare_route')}}"><img src="/static/PNG/cog.png" alt="tick" srcset="/static/SVG/cog.svg"></a>
-        </button>
+
 
 
         {% block content %}
