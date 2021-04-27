@@ -1,4 +1,5 @@
 console.log(`gallery_grid.js - START`);
+// prefsInfo passed in using jinja filter in HTML
 
 // IIFE - check what scripts loaded
 (function(){
@@ -21,7 +22,6 @@ console.log(`gallery_grid.js - START`);
 
 
 var d1 = new Date();
-// prefsInfo passed in using jinja filter in HTML
 
 // IIFE - get FP asap!
 (function (time=d1) {
@@ -43,7 +43,7 @@ var d1 = new Date();
 })();
 
 
-function postUpdateSettingsToServer(){
+function postUpdatePrefsToServer(){
   // TODO - store setting locally
 
   console.log( JSON.stringify( { 'prefs_info':prefsInfo }) );
@@ -51,32 +51,54 @@ function postUpdateSettingsToServer(){
   fetch( '/', {
     method: 'POST',                                             // method (default is GET)
     headers: {'Content-Type': 'application/json' },             // JSON
-    //body: JSON.stringify( { 'uuid':prefsInfo.uuid, 'prefs_info':prefsInfo } )      // Payload
-    body: JSON.stringify( { 'prefs_info':prefsInfo } )      // Payload
+    body: JSON.stringify( { 'prefs_info':prefsInfo } )          // Payload
 
   }).then( function(response) {
     return response.json();
 
   }).then( function(jsonResp) {
-    //window.location.replace('/tracker');
-    //window.location.replace('/weigh_in');
     console.log(`setting UPDATED? - ${jsonResp}`);
   });
 
 }
 
+function changeUser(new_id) {
+  console.log( JSON.stringify( { 'new_id':new_id }) );
 
-document.addEventListener('click', clickHandler);
+  fetch( '/', {
+    method: 'POST',                                             // method (default is GET)
+    headers: {'Content-Type': 'application/json' },             // JSON
+    body: JSON.stringify( { 'new_id':new_id } )          // Payload
+
+  }).then( function(response) {
+    return response.json();
+
+  }).then( function(jsonResp) {
+    console.log(`user CHANGED to: ${prefsInfo.name} - ${jsonResp}`);
+    window.location.replace('/');
+  });
+}
+
 
 function clickHandler(e) {
   console.log("\n-\n-\n");
   console.log(e);
   console.log(e.target);
-  console.log(e.target.parentNode.id);
-  console.log(e.target.parentNode.classList);
+  console.log(e.target.classList);
+  //console.log(e.target.parentNode.id);
+  //console.log(e.target.parentNode.classList);
   console.log("\n-\n-\n");
-  postUpdateSettingsToServer();
+  //postUpdatePrefsToServer();
 
+  // button classes
+  // ACTIVE USER  bt-usr      bt-usr-inactiv bt-usr-activ
+  // GENRES       btn_genre   genre-pos genre-neg
+
+
+  if (Array.from(e.target.classList).includes('bt-usr')) {
+    console.log(`${e.target.id}`);
+    changeUser(e.target.id);
+  }
   //if (e.target.id.includes('tag_btn_id_')) { // its a tag - toggle it
   //  toggleTagInCategory(e.target);
   //
@@ -104,7 +126,7 @@ function clickHandler(e) {
   //    index === -1 ? console.log(`REMOVE - ALREADY PRESENT: ${input.value} <`) : df.splice(index, 1);
   //  }
   //
-  //  postUpdateSettingsToServer();
+  //  postUpdatePrefsToServer();
   //
   //  // TODO - chain promises?
   //  console.log(`IGD EXC = RELOAD /settings`);
@@ -116,15 +138,58 @@ function clickHandler(e) {
 
 
 
+//HTMLCollection.prototype.forEach = Array.prototype.forEach;
+//genre_buttons = document.getElementsByClassName('btn_genre'); // returns HTMLCollection - not array
+//genre_buttons.forEach(  // requires HTMLCollection.prototype.forEach = Array.prototype.forEach;
+//  function(element, index, array) {
+//    console.log(index, element);
+//  }
+//);
+
+function setButtonColours() {
+
+  //console.log('User buttons -S');
+  // genre buttons
+  Array.from(document.getElementsByClassName("btn_genre")).forEach(   // getElementsByClassName returns HTMLCollection - not array
+    function(element, index, array) {
+      //console.log(element.value);
+      if (prefsInfo.prefs_genre.neg.includes(element.value)) {
+        element.classList.remove('genre-pos');
+        element.classList.add('genre-neg');
+      } else if (prefsInfo.prefs_genre.pos.includes(element.value)) {
+        element.classList.remove('genre-neg');
+        element.classList.add('genre-pos');
+      }
+    }
+  );
+
+  // current user button
+  Array.from(document.getElementsByClassName("bt-usr")).forEach(   // getElementsByClassName returns HTMLCollection - not array
+    function(element, index, array) {
+      if (prefsInfo.name === element.innerText) {
+        element.classList.remove('bt-usr-inactiv');
+        element.classList.add('bt-usr-activ');
+      } else {
+        element.classList.remove('bt-usr-activ');
+        element.classList.add('bt-usr-inactiv');
+      }
+    }
+  );
+
+
+}
 
 
 
+document.addEventListener('click', clickHandler);
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  console.log('document. - S');
 
+  setButtonColours();
 
-
-
-
+  console.log('document. - E');
+});
 
 
 

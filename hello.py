@@ -123,11 +123,11 @@ class UserPrefs:
                            'fingerprints':[],
                            'ni_list':[],
                            'ratings':{},
-                           'prefs_genre': {'genres_neg':[],
+                           'prefs_genre': {'neg':[],
                                           #"genres_all":["History","War","Sci-Fi","Music","Sport","Romance","Adventure","Action","Mystery","Thriller","Documentary","Musical","Biography","News","Fantasy","Animation","Family","Crime","Drama","Comedy","Horror","Western"],
-                                          'genres_pos':[]},
-                           'prefs_actors':{'actors_neg':[],
-                                          'actors_pos':[]}
+                                          'pos':[]},
+                           'prefs_actors':{'neg':[],
+                                          'pos':[]}
                            }
         self.prefs_info.update(info)
         print(type(info))
@@ -151,8 +151,15 @@ class UserPrefs:
     def uuid(self):
         return self.prefs_info['uuid']
 
+    @property
     def name(self):
         return self.prefs_info['name']
+
+    @name.setter
+    def name(self, name):
+        self.prefs_info['name'] = name
+
+
 
     def add_fingerprint(self, fingerprint):
         if fingerprint not in self.prefs_info['fingerprints']:
@@ -166,8 +173,8 @@ class UserPrefs:
         for m in movie_list:
             m['prefScore'] = 10000
             # add 100 pointe per positive genre match in movie
-            pos = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['genres_pos']) )) * 100
-            neg = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['genres_neg']) )) * 100
+            pos = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['pos']) )) * 100
+            neg = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['neg']) )) * 100
             m['prefScore'] += pos
             m['prefScore'] -= neg
 
@@ -235,7 +242,7 @@ current_user = None
 print("users:")
 for k in user_device_DB.keys():
     user = user_device_DB[k]
-    print(f"u: {user.uuid()} n:{user.name()} t:{type(user)}")
+    print(f"u: {user.uuid()} n:{user.name} t:{type(user)}")
 
 print(f"New UUID: {new_uuid}")
 
@@ -257,11 +264,16 @@ print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - J
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
+#@app.route('/', methods=["GET", "POST"])
 
 # each app.route is an endpoint
+
+#<a href="{{url_for('/', user_id=u['user_uuid'])}}">{{ u['usr'] }}</a>
+
+#@app.route('/<user_id>', methods=["GET", "POST"])
 @app.route('/', methods=["GET", "POST"])
 def movie_gallery_home():
-
+    global current_user
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     # reset vlc process                                                                             #
     #                                                                                               #
@@ -312,6 +324,14 @@ def movie_gallery_home():
                     # return - couldnt find user_info!??
                     return json.dumps({}), 404
 
+            if settings != None  and 'new_id' in settings:
+                try:
+                    current_user = user_device_DB[settings['new_id']]
+                    return json.dumps({}), 201 # user changed
+                except KeyError:
+                    # return - couldnt find user_info!??
+                    return json.dumps({}), 404
+
 
         else:
             print("movie_gallery_home: request.method == 'POST' - NOT json ")
@@ -326,8 +346,21 @@ def movie_gallery_home():
             # cycle through form items
             for key, val in request.form.items():
                 print(f"{key} - {val}")
-                if re.match(r'user_prefs', key):
-                    print(f"found: {key} movie ID:{val}")
+                if 'change_genre' == key:       # easier to do this in JS land and post new prefs No?
+                    selected_genre = request.form['change_genre']
+                    if selected_genre in current_user.prefs_info['prefs_genre']['neg']:
+                        # del from neg move to pos
+                        current_user.prefs_info['prefs_genre']['neg'].remove(selected_genre)
+                        current_user.prefs_info['prefs_genre']['pos'].append(selected_genre)
+
+                    elif selected_genre in current_user.prefs_info['prefs_genre']['pos']:
+                        # del from pos move to don't care (not in either)
+                        current_user.prefs_info['prefs_genre']['pos'].remove(selected_genre)
+
+                    elif request.form['change_genre'] not in (current_user.prefs_info['prefs_genre']['neg'] +
+                                                            current_user.prefs_info['prefs_genre']['pos']):
+                        # move to neg
+                        current_user.prefs_info['prefs_genre']['neg'].append(selected_genre)
 
                 if 'sort_type' == key:
                     if request.form['sort_type'] in chosen_sort:
@@ -396,9 +429,14 @@ def movie_gallery_home():
     #prefs_info = current_user.prefs_info  # TODO make property
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
+    users_nav_bar = []
+    pprint(user_device_DB)
+    for key_uuid,user_prefs in user_device_DB.items():
+        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
+
 
     #return render_template('gallery.html', movies=movies)
-    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info)
+    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar)
 
 
 

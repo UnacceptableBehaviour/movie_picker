@@ -17,7 +17,7 @@
 
         <!--<script src="https://use.fontawesome.com/releases/v5.7.0/js/all.js"></script>-->
 
-        <!--JS-->        
+        <!--JS-->
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Picker Integration</title>
         <style>
@@ -26,6 +26,12 @@
             }
             #bt_gallery, #bt_db_recipe, #bt_nutes {
                 background-color: #B1D6E2;
+            }
+            #bt-usr-inactiv {
+                background-color: #C615B5;
+            }
+            #bt_usr_activ {
+                background-color: #C615B5;
             }
         </style>
         <!--<link rel="stylesheet" href="static/style.css">-->
@@ -54,6 +60,15 @@
             <a href="{{url_for('spare_route')}}"><img src="/static/PNG/pencil.png" alt="tick" srcset="/static/SVG/pencil.svg"></a>
         </button>
 
+        {% for u in users_nav_bar %}
+        <button id="{{ u['user_uuid'] }}" class='bt-usr bt-usr-inactiv'>
+            {{ u['usr'] }}
+        </button>
+        {% endfor %}
+        <button id="bt-usr-add" class='bt-usr bt-usr-inactiv'>
+            +
+        </button>
+
 
         <form action='/'>
             <p style="color:white; display:inline-block;">SORT BY</p>
@@ -63,33 +78,32 @@
             <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='added'>ADDED</button>
         </form>
 
+
         <form action='/'>
             <p style="color:white; display:inline-block;">GENRE PREFS</p>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='history'>history</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='war'>war</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='sci-fi'>sci-fi</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='music'>music</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='sport'>sport</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='romance'>romance</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='adventure'>adventure</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='action'>action</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='mystery'>mystery</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='thriller'>thriller</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='documentary'>documentary</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='musical'>musical</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='biography'>biography</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='news'>news</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='fantasy'>fantasy</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='animation'>animation</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='family'>family</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='crime'>crime</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='drama'>drama</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='comedy'>comedy</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='horror'>horror</button>
-            <button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='western'>western</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='History'>History</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='War'>War</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Sci-Fi'>Sci-Fi</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Music'>Music</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Sport'>Sport</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Romance'>Romance</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Adventure'>Adventure</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Action'>Action</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Mystery'>Mystery</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Thriller'>Thriller</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Documentary'>Documentary</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Musical'>Musical</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Biography'>Biography</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='News'>News</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Fantasy'>Fantasy</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Animation'>Animation</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Family'>Family</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Crime'>Crime</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Drama'>Drama</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Comedy'>Comedy</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Horror'>Horror</button>
+            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Western'>Western</button>
         </form>
-
-
 
 
         {% block content %}
