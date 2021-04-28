@@ -19,6 +19,39 @@
 
 
 {% block content %}
+<form action='/'>
+    <p style="color:white; display:inline-block;">SORT BY</p>
+    <button type="submit" class='btn_sort bt-sort-gen' name='sort_type' formmethod="post" value='year'>YEAR</button>
+    <button type="submit" class='btn_sort bt-sort-gen' name='sort_type' formmethod="post" value='rating'>RATING</button>
+    <button type="submit" class='btn_sort bt-sort-gen' name='sort_type' formmethod="post" value='title'>TITLE</button>
+    <button type="submit" class='btn_sort bt-sort-gen' name='sort_type' formmethod="post" value='added'>ADDED</button>
+</form>
+
+
+<form action='/'>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='History'>History</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='War'>War</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Sci-Fi'>Sci-Fi</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Music'>Music</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Sport'>Sport</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Romance'>Romance</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Adventure'>Adventure</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Action'>Action</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Mystery'>Mystery</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Thriller'>Thriller</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Documentary'>Documentary</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Musical'>Musical</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Biography'>Biography</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='News'>News</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Fantasy'>Fantasy</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Animation'>Animation</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Family'>Family</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Crime'>Crime</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Drama'>Drama</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Comedy'>Comedy</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Horror'>Horror</button>
+    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='Western'>Western</button>
+</form>
 
 <h5>offline recipe gallery - add discard button</h5>
     {% for movie_info in movies %}

@@ -1,256 +1,244 @@
-<style>
-    body {                                  /* TODO - THIS HAS NO EFFECT! WHY - entering color into tools works*/
-        background-color: #f2fcff;
-        font-family: arial, sans-serif;
-        font-size: 0.8em;
-    }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    /* Task 6 - Movie Card V2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-    /* add variables aka CSS custom properties */
-    :root {
-      --font-size-title: 1.5em;
-      --font-size-synopsis: 1.2em;
-      --font-size-cast: 1.3em;
-      --font-size-buttons: 1.4em;
-    }
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/* Task 6 - Movie Card V2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+/* add variables aka CSS custom properties */
+:root {
+  --font-size-title: 1.5em;
+  --font-size-synopsis: 1.2em;
+  --font-size-cast: 1.3em;
+  --font-size-buttons: 1.4em;
+}
 
-    body {                                  /* TODO - THIS HAS NO EFFECT! WHY - entering color into tools works*/
-        background-color: #111111;
-    }
+body {                                  /* TODO - THIS HAS NO EFFECT! WHY - entering color into tools works*/
+    background-color: #111111;
+}
 
-    .grid-movie-card-v2 {
-      background-color: #000000;
-      margin-top: 4vh;
+.grid-movie-card-v2 {
+  background-color: #000000;
+  margin-top: 4vh;
 
-      padding: 3px;
-      display: grid;
-      font-family: arial, sans-serif;
-      font-size: var(--font-size-synopsis);
-      color: #faf7e1;
-      grid-template-rows: auto auto auto auto auto auto auto;
+  padding: 3px;
+  display: grid;
+  font-family: arial, sans-serif;
+  font-size: var(--font-size-synopsis);
+  color: #faf7e1;
+  grid-template-rows: auto auto auto auto auto auto auto;
 
-      grid-template-areas:
-        "poster  poster  poster"
-        "title   title   title"
-        "runtime .       rating"
-        "synop   synop   synop"
-        "allcast allcast allcast"
-        "genre   genre   genre"
-        "control control control" ;
-    }
+  grid-template-areas:
+    "poster  poster  poster"
+    "title   title   title"
+    "runtime .       rating"
+    "synop   synop   synop"
+    "allcast allcast allcast"
+    "genre   genre   genre"
+    "control control control" ;
+}
 
-    .grid-movie-card-v2 .cast:hover {
-      background-color: #666666;
-    }
+.grid-movie-card-v2 .cast:hover {
+  background-color: #666666;
+}
 
-    .grid-movie-card-v2 .poster {
-      grid-area: poster;
-    }
-    .grid-movie-card-v2 .title {
-      grid-area: title;
-      font-size: var(--font-size-title);
-      padding: 3px;
-    }
-    .grid-movie-card-v2 .runtime {
-      grid-area: runtime;
-      font-size: var(--font-size-title);
-      padding: 3px;
-    }
-    .grid-movie-card-v2 .rating {
-      grid-area: rating;
-      font-size: var(--font-size-title);
-      padding: 3px;
-    }
-    .grid-movie-card-v2 .synop {
-      grid-area: synop;
-      padding: 3px;
-    }
-    .grid-movie-card-v2 .allcast {
-      grid-area: allcast;
-      font-size: var(--font-size-cast);
-      padding: 3px;
-    }
-    .grid-movie-card-v2 .genre {
-      grid-area: genre;
-    }
-    .grid-movie-card-v2 .control {
-      grid-area: control;
-      justify-self: end;
-    }
-    /* Alignment & justification in a grid layout */
-    /* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Box_Alignment_in_CSS_Grid_Layout */
-    /* Minmax https://developer.mozilla.org/en-US/docs/Web/CSS/minmax() */
-    .genre .genre-bt {
-      font-size: var(--font-size-buttons);
-    }
-    .control .control-bt{
-      font-size: var(--font-size-buttons);
-    }
-    .genre button {
-      margin: 3px;
-    }
-    .control button {
-      margin: 3px;
-    }
+.grid-movie-card-v2 .poster {
+  grid-area: poster;
+}
+.grid-movie-card-v2 .title {
+  grid-area: title;
+  font-size: var(--font-size-title);
+  padding: 3px;
+}
+.grid-movie-card-v2 .runtime {
+  grid-area: runtime;
+  font-size: var(--font-size-title);
+  padding: 3px;
+}
+.grid-movie-card-v2 .rating {
+  grid-area: rating;
+  font-size: var(--font-size-title);
+  padding: 3px;
+}
+.grid-movie-card-v2 .synop {
+  grid-area: synop;
+  padding: 3px;
+}
+.grid-movie-card-v2 .allcast {
+  grid-area: allcast;
+  font-size: var(--font-size-cast);
+  padding: 3px;
+}
+.grid-movie-card-v2 .genre {
+  grid-area: genre;
+}
+.grid-movie-card-v2 .control {
+  grid-area: control;
+  justify-self: end;
+}
+/* Alignment & justification in a grid layout */
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Box_Alignment_in_CSS_Grid_Layout */
+/* Minmax https://developer.mozilla.org/en-US/docs/Web/CSS/minmax() */
+.genre .genre-bt {
+  font-size: var(--font-size-buttons);
+}
+.control .control-bt{
+  font-size: var(--font-size-buttons);
+}
+.genre button {
+  margin: 3px;
+}
+.control button {
+  margin: 3px;
+}
 
-    @media (min-width: 620px) {
-      grid-template-rows: auto auto auto auto auto auto;
+@media (min-width: 620px) {
+  grid-template-rows: auto auto auto auto auto auto;
 
-      grid-template-areas:
-        "poster  title    ."
-        "poster  runtime rating"
-        "poster  allcast allcast"
-        "synop   synop   synop"
-        "genre   genre   genre"
-        "control control control" ;
+  grid-template-areas:
+    "poster  title    ."
+    "poster  runtime rating"
+    "poster  allcast allcast"
+    "synop   synop   synop"
+    "genre   genre   genre"
+    "control control control" ;
 
-    }
+}
 
 
-    @media (min-width: 720px) {
-      .grid-movie-card-v2 {
-        grid-template-rows: auto auto 1fr auto auto auto;
-        grid-template-columns: 300px auto auto auto auto;
+@media (min-width: 720px) {
+  .grid-movie-card-v2 {
+    grid-template-rows: auto auto 1fr auto auto auto;
+    grid-template-columns: 300px auto auto auto auto;
 
-        grid-template-areas:
-          "poster  title  title   title   rating"
-          "poster  title  title   title   runtime"
-          "poster  synop  synop   synop   synop"
-          "poster allcast allcast allcast allcast"
-          "poster  genre  genre   genre   genre"
-          "poster control control control control";
-      }
-      .grid-movie-card-v2 .runtime {
-        grid-area: runtime;
-        justify-self: end;
-      }
-      .grid-movie-card-v2 .rating {
-        grid-area: rating;
-        justify-self: end;
-      }
-      .poster {
-        display: inline-flex;
-        /*background-color: #000000;*/
-        /*padding: 5px;*/
-        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
-        /*grid-area: 1 / 1 /  9 / 5;*/            /*3wx6h - block 70px*/
-        justify-content: flex-end;    /* FLEX-HORIZ    center, space-between etc */
-        align-items: center;          /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
-      }
-      .poster > .img-poster {
-        height: 400px; /*height: 100%;*/
-        width: auto;
-      }
-    }
+    grid-template-areas:
+      "poster  title  title   title   rating"
+      "poster  title  title   title   runtime"
+      "poster  synop  synop   synop   synop"
+      "poster allcast allcast allcast allcast"
+      "poster  genre  genre   genre   genre"
+      "poster control control control control";
+  }
+  .grid-movie-card-v2 .runtime {
+    grid-area: runtime;
+    justify-self: end;
+  }
+  .grid-movie-card-v2 .rating {
+    grid-area: rating;
+    justify-self: end;
+  }
+  .poster {
+    display: inline-flex;
+    /*background-color: #000000;*/
+    /*padding: 5px;*/
+    /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+    /*grid-area: 1 / 1 /  9 / 5;*/            /*3wx6h - block 70px*/
+    justify-content: flex-end;    /* FLEX-HORIZ    center, space-between etc */
+    align-items: center;          /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
+  }
+  .poster > .img-poster {
+    height: 400px; /*height: 100%;*/
+    width: auto;
+  }
+}
 
-    @media (min-width: 1020px) {
+@media (min-width: 1020px) {
 
-    }
+}
 
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
-    .grid-movie-card {
-        /* 980x800 each card 14x6 ~ 1-15x1-7 - 70x70 */
-        background-color: #000000;
-        padding: 2px;
-        font-family: arial, sans-serif;
-        font-size: 0.8em;
-        margin: 5px;
-        height: 430px;
-        display: grid;                      /* select GRID BOX functionality */
-        grid-template-columns: repeat(14, 70px);
-        /*grid-column-gap: 10px;*/
-        grid-template-rows: repeat(8, 50px);
-        /*grid-row-gap: 10px;*/
-        grid-gap: 4px 4px;         /* grid-gap: row column; specify . . . */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL BELOW - - - - - - - - - - - - - - - - - - - - */
+.grid-movie-card {
+    /* 980x800 each card 14x6 ~ 1-15x1-7 - 70x70 */
+    background-color: #000000;
+    padding: 2px;
+    font-family: arial, sans-serif;
+    font-size: 0.8em;
+    margin: 5px;
+    height: 430px;
+    display: grid;                      /* select GRID BOX functionality */
+    grid-template-columns: repeat(14, 70px);
+    /*grid-column-gap: 10px;*/
+    grid-template-rows: repeat(8, 50px);
+    /*grid-row-gap: 10px;*/
+    grid-gap: 4px 4px;         /* grid-gap: row column; specify . . . */
 
-    }
+}
 
-    .m1-poster {
-        display: inline-flex;
-        background-color: #000000;
-        padding: 5px;
-        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
-        grid-area: 1 / 1 /  9 / 5;            /*3wx6h - block 70px*/
-        justify-content: flex-end;    /* FLEX-HORIZ    center, space-between etc */
-        align-items: center;        /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
-    }
-    .m1-img-poster {
-        height: 100%;
-        width: auto;
-    }
+.m1-poster {
+    display: inline-flex;
+    background-color: #000000;
+    padding: 5px;
+    /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+    grid-area: 1 / 1 /  9 / 5;            /*3wx6h - block 70px*/
+    justify-content: flex-end;    /* FLEX-HORIZ    center, space-between etc */
+    align-items: center;        /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
+}
+.m1-img-poster {
+    height: 100%;
+    width: auto;
+}
 
-    #m1-ink { color: #f7fdff; background-color: #000000;}
-    .m1-title {                        /*contains , .m1-year, .m1-runtime, .m1-rating */
-        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
-        grid-area: 1 / 5 /  2 / 14;            /* grid  width - image width, 1 high */
-        font-size: 2.2em;
-    }
-    .m1-rating {
-        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
-        grid-area: 1 / 14 /  2 / 15;              /* TRHC */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.2em;
-    }
-    .m1-title, .m1-year, .m1-runtime, .m1-rating { /* set large font */
-        display: flex;
-        align-items: center;
-    }
+#m1-ink { color: #f7fdff; background-color: #000000;}
+.m1-title {                        /*contains , .m1-year, .m1-runtime, .m1-rating */
+    /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+    grid-area: 1 / 5 /  2 / 14;            /* grid  width - image width, 1 high */
+    font-size: 2.2em;
+}
+.m1-rating {
+    /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+    grid-area: 1 / 14 /  2 / 15;              /* TRHC */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2em;
+}
+.m1-title, .m1-year, .m1-runtime, .m1-rating { /* set large font */
+    display: flex;
+    align-items: center;
+}
 
-    .m1-synop, .m1-cast {
-        /* make cast buttons so can guide choices - text for now */
-        font-size: 1.6em;
-        /* grid  width - image, 1*/
-    }
-    .m1-synop {
-        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
-        grid-area: 2 / 5 / span 4 / span 10;            /* under title */
-    }
-    .m1-cast {
-        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
-        grid-area: 6 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
-    }
-    .m1-genre {
-        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
-        grid-area: 7 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
-        display: flex;
-        align-items: center;
-    }
-    .m1-control {
-        /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
-        grid-area: 8 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
-    .m1-genre-bt, .m1-control-bt {
-        font-size: 1.7em;
-        height: 80%;
-        margin: 0 3px;
-    }
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
-    /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
+.m1-synop, .m1-cast {
+    /* make cast buttons so can guide choices - text for now */
+    font-size: 1.6em;
+    /* grid  width - image, 1*/
+}
+.m1-synop {
+    /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+    grid-area: 2 / 5 / span 4 / span 10;            /* under title */
+}
+.m1-cast {
+    /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+    grid-area: 6 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
+}
+.m1-genre {
+    /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+    grid-area: 7 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
+    display: flex;
+    align-items: center;
+}
+.m1-control {
+    /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
+    grid-area: 8 / 5 /  span 1 / span 10;            /* grid  width - image width, 1 high */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.m1-genre-bt, .m1-control-bt {
+    font-size: 1.7em;
+    height: 80%;
+    margin: 0 3px;
+}
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
+/* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
 
-    /* GENRE buttons scheme - - - - - - - - - - - - - - - - - - - - */
-    .genre-pos {
-        background-color: #8BCE51;
-    }
-    .genre-neg {
-        background-color: #CC516A;
-    }
-    .bt-usr-activ {
-        background-color: #F9C563;
-    }
-    .bt-usr-inactiv {
-        background-color: #EFEFEF;
-    }
-</style>
+/* GENRE buttons scheme - - - - - - - - - - - - - - - - - - - - */
+.genre-pos {
+    background-color: #8BCE51;
+}
+.genre-neg {
+    background-color: #CC516A;
+}
+

@@ -26,7 +26,7 @@ import socket
 import copy
 
 import sys
-from PyQt5 import QtWidgets, QtGui, QtCore
+from collections import Counter
 
 import subprocess
 from time import sleep
@@ -121,6 +121,8 @@ class UserPrefs:
         self.prefs_info = {'uuid':'uu_id',
                            'name':'user_name',
                            'fingerprints':[],
+                           'short_list':[],
+                           'seen_list':[],
                            'ni_list':[],
                            'ratings':{},
                            'prefs_genre': {'neg':[],
@@ -160,11 +162,13 @@ class UserPrefs:
         self.prefs_info['name'] = name
 
 
-
     def add_fingerprint(self, fingerprint):
         if fingerprint not in self.prefs_info['fingerprints']:
             self.prefs_info['fingerprints'].append(fingerprint)
 
+    #
+    # TODO adapt interface so its update on change - also bake in order based on ratings
+    #
     def filter_list(self, movie_list):
         scored_and_sorted_movies = []
         #print(f"UserPrefs.filter_list: {len(movie_list)}")
@@ -173,10 +177,12 @@ class UserPrefs:
         for m in movie_list:
             m['prefScore'] = 10000
             # add 100 pointe per positive genre match in movie
-            pos = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['pos']) )) * 100
-            neg = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['neg']) )) * 100
+            pos = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['pos']) )) * 500
+            neg = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['neg']) )) * 500
             m['prefScore'] += pos
             m['prefScore'] -= neg
+            if m['id'] in self.prefs_info['seen_list']: m['prefScore'] -= 250
+            if m['id'] in self.prefs_info['ni_list']: m['prefScore'] -= 750
 
         scored_and_sorted_movies  = sorted(movie_list, key=lambda k: k['prefScore'], reverse=True)
 
@@ -365,6 +371,23 @@ def movie_gallery_home():
                 if 'sort_type' == key:
                     if request.form['sort_type'] in chosen_sort:
                         sort_by = request.form['sort_type']
+
+                # TODO move this to JS land
+                if 'user_prefs' in key:
+                    button = re.sub('user_prefs_','', key) # which user pref button?
+                    print(f"user_prefs clicked: {button}")
+                    if button == 'sl':
+                        if val not in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].append(val)
+                        commit_dict_to_DB(user_device_DB)
+                    elif button == 'ni':
+                        if val not in current_user.prefs_info['ni_list']: current_user.prefs_info['ni_list'].append(val)
+                        commit_dict_to_DB(user_device_DB)
+                    elif button == 'rate':
+                        pass
+                    elif button == 'seen':
+                        if val not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(val)
+                        commit_dict_to_DB(user_device_DB)
+
 
             # #print(request.form['bt-short'])                                                           #
             # if 'bt-short' in request.form.keys(): print(request.form.get('bt-short'))                                                        #
@@ -566,18 +589,65 @@ def play_movie(movie_id):
 
     print(f"play_movie: movie ID:{movie_id}")
 
-    return render_template('play_movie.html', movies=movies)
+    users_nav_bar = []
+    for key_uuid,user_prefs in user_device_DB.items():
+        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
-@app.route('/db_movie_page', methods=["GET", "POST"])
-def db_movie_page():
-    movies = []
-    return render_template('index.html', movies=movies)
+    return render_template('play_movie.html', movies=movies, users_nav_bar=users_nav_bar)
+
+# @app.route('/db_movie_page', methods=["GET", "POST"])
+# def db_movie_page():
+#     movies = []
+#     return render_template('index.html', movies=movies)
 
 @app.route('/short_list', methods=["GET", "POST"])
 def short_list():
-    headline_py = "short_list"
+    movies = [media_lib.media_with_id(mov_id) for mov_id in current_user.prefs_info['short_list']]
+
+    prefs_info = current_user.get_prefs()
+    pprint(prefs_info)
+
+    users_nav_bar = []
+    for key_uuid,user_prefs in user_device_DB.items():
+        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
+
+    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar)
+
+
+@app.route('/combined_short_list', methods=["GET", "POST"])
+def combined_short_list():
+    # filter out duplicates and order most frequent first!
+
+    print("- - - combo SL - - - S")
+    pprint(user_device_DB)
+    # combine all users shortlists
     movies = []
-    return render_template('short_list.html', movies=movies)
+    for usr_uuid,usr in user_device_DB.items():
+        pprint(usr.prefs_info['short_list'])
+        movies = movies + usr.prefs_info['short_list']
+
+    movies_ids_ordered_by_frequency = [ mov for mov,count in Counter(movies).most_common() ]
+    pprint(movies_ids_ordered_by_frequency)
+
+    movies = [media_lib.media_with_id(mov_id) for mov_id in movies_ids_ordered_by_frequency]
+    for m in movies:
+        #pprint(m)
+        print(m['title'])
+
+
+    prefs_info = []
+    # prefs_info = current_user.get_prefs()
+    # pprint(prefs_info)
+
+    users_nav_bar = []
+    for key_uuid,user_prefs in user_device_DB.items():
+        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
+
+    print("- - - combo SL - - - E")
+
+    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar)
+
+
 
 @app.route('/tile_view', methods=["GET", "POST"])
 def tile_view():

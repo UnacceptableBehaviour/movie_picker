@@ -20,91 +20,44 @@
         <!--JS-->
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Picker Integration</title>
-        <style>
-            #bt_home, #bt_nutes_compare {
-                background-color: #8BCE51;
-            }
-            #bt_gallery, #bt_db_recipe, #bt_nutes {
-                background-color: #B1D6E2;
-            }
-            #bt-usr-inactiv {
-                background-color: #C615B5;
-            }
-            #bt_usr_activ {
-                background-color: #C615B5;
-            }
-        </style>
-        <!--<link rel="stylesheet" href="static/style.css">-->
+
+        <link rel="stylesheet" href="/static/nav_buttons_thin.css">
         {% block header %}
         {% endblock%}
 
     </head>
 
     <body id='debug_target'>
+        <div class='nav-container'>
+            <button id='bt_home' class="bt-nav bt-nav-icon">
+                <!--<a href="{{url_for('movie_gallery_home')}}"><img src="/static/PNG/check1.png" alt="tick" srcset="/static/SVG/check1.svg"></a>-->
+                <a href="{{url_for('movie_gallery_home')}}"><img src="/static/PNG/refresh.png" alt="tick" srcset="/static/SVG/refresh.svg"></a>
+            </button>
 
-        <button id='bt_home'>
-            <!--<a href="{{url_for('movie_gallery_home')}}"><img src="/static/PNG/check1.png" alt="tick" srcset="/static/SVG/check1.svg"></a>-->
-            <a href="{{url_for('movie_gallery_home')}}"><img src="/static/PNG/refresh.png" alt="tick" srcset="/static/SVG/refresh.svg"></a>
-        </button>
+            <button id='bt_gallery' class="bt-nav bt-nav-icon">
+                <a href="{{url_for('short_list')}}"><img src="/static/PNG/heart.png" alt="tick" srcset="/static/SVG/heart.svg"></a>
+            </button>
 
-        <button id='bt_gallery'>
-            <a href="{{url_for('spare_route')}}"><img src="/static/PNG/heart.png" alt="tick" srcset="/static/SVG/heart.svg"></a>
-        </button>
+            <button class="bt-nav bt-nav-icon">
+                <a href="{{url_for('combined_short_list')}}"><img src="/static/PNG/pencil.png" alt="tick" srcset="/static/SVG/pencil.svg"></a>
+                <!--<a href="{{url_for('play_movie', movie_id='0')}}"><img src="/static/PNG/arrow-circle-o-up.png" alt="tick" srcset="/static/SVG/arrow-circle-o-up.svg"></a>-->
+            </button>
 
-        <button>
-            <a href="{{url_for('spare_route')}}"><img src="/static/PNG/pencil.png" alt="tick" srcset="/static/SVG/pencil.svg"></a>
-            <!--<a href="{{url_for('play_movie', movie_id='0')}}"><img src="/static/PNG/arrow-circle-o-up.png" alt="tick" srcset="/static/SVG/arrow-circle-o-up.svg"></a>-->
-        </button>
+            <button class="bt-nav bt-nav-icon">
+                <a href="{{url_for('spare_route')}}"><img src="/static/PNG/cog.png" alt="tick" srcset="/static/SVG/cog.svg"></a>
+            </button>
 
-        <button>
-            <a href="{{url_for('spare_route')}}"><img src="/static/PNG/pencil.png" alt="tick" srcset="/static/SVG/pencil.svg"></a>
-        </button>
+            <inline class="bt-nav-space">HELLO HERE I AM</inline>
 
-        {% for u in users_nav_bar %}
-        <button id="{{ u['user_uuid'] }}" class='bt-usr bt-usr-inactiv'>
-            {{ u['usr'] }}
-        </button>
-        {% endfor %}
-        <button id="bt-usr-add" class='bt-usr bt-usr-inactiv'>
-            +
-        </button>
-
-
-        <form action='/'>
-            <p style="color:white; display:inline-block;">SORT BY</p>
-            <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='year'>YEAR</button>
-            <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='rating'>RATING</button>
-            <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='title'>TITLE</button>
-            <button type="submit" class='btn_sort' name='sort_type' formmethod="post" value='added'>ADDED</button>
-        </form>
-
-
-        <form action='/'>
-            <p style="color:white; display:inline-block;">GENRE PREFS</p>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='History'>History</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='War'>War</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Sci-Fi'>Sci-Fi</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Music'>Music</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Sport'>Sport</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Romance'>Romance</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Adventure'>Adventure</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Action'>Action</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Mystery'>Mystery</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Thriller'>Thriller</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Documentary'>Documentary</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Musical'>Musical</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Biography'>Biography</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='News'>News</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Fantasy'>Fantasy</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Animation'>Animation</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Family'>Family</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Crime'>Crime</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Drama'>Drama</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Comedy'>Comedy</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Horror'>Horror</button>
-            <button type='submit' class='btn_genre' name='change_genre' formmethod='post' value='Western'>Western</button>
-        </form>
-
+            {% for u in users_nav_bar %}
+            <button id="{{ u['user_uuid'] }}" class='bt-nav bt-usr bt-usr-inactiv'>
+                {{ u['usr'] }}
+            </button>
+            {% endfor %}
+            <button id="bt-usr-add" class='bt-nav-icon bt-nav bt-usr bt-usr-inactiv'>
+                +
+            </button>
+        </div>
 
         {% block content %}
         {% endblock %}
