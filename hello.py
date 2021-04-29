@@ -387,16 +387,8 @@ def movie_gallery_home():
                     elif button == 'seen':
                         if val not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(val)
                         commit_dict_to_DB(user_device_DB)
+                # TODO move this to JS land
 
-
-            # #print(request.form['bt-short'])                                                           #
-            # if 'bt-short' in request.form.keys(): print(request.form.get('bt-short'))                                                        #
-            # print("> - - - - - vars(request.form) - - - - s")
-            # if 'sort_type' in request.form.keys():
-            #     print(request.form['sort_type'])
-            #     if request.form['sort_type'] in chosen_sort:
-            #         sort_by = request.form['sort_type']
-            # print("> - - - - - vars(request.form) - - - - e")
 
 
     else:                                                                                          #
@@ -458,7 +450,6 @@ def movie_gallery_home():
         users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
 
-    #return render_template('gallery.html', movies=movies)
     return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar)
 
 
@@ -661,19 +652,14 @@ def tile_view():
 def settings():
     headline_py = "Settings"
     movies = []
-    return render_template('index.html', movies=movies)
+    return "SETTINGS route unimplemented <a href='/'>HOME</a>" #render_template('spare_route.html', movies=movies)
 
 @app.route('/spare_route', methods=["GET", "POST"])
 def spare_route():
     headline_py = "spare_route"
     movies = []
-    return render_template('index.html', movies=movies)
+    return "SPARE route unimplemented <a href='/'>HOME</a>" #render_template('spare_route.html', movies=movies)
 
-@app.route('/buttons_inputs', methods=["GET", "POST"])
-def buttons_inputs():
-    headline_py = "buttons_inputs"
-    movies = []
-    return render_template('index.html', movies=movies)
 
 
 if __name__ == '__main__':

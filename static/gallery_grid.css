@@ -1,6 +1,5 @@
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-/* Task 6 - Movie Card V2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 /* add variables aka CSS custom properties */
 :root {
   --font-size-title: 1.5em;
@@ -9,7 +8,7 @@
   --font-size-buttons: 1.4em;
 }
 
-body {                                  /* TODO - THIS HAS NO EFFECT! WHY - entering color into tools works*/
+body {
     background-color: #111111;
 }
 
@@ -241,4 +240,3 @@ body {                                  /* TODO - THIS HAS NO EFFECT! WHY - ente
 .genre-neg {
     background-color: #CC516A;
 }
-

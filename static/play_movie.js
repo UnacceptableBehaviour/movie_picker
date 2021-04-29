@@ -117,6 +117,14 @@ function consoleButton(e){
 
 // register button click events
 document.addEventListener("DOMContentLoaded", function(event) {
+  console.log('DOMContentLoaded triggered - - - - - S');
+  Array.from(document.getElementsByClassName('bt-usr')).forEach(
+    function (element, index, array) {
+        console.log(element);
+        element.style.display = 'None';
+    }
+  );
+  console.log('DOMContentLoaded triggered - - - - - M');
   document.querySelector('.rc-item.rc-start').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-back30s').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-play').addEventListener('click', consoleButton);

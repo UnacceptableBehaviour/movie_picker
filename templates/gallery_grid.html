@@ -1,8 +1,6 @@
 {% extends 'nav_buttons_thin.html' %}
 
 {% block header %}
-<link rel="stylesheet" href="{{ url_for( 'static', filename='gallery_grid.css') }}">
-
 <!--TODO REMOVE temporaritly here from nav_buttons thin-->
 <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
 <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
@@ -14,7 +12,7 @@
   console.log(prefsInfo);
 </script>
 <script id='gg' src="static/gallery_grid2.js"></script>
-<!--<script src="{{ url_for( 'static', filename='gallery_grid.css') }}"></script>-->
+<link rel="stylesheet" href="{{ url_for( 'static', filename='gallery_grid.css') }}">
 {% endblock %}
 
 
