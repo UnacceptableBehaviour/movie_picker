@@ -129,7 +129,8 @@ class UserPrefs:
                                           #"genres_all":["History","War","Sci-Fi","Music","Sport","Romance","Adventure","Action","Mystery","Thriller","Documentary","Musical","Biography","News","Fantasy","Animation","Family","Crime","Drama","Comedy","Horror","Western"],
                                           'pos':[]},
                            'prefs_actors':{'neg':[],
-                                          'pos':[]}
+                                          'pos':[]},
+                           'current_user': False
                            }
         self.prefs_info.update(info)
         print(type(info))
@@ -138,6 +139,7 @@ class UserPrefs:
         self.prefs_info['uuid'] = uuid
         if name: self.prefs_info['name'] = name
 
+    # deprecated - find uses - change TODO
     def get_prefs(self):
         return self.prefs_info
 
@@ -147,6 +149,14 @@ class UserPrefs:
             self.prefs_info.update(new_prefs)
         else:
             raise UserUuidMismatch
+
+    # @property
+    # def prefs_info(self):
+    #     return self.prefs_info
+    #
+    # @prefs_info.setter
+    # def prefs_info(self, ):
+    #     pass
 
 
 
@@ -260,7 +270,14 @@ if new_uuid not in user_device_DB:
 else:
     print(f"FOUND USER: {new_uuid}")
     pprint(user_device_DB[new_uuid].get_prefs())
-    current_user = user_device_DB[new_uuid]
+    # user_device_DB[new_uuid].prefs_info['current_user'] = True
+    # commit_dict_to_DB(user_device_DB)
+
+for usr_id,usr in user_device_DB.items():
+    print(f"u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
+    if usr.prefs_info['current_user']: current_user = usr
+
+
 
 print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - JSON DB - E")
 
@@ -269,8 +286,6 @@ print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - J
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
-#@app.route('/', methods=["GET", "POST"])
 
 # each app.route is an endpoint
 
@@ -332,38 +347,41 @@ def movie_gallery_home():
 
             if settings != None  and 'new_id' in settings:  # user id
                 try:
+                    last_user = current_user
                     current_user = user_device_DB[settings['new_id']]
+                    current_user.prefs_info['current_user'] = True
+                    if current_user != last_user: last_user.prefs_info['current_user'] = False
+                    commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201 # user changed
                 except KeyError:
                     # return - couldnt find user_info!??
                     return json.dumps({}), 404
 
             if settings != None  and 'mov_id_prefs' in settings:
-                if 'mov_id_prefs' in settings:
-                    print("'mov_prefs' in settings - - - S")
-                    button = re.sub('mov_prefs_','', settings['button']) # which movie pref button?
-                    mov_id = settings['mov_id_prefs']
-                    rating = settings['rating']
-                    print(f"mov_prefs clicked: {button}")
-                    if button == 'sl':
-                        if mov_id not in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].append(mov_id)
+                print("'mov_prefs' in settings - - - S")
+                button = re.sub('mov_prefs_','', settings['button']) # which movie pref button?
+                mov_id = settings['mov_id_prefs']
+                rating = settings['rating']
+                print(f"mov_prefs clicked: {button}")
+                if button == 'sl':
+                    if mov_id not in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].append(mov_id)
+                    commit_dict_to_DB(user_device_DB)
+                    return json.dumps({}), 201
+                elif button == 'ni':
+                    if mov_id not in current_user.prefs_info['ni_list']: current_user.prefs_info['ni_list'].append(mov_id)
+                    commit_dict_to_DB(user_device_DB)
+                    return json.dumps({}), 201
+                elif button == 'rate':
+                    if (rating != -1) and (mov_id not in current_user.prefs_info['ratings']):
+                        current_user.prefs_info['ratings'][mov_id] = rating
                         commit_dict_to_DB(user_device_DB)
                         return json.dumps({}), 201
-                    elif button == 'ni':
-                        if mov_id not in current_user.prefs_info['ni_list']: current_user.prefs_info['ni_list'].append(mov_id)
-                        commit_dict_to_DB(user_device_DB)
-                        return json.dumps({}), 201
-                    elif button == 'rate':
-                        if (rating != -1) and (mov_id not in current_user.prefs_info['ratings']):
-                            current_user.prefs_info['ratings'][mov_id] = rating
-                            commit_dict_to_DB(user_device_DB)
-                            return json.dumps({}), 201
-                        return json.dumps({}), 404
-                    elif button == 'seen':
-                        if mov_id not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(mov_id)
-                        commit_dict_to_DB(user_device_DB)
-                        return json.dumps({}), 201
-                    print("'mov_prefs' in settings - - - E")
+                    return json.dumps({}), 404
+                elif button == 'seen':
+                    if mov_id not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(mov_id)
+                    commit_dict_to_DB(user_device_DB)
+                    return json.dumps({}), 201
+                print("'mov_prefs' in settings - - - E")
 
         else:
             print("movie_gallery_home: request.method == 'POST' - NOT json ")
@@ -459,7 +477,7 @@ def movie_gallery_home():
         users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
 
-    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar)
+    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres)
 
 
 
@@ -595,23 +613,85 @@ def play_movie(movie_id):
 
     return render_template('play_movie.html', movies=movies, users_nav_bar=users_nav_bar)
 
-# @app.route('/db_movie_page', methods=["GET", "POST"])
-# def db_movie_page():
-#     movies = []
-#     return render_template('index.html', movies=movies)
 
 @app.route('/short_list', methods=["GET", "POST"])
 def short_list():
+    print(f"\nshort_list: - - - - - - - - debug - - - - - - - - - - - - - - - - S\n")
+    if request.method == 'POST':
+        if request.is_json:
+            print("short_list: request.method == 'POST_JSON'")
+            settings = request.get_json() # parse JSON into DICT
+            pprint(settings)
+
+            if settings != None  and 'mov_id_prefs' in settings:
+                print("'mov_prefs' in settings - - - S")
+                button = re.sub('mov_prefs_','', settings['button']) # which movie pref button?
+                mov_id = settings['mov_id_prefs']
+                rating = settings['rating']
+                print(f"mov_prefs clicked: {button}")
+                if button == 'sl':      # REMOVE button
+                    print(f"short_list: REMOVE - mov_id:{mov_id}")
+                    print(current_user.prefs_info['seen_list'])
+                    print(current_user.prefs_info['short_list'])
+                    if mov_id in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].remove(mov_id)
+                    commit_dict_to_DB(user_device_DB)
+                    return json.dumps({}), 201
+                elif button == 'rate':
+                    if (rating != -1) and (mov_id not in current_user.prefs_info['ratings']):
+                        current_user.prefs_info['ratings'][mov_id] = rating
+                        commit_dict_to_DB(user_device_DB)
+                        return json.dumps({}), 201
+                    return json.dumps({}), 404
+                elif button == 'seen':
+                    print(f"short_list: seen - mov_id:{mov_id}")
+                    print(current_user.prefs_info['seen_list'])
+                    print(current_user.prefs_info['short_list'])
+                    if mov_id not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(mov_id)
+                    if mov_id in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].remove(mov_id)
+                    commit_dict_to_DB(user_device_DB)
+                    return json.dumps({}), 201
+                print("'mov_prefs' in settings - - - E")
+    else:
+        print(f"short_list: request.method == {request.method}")
+    print(f"\nshort_list: - - - - - - - - debug - - - - - - - - - - - - - - - - E\n")
+
     movies = [media_lib.media_with_id(mov_id) for mov_id in current_user.prefs_info['short_list']]
 
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
 
     users_nav_bar = []
-    for key_uuid,user_prefs in user_device_DB.items():
-        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
+    # for key_uuid,user_prefs in user_device_DB.items():
+    #     users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
-    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar)
+    title = f"{prefs_info['name']}'s movie shortlist . . ."
+    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @app.route('/combined_short_list', methods=["GET", "POST"])
@@ -645,7 +725,9 @@ def combined_short_list():
 
     print("- - - combo SL - - - E")
 
-    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar)
+    title = f"combined movie shortlist . . ."
+    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title)
+
 
 
 
