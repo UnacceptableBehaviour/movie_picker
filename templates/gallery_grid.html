@@ -72,13 +72,11 @@
             {% endfor %}
         </div>
         <div class='control'>
-            <form action="/" method="POST">
-                <button type='submit' class='control-bt' name='user_prefs_ni'   id='bt-ni'    value="{{  movie_info['id']  }}">NI</button>
-                <button type='submit' class='control-bt' name='user_prefs_rate' id='bt-rate'  value="{{  movie_info['id']  }}">RATE</button>
-                <button type='submit' class='control-bt' name='user_prefs_seen' id='bt-seen'  value="{{  movie_info['id']  }}">SEEN</button>
-                <button type='submit' class='control-bt' name='user_prefs_sl'   id='bt-sl'    value="{{  movie_info['id']  }}">+List</button>
-                <button type='submit' class='control-bt' name='user_prefs_play' id='bt-play'  value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
-            </form>
+            <button type='submit' class='control-bt' name='mov_prefs_ni'   value="{{  movie_info['id']  }}">NI</button>
+            <button type='submit' class='control-bt' name='mov_prefs_rate' value="{{  movie_info['id']  }}">RATE</button>
+            <button type='submit' class='control-bt' name='mov_prefs_seen' value="{{  movie_info['id']  }}">SEEN</button>
+            <button type='submit' class='control-bt' name='mov_prefs_sl'   value="{{  movie_info['id']  }}">+List</button>
+            <button type='submit' class='control-bt' name='mov_prefs_play' value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
         </div>
     </div>
     {% endfor %}

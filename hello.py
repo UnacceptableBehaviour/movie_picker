@@ -330,7 +330,7 @@ def movie_gallery_home():
                     # return - couldnt find user_info!??
                     return json.dumps({}), 404
 
-            if settings != None  and 'new_id' in settings:
+            if settings != None  and 'new_id' in settings:  # user id
                 try:
                     current_user = user_device_DB[settings['new_id']]
                     return json.dumps({}), 201 # user changed
@@ -338,6 +338,32 @@ def movie_gallery_home():
                     # return - couldnt find user_info!??
                     return json.dumps({}), 404
 
+            if settings != None  and 'mov_id_prefs' in settings:
+                if 'mov_id_prefs' in settings:
+                    print("'mov_prefs' in settings - - - S")
+                    button = re.sub('mov_prefs_','', settings['button']) # which movie pref button?
+                    mov_id = settings['mov_id_prefs']
+                    rating = settings['rating']
+                    print(f"mov_prefs clicked: {button}")
+                    if button == 'sl':
+                        if mov_id not in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].append(mov_id)
+                        commit_dict_to_DB(user_device_DB)
+                        return json.dumps({}), 201
+                    elif button == 'ni':
+                        if mov_id not in current_user.prefs_info['ni_list']: current_user.prefs_info['ni_list'].append(mov_id)
+                        commit_dict_to_DB(user_device_DB)
+                        return json.dumps({}), 201
+                    elif button == 'rate':
+                        if (rating != -1) and (mov_id not in current_user.prefs_info['ratings']):
+                            current_user.prefs_info['ratings'][mov_id] = rating
+                            commit_dict_to_DB(user_device_DB)
+                            return json.dumps({}), 201
+                        return json.dumps({}), 404
+                    elif button == 'seen':
+                        if mov_id not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(mov_id)
+                        commit_dict_to_DB(user_device_DB)
+                        return json.dumps({}), 201
+                    print("'mov_prefs' in settings - - - E")
 
         else:
             print("movie_gallery_home: request.method == 'POST' - NOT json ")
@@ -371,23 +397,6 @@ def movie_gallery_home():
                 if 'sort_type' == key:
                     if request.form['sort_type'] in chosen_sort:
                         sort_by = request.form['sort_type']
-
-                # TODO move this to JS land
-                if 'user_prefs' in key:
-                    button = re.sub('user_prefs_','', key) # which user pref button?
-                    print(f"user_prefs clicked: {button}")
-                    if button == 'sl':
-                        if val not in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].append(val)
-                        commit_dict_to_DB(user_device_DB)
-                    elif button == 'ni':
-                        if val not in current_user.prefs_info['ni_list']: current_user.prefs_info['ni_list'].append(val)
-                        commit_dict_to_DB(user_device_DB)
-                    elif button == 'rate':
-                        pass
-                    elif button == 'seen':
-                        if val not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(val)
-                        commit_dict_to_DB(user_device_DB)
-                # TODO move this to JS land
 
 
 

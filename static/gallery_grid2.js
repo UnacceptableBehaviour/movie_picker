@@ -1,3 +1,9 @@
+// style note
+// variable used on server python IE passed as JSON   server_var
+// variable coming from client JS                     clientVar
+// ref to html class                                  html-class
+
+
 console.log(`gallery_grid.js - START`);
 // prefsInfo passed in using jinja filter in HTML
 
@@ -62,6 +68,25 @@ function postUpdatePrefsToServer(){
 
 }
 
+function updateMoviePrefs(movId, buttonPref, movieRating=-1) {
+  console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
+
+  fetch( '/', {
+    method: 'POST',                                             // method (default is GET)
+    headers: {'Content-Type': 'application/json' },             // JSON
+    body: JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating } ) // Payload
+
+  }).then( function(response) {
+    return response.json();
+
+  }).then( function(jsonResp) {
+    console.log(`mov prefs UPDATED: ${movId} - ${jsonResp}`);
+    window.location.replace('/');
+  }).catch( function(err){
+    console.log(err);
+  });
+}
+
 function changeUser(new_id) {
   console.log( JSON.stringify( { 'new_id':new_id }) );
 
@@ -80,6 +105,7 @@ function changeUser(new_id) {
 }
 
 
+
 function clickHandler(e) {
   console.log("\n-\n-\n");
   console.log(e);
@@ -93,11 +119,19 @@ function clickHandler(e) {
   // button classes
   // ACTIVE USER  bt-usr      bt-usr-inactiv bt-usr-activ
   // GENRES       btn_genre   genre-pos genre-neg
+  // MOVIE PREFS  control-bt
 
 
   if (Array.from(e.target.classList).includes('bt-usr')) {
     console.log(`${e.target.id}`);
     changeUser(e.target.id);
+    return;
+  }
+
+  if (Array.from(e.target.classList).includes('control-bt')) {
+    console.log(`${e.target.name}`);
+    console.log(`${e.target.value}`);
+    updateMoviePrefs(e.target.value, e.target.name);
   }
   //if (e.target.id.includes('tag_btn_id_')) { // its a tag - toggle it
   //  toggleTagInCategory(e.target);
