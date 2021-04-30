@@ -670,30 +670,6 @@ def short_list():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/combined_short_list', methods=["GET", "POST"])
 def combined_short_list():
     # filter out duplicates and order most frequent first!
@@ -725,7 +701,7 @@ def combined_short_list():
 
     print("- - - combo SL - - - E")
 
-    title = f"combined movie shortlist . . ."
+    title = "combined movie shortlists . . ."
     return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title)
 
 
