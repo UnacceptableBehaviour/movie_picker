@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title><!-- Insert your title here --></title>
+    <style>
+        /* https://css-tricks.com/gotchas-on-getting-svg-into-production/ */
+        /* nothing = tag,   .=class  #=id*/
+        h2 { color: green; background-color: purple;}           /* tag */
+        .demo-class { color: blue; background-color: yellow;}   /* class */
+        #demo-id { color: red; background-color: gold; }        /* id */
+
+        body{ background-color: #CCCCCC; }
+
+        .star-1 {
+            background-color: transparent;
+            color: gold;
+        }
+        .star-2 {
+            background-color: black;
+            fill: gold;
+        }
+        .star-2 path {
+            background-color: black;
+            fill: gold;
+        }
+        /* https://stackoverflow.com/questions/22252472/how-to-change-the-color-of-an-svg-element/53336754#53336754 */
+        /* computing filter https://codepen.io/sosuke/pen/Pjoqqp */
+        /* more computing filter https://stackoverflow.com/questions/42966641/how-to-transform-black-into-any-given-color-using-only-css-filters/43960991#43960991 */
+        .filter-green{
+            filter: invert(48%) sepia(79%) saturate(576%) hue-rotate(86deg) brightness(118%) contrast(119%);
+        }
+        .filter-gold {
+            filter: invert(74%) sepia(91%) saturate(517%) hue-rotate(358deg) brightness(103%) contrast(105%);
+        }
+        .filter-gold2 {
+            filter: invert(81%) sepia(54%) saturate(1620%) hue-rotate(0deg) brightness(105%) contrast(104%);
+        }
+        /* <use> can duplicate SVG components https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use */
+
+        #star_icon {        /* embedded svg data */
+            fill: gold;
+        }
+
+        .css-star {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            color: gold;        /* no effect */
+            fill: gold;         /* no effect */
+            background-image: url(static/SVG/star.svg);
+            background-color: #FFEB3B;
+            background-size: 28px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* https://jsfiddle.net/KuhlTime/2j8exgcb/ */
+        .icon {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background-color: #FFEB3B;
+        }
+        .css-mask-star {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background-color: #000000;
+            -webkit-mask: url(static/SVG/star.svg) no-repeat center;
+            mask: url(static/SVG/star.svg) no-repeat center;
+        }
+
+        /* Add this example https://stackoverflow.com/questions/22252472/how-to-change-the-color-of-an-svg-element */
+
+    </style>
+</head>
+<body>
+    <h2 class='star-1'>TESTS</h2>
+    <h2 >TAG</h2>
+    <h2 class='demo-class'>CLASS</h2>
+    <h2 id='demo-id'>ID</h2>
+    <br>
+    <img src="static/SVG/star.svg" class='star-1'>
+    <img src="static/SVG/star.svg" class="star-2">
+    <img src="static/SVG/star.svg" style="fill:gold;">
+    <button id='bt_home' class="star-1">
+        <a href="/"><img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg"></a>
+    </button>
+    <button id='bt_home' class="star-2">
+        <a href="/"><img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg"></a>
+    </button>
+    <img src="static/SVG/star.svg" class="star-2">
+
+    <br>
+    editing SVG file (fill/stroke)
+    <img src="static/SVG/star_g.svg">              <!--edit svg file path fill="gold"-->
+    <img src="static/SVG/star_gr.svg">             <!--edit svg file path stroke="red"-->
+
+    <br>css filter:
+    <img src="static/SVG/star.svg" class="filter-green"/>
+    <img src="static/SVG/star.svg" class="filter-gold"/>
+    <img src="static/SVG/star.svg" class="filter-gold2"/>
+
+    <br>embedded SVG data & css
+    <svg id="star_icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="26" height="28" viewBox="0 0 26 28">
+        <title>star</title>
+        <path d="M26 10.109c0 0.281-0.203 0.547-0.406 0.75l-5.672 5.531 1.344 7.812c0.016 0.109 0.016 0.203 0.016 0.313 0 0.406-0.187 0.781-0.641 0.781-0.219 0-0.438-0.078-0.625-0.187l-7.016-3.687-7.016 3.687c-0.203 0.109-0.406 0.187-0.625 0.187-0.453 0-0.656-0.375-0.656-0.781 0-0.109 0.016-0.203 0.031-0.313l1.344-7.812-5.688-5.531c-0.187-0.203-0.391-0.469-0.391-0.75 0-0.469 0.484-0.656 0.875-0.719l7.844-1.141 3.516-7.109c0.141-0.297 0.406-0.641 0.766-0.641s0.625 0.344 0.766 0.641l3.516 7.109 7.844 1.141c0.375 0.063 0.875 0.25 0.875 0.719z"></path>
+    </svg>
+
+    <br>loading through css
+    <div class="css-star"></div>
+    <div class="css-star"></div>
+    <div class="css-star"></div>
+
+    <br>
+    define SVG as a mask - not working
+    <div class="icon "></div>
+    <div class="icon css-mask-star"></div>
+    <div class="css-mask-star"></div>
+
+    <br>
+    <br>embedded SVG & use tag:
+    <svg id="rt_star" version="1.1" xmlns="http://www.w3.org/2000/svg" width="26" height="28" viewBox="0 0 26 28">
+        <title>star</title>
+        <path d="M26 10.109c0 0.281-0.203 0.547-0.406 0.75l-5.672 5.531 1.344 7.812c0.016 0.109 0.016 0.203 0.016 0.313 0 0.406-0.187 0.781-0.641 0.781-0.219 0-0.438-0.078-0.625-0.187l-7.016-3.687-7.016 3.687c-0.203 0.109-0.406 0.187-0.625 0.187-0.453 0-0.656-0.375-0.656-0.781 0-0.109 0.016-0.203 0.031-0.313l1.344-7.812-5.688-5.531c-0.187-0.203-0.391-0.469-0.391-0.75 0-0.469 0.484-0.656 0.875-0.719l7.844-1.141 3.516-7.109c0.141-0.297 0.406-0.641 0.766-0.641s0.625 0.344 0.766 0.641l3.516 7.109 7.844 1.141c0.375 0.063 0.875 0.25 0.875 0.719z"></path>
+    </svg>
+    <use href="#rt_star" x="50" fill="gold"></use>
+    <object src="static/SVG/star.svg" class="filter-gold2"/>
+</body>
+</html>
