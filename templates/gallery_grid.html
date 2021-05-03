@@ -26,12 +26,16 @@
 </form>
 
 
-<form action='/'>
+<form action='/' background-color='white'>
     {% for g in genres %}
+
+    <img class="star-gold" src="static/SVG/star.svg">
+    <img class="star-grey" src="static/SVG/star.svg">
+
     <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='{{g}}'>{{g}}</button>
     {% endfor %}
 </form>
-
+<inline><img src="static/SVG/star.svg" fill="gold"></inline>
 <h5>offline recipe gallery - add discard button</h5>
     {% for movie_info in movies %}
     <div class='grid-movie-card-v2' id='ink'>
@@ -52,13 +56,19 @@
                 <button class='genre-bt bt_{{genre}}'>{{ genre }}</button>
             {% endfor %}
         </div>
+        <inline><img src="static/SVG/star.svg" fill="gold"></inline>
         <div class='control'>
-            <inline><img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg" class="star-gold"></inline>
-            <inline><img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg" class="star-gold"></inline>
-            <inline><img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg" class="star-gold"></inline>
-            <inline><img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg" class="star-gold"></inline>
-            <inline><img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg" class="star-gold"></inline>
-            <inline><img src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg" class="star-gold"></inline>
+            <img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-grey" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-grey" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+            <img class="star-grey" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+
             <button type='submit' class='control-bt' name='mov_prefs_rate' value="{{  movie_info['id']  }}">RATE</button>
             <button type='submit' class='control-bt' name='mov_prefs_ni'   value="{{  movie_info['id']  }}">NI</button>
             <button type='submit' class='control-bt' name='mov_prefs_seen' value="{{  movie_info['id']  }}">SEEN</button>

@@ -18,6 +18,27 @@ h2 {
   color: #faf7e1;
 }
 
+
+.star-gold {
+    filter: invert(81%) sepia(54%) saturate(1620%) hue-rotate(0deg) brightness(105%) contrast(104%);
+    height: 32px;
+    width: 32px;
+    vertical-align: middle;
+    /*justify-content: center;*/
+    /*margin-top: 4px;*/
+    /*border-top: 4px;*/
+    /*padding-top: 4px*/;
+    padding-bottom: 6px;
+}
+
+.star-grey {
+    filter: invert(24%) sepia(1%) saturate(4372%) hue-rotate(25deg) brightness(98%) contrast(88%);
+    height: 32px;
+    width: 32px;
+    vertical-align: middle;
+    padding-bottom: 6px;
+}
+
 .grid-movie-card-v2 {
   background-color: #000000;
   margin-top: 4vh;
