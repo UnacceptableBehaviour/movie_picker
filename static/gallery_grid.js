@@ -104,7 +104,23 @@ function changeUser(new_id) {
   });
 }
 
+//<img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+//<img class="star-grey" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+function goldStars(e) {
+  // color stars in set up to mouseover star gold and the rest grey
+  let stars = e.target.parentElement.getElementsByClassName('solo-star');
 
+  Array.from(stars).forEach( a => {
+    console.log(`star scan ${a.value}`);
+    if (a.value <= e.target.value) {
+      a.classList.remove('star-grey');
+      a.classList.add('star-gold');
+    } else {
+      a.classList.remove('star-gold');
+      a.classList.add('star-grey');
+    }
+  });
+}
 
 function clickHandler(e) {
   console.log("\n-\n-\n");
@@ -131,7 +147,33 @@ function clickHandler(e) {
   if (Array.from(e.target.classList).includes('control-bt')) {
     console.log(`${e.target.name}`);
     console.log(`${e.target.value}`);
-    updateMoviePrefs(e.target.value, e.target.name);
+    if (e.target.name === 'mov_prefs_rate') {
+      console.log(`RATE CLICKED: ${e.target.name}`);
+      movId = e.target.closest('.grid-movie-card-v2').id;
+      console.log(`movId: ${movId}`);
+      let rtStars = document.getElementById(`rt-stars-${movId}`);
+      //let starsHtml = '';
+
+      for (let s = 1; s < 11; s += 1) {
+        console.log(`adding star ${s}`);
+        //starsHtml += `<img class="star-grey" value=${s} src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">`;
+        //
+        greyStar = document.createElement('img');
+        greyStar.value = s;
+        greyStar.className = "solo-star star-grey";
+        greyStar.srcset = "static/SVG/star.svg";
+        greyStar.src="static/PNG/star.png";
+        greyStar.alt="rating star";
+        greyStar.addEventListener('mouseenter', function(e){ goldStars(e); });
+        //greyStar.addEventListener('mouseenter', goldStars);
+        rtStars.appendChild(greyStar);
+      }
+      //rtStars.innerHTML = starsHtml;
+
+    } else {
+      updateMoviePrefs(e.target.value, e.target.name);
+    }
+
   }
   //if (e.target.id.includes('tag_btn_id_')) { // its a tag - toggle it
   //  toggleTagInCategory(e.target);
@@ -169,6 +211,7 @@ function clickHandler(e) {
   //}
 
 }
+
 
 
 
