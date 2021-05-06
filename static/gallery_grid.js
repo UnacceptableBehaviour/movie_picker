@@ -1,3 +1,18 @@
+// prefsInfo passed in using jinja filter in HTML
+//
+// current_user: true
+// fingerprints: ["6012bf36aba6d881aede81f36a75b819"]
+// name: "usr3"
+// ni_list: (10) ["8579674", "4218572", "2267968", "3040964", "7846844", "9340860", ...]
+// prefs_actors: {neg: Array(0), pos: Array(0)}
+// prefs_genre:
+//   neg: (5) ["Documentary", "Music", "Comedy", "Sci-Fi", "Action"]
+//   pos: (2) ["Adventure", "Thriller"]
+// ratings: {}
+// seen_list: (9) ["0078718", "6294822", "0816692", "7556122", "6386748", "7497366", ...]
+// short_list: (3) ["9620292", "5867314", "7784604"]
+// uuid: "1d016209-52d9-4539-ac45-f82acfb841be"
+
 // style note
 // variable used on server python IE passed as JSON   server_var
 // variable coming from client JS                     clientVar
@@ -5,7 +20,7 @@
 
 
 console.log(`gallery_grid.js - START`);
-// prefsInfo passed in using jinja filter in HTML
+
 
 // IIFE - check what scripts loaded
 (function(){
@@ -48,9 +63,9 @@ var d1 = new Date();
   });
 })();
 
-
-function postUpdatePrefsToServer(){
-  // TODO - store setting locally
+// update prefs W/O RELOADING
+function postUpdatedPrefsToServerNOReload(){
+  // TODO - store setting locally - PERSISTENT CACHE - one for each user on device
 
   console.log( JSON.stringify( { 'prefs_info':prefsInfo }) );
 
@@ -65,10 +80,10 @@ function postUpdatePrefsToServer(){
   }).then( function(jsonResp) {
     console.log(`setting UPDATED? - ${jsonResp}`);
   });
-
 }
 
-function updateMoviePrefs(movId, buttonPref, movieRating=-1) {
+// update prefs W/ RELOAD - change offered movies based on button
+function updateMoviePrefsAndReload(movId, buttonPref, movieRating=-1) {
   console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
 
   fetch( '/', {
@@ -104,22 +119,30 @@ function changeUser(new_id) {
   });
 }
 
-//<img class="star-gold" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
-//<img class="star-grey" src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">
+//<div class="rt-stars" id="rt-stars-7179594">
+//  <img class="solo-star star-gold" srcset="static/SVG/star.svg" src="static/PNG/star.png" alt="rating star">
+//  <img class="solo-star star-gold" srcset="static/SVG/star.svg" src="static/PNG/star.png" alt="rating star">
+//</div>
 function goldStars(e) {
   // color stars in set up to mouseover star gold and the rest grey
   let stars = e.target.parentElement.getElementsByClassName('solo-star');
+  let movId = e.target.parentElement.id.replace('rt-stars-', '');
+  let movRating = 0;
 
   Array.from(stars).forEach( a => {
     console.log(`star scan ${a.value}`);
     if (a.value <= e.target.value) {
       a.classList.remove('star-grey');
       a.classList.add('star-gold');
+      movRating = a.value;
     } else {
       a.classList.remove('star-gold');
       a.classList.add('star-grey');
     }
   });
+
+  console.log(`movie rating ${movRating}`);
+  prefsInfo.ratings[movId] = movRating;
 }
 
 function clickHandler(e) {
@@ -130,7 +153,7 @@ function clickHandler(e) {
   //console.log(e.target.parentNode.id);
   //console.log(e.target.parentNode.classList);
   console.log("\n-\n-\n");
-  //postUpdatePrefsToServer();
+  //postUpdatedPrefsToServerNOReload();
 
   // button classes
   // ACTIVE USER  bt-usr      bt-usr-inactiv bt-usr-activ
@@ -147,31 +170,43 @@ function clickHandler(e) {
   if (Array.from(e.target.classList).includes('control-bt')) {
     console.log(`${e.target.name}`);
     console.log(`${e.target.value}`);
-    if (e.target.name === 'mov_prefs_rate') {
-      console.log(`RATE CLICKED: ${e.target.name}`);
-      movId = e.target.closest('.grid-movie-card-v2').id;
-      console.log(`movId: ${movId}`);
-      let rtStars = document.getElementById(`rt-stars-${movId}`);
-      //let starsHtml = '';
+    let movId = e.target.closest('.grid-movie-card-v2').id;   // go up node tree until find first class='bla'
+    switch (e.target.name) {
+        case 'mov_prefs_rate':
+          console.log(`RATE CLICKED: ${e.target.name}`);
 
-      for (let s = 1; s < 11; s += 1) {
-        console.log(`adding star ${s}`);
-        //starsHtml += `<img class="star-grey" value=${s} src="static/PNG/star.png" alt="tick" srcset="static/SVG/star.svg">`;
-        //
-        greyStar = document.createElement('img');
-        greyStar.value = s;
-        greyStar.className = "solo-star star-grey";
-        greyStar.srcset = "static/SVG/star.svg";
-        greyStar.src="static/PNG/star.png";
-        greyStar.alt="rating star";
-        greyStar.addEventListener('mouseenter', function(e){ goldStars(e); });
-        //greyStar.addEventListener('mouseenter', goldStars);
-        rtStars.appendChild(greyStar);
-      }
-      //rtStars.innerHTML = starsHtml;
+          console.log(`movId: ${movId}`);
+          let rtStars = document.getElementById(`rt-stars-${movId}`);
 
-    } else {
-      updateMoviePrefs(e.target.value, e.target.name);
+          if (rtStars.children.length > 0) { // send rating
+            console.log(`RATE > SEND RATING as PREFS JSON : ${prefsInfo.ratings[movId]}`);
+            postUpdatedPrefsToServerNOReload();
+          } else { // add stars to rate movie
+            console.log(`rtStars.children.length == 0: ${rtStars.children.length}`);
+            for (let s = 1; s < 11; s += 1) {
+              let starColour = 'star-grey';
+              if (s <= prefsInfo.ratings[movId]) { starColour = 'star-gold'; }
+              greyStar = document.createElement('img');
+              greyStar.value = s;
+              greyStar.name = 'mov_prefs_star';
+              greyStar.className = "control-bt solo-star " + starColour;
+              greyStar.srcset = "static/SVG/star.svg";
+              greyStar.src="static/PNG/star.png";
+              greyStar.alt="rating star";
+              greyStar.addEventListener('mouseenter', function(e){ goldStars(e); });
+              //greyStar.addEventListener('mouseenter', goldStars);   // w/o argument
+              rtStars.appendChild(greyStar);
+            }
+          }
+          break;
+
+        case 'mov_prefs_star':
+          console.log(`STAR > SEND RATING as PREFS JSON: ${prefsInfo.ratings[movId]}`);
+          postUpdatedPrefsToServerNOReload();
+          break;
+
+        default:
+          updateMoviePrefsAndReload(e.target.value, e.target.name);
     }
 
   }
@@ -202,7 +237,7 @@ function clickHandler(e) {
   //    index === -1 ? console.log(`REMOVE - ALREADY PRESENT: ${input.value} <`) : df.splice(index, 1);
   //  }
   //
-  //  postUpdatePrefsToServer();
+  //  postUpdatedPrefsToServerNOReload();
   //
   //  // TODO - chain promises?
   //  console.log(`IGD EXC = RELOAD /settings`);

@@ -372,7 +372,7 @@ def movie_gallery_home():
                     commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201
                 elif button == 'rate':
-                    if (rating != -1) and (mov_id not in current_user.prefs_info['ratings']):
+                    if (rating != -1):
                         current_user.prefs_info['ratings'][mov_id] = rating
                         commit_dict_to_DB(user_device_DB)
                         return json.dumps({}), 201
@@ -456,7 +456,7 @@ def movie_gallery_home():
     #     movies.append(all_movies[i])
 
 
-    movies = current_user.filter_list(all_movies)[0:9]
+    movies = current_user.filter_list(all_movies)#[10:19]
 
     # print("Incorrectly classified:")
     # for movie in bad_labels:
