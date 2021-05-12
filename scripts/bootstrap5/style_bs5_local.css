@@ -1,11 +1,47 @@
-@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,700');
+/*@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,700');*/
 /* localise ^ with https://simplify-everything.com/en/blog/2019/05/30/how-to-host-google-fonts-local-through-css/ */
+/* font tool - creates CSS & dowload relevant files - https://google-webfonts-helper.herokuapp.com/fonts/poppins?subsets=latin */
+
+/* use local font so no internet access required */
+/* poppins-regular - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+       url('./fonts/poppins-v15-latin/poppins-v15-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('./fonts/poppins-v15-latin/poppins-v15-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* poppins-500 - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  src: local(''),
+       url('./fonts/poppins-v15-latin/poppins-v15-latin-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('./fonts/poppins-v15-latin/poppins-v15-latin-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* poppins-700 - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  src: local(''),
+       url('./fonts/poppins-v15-latin/poppins-v15-latin-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('./fonts/poppins-v15-latin/poppins-v15-latin-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
 
 /* local action buttons - bt-nav3 bt-usr2 bt-usr-inactiv */
 /*              icons   - svg-sz-26 img-svg-f-white */
 
 /* local user buttons - bt-nav3 bt-usr2 bt-usr-inactiv */
 
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;     /*-- font (imported at the top), backup font --*/
+}
 
 /* sizing locally loaded svg */
 .svg-sz-26 {
