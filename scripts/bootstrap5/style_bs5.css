@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,700');
+
+
+/*-- CSS uses selectors to target elements to format on the page --*/
+/*-- CSS referece - https://www.w3schools.com/cssref/css_selectors.asp --*/
+/*--                          EG
+. selects elements class      .carousel-item { transition: -webkit-transform 0.5s ease; }
+# selects elements id         #fixed { background-image: url('img/mac.png'); }
+element                       body { background-color: lightblue; }
+
+. . . there are a lot see ref!
+
+@media  based on viewport     @media (max-width: 576px) {  EG can create different set of rile for each size
+                                body { background-color: lightblue; }
+                              }
+
+--*/
+
+/*-- standard element tags --*/
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;     /*-- font (imported at the top), backup font --*/
+  /*font-size: 22px;*/
+  font-size: 12px;
+  color: #222;                            /*-- https://encycolorpedia.com/222222 --*/
+}
+
+/* sizing fonts */
+.f-22 {
+  font-size: 22px;
+}
+.f-18 {
+  font-size: 18px;
+}
+.f-14 {
+  font-size: 14px;
+}
+.f-10 {
+  font-size: 10px;
+}
+/* sizing cdb loaded svg */
+.icf-26 {
+  font-size: 26px;
+}
+.icf-24 {
+  font-size: 24px;
+}
+.icf-22 {
+  font-size: 22px;
+}
+.icf-18 {
+  font-size: 18px;
+}
+
+/* sizing locally loaded svg */
+.svg-sz-28 {
+  width: 28px;
+  height: 28px;
+}
+.svg-sz-26 {
+  width: 26px;
+  height: 26px;
+  color: #FFFFFF;
+  fill: #FFFFFF;
+  stroke: #FFFFFF;
+  --currentColor: #FFFFFF;
+}
+.svg-sz-24 {
+  width: 24px;
+  height: 24px;
+}
+
+/* use this to select filter attributes https://codepen.io/sosuke/pen/Pjoqqp */
+.img-svg-f-white {
+  filter: invert(99%) sepia(1%) saturate(2%) hue-rotate(304deg) brightness(115%) contrast(100%);
+}
+
+
+
+.nav-container {
+    background-color: #000000;
+    margin: 1px;
+    height: 42px;
+    display: flex;                  /* select FLEX BOX display functionality */
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.bt-nav {
+    height: 34px;
+    margin-left: 1px;
+    margin-right: 1px;
+    font-size: 22px;
+    text-align: center;
+}
+.bt-nav2 {
+    text-align: center;
+    height: 34px;
+    margin-left: 1px;
+    margin-right: 1px;
+    display: -webkit-flexbox;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    justify-content: center;
+}
+
+/* https://stackoverflow.com/questions/19461521/how-to-center-an-element-horizontally-and-vertically */
+.bt-nav3 {
+    text-align: center;
+    font-size: 22px;
+    height: 34px;
+    margin-left: 1px;
+    margin-right: 1px;
+    display: -webkit-flexbox;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.bt-nav-space {                     /* pushes button out to each side */
+    height: 34px;
+    flex-grow: 1;
+}
+
+.bt-nav-icon {
+    /*height: 34px;*/
+    /*width: 40px;*/
+}
+
+.bt-usr {
+    height: 34px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.bt-usr2 {
+    height: 34px;
+    min-width: 34px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+
+.bt-sort-gen {
+    height: 34px;
+    padding: 1px;
+    padding-left: 2px;
+    padding-right: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.bt-usr-activ {
+    background-color: #F9C563;
+}
+.bt-usr-inactiv {
+    /*background-color: #EFEFEF;*/
+}
+
+.bi-cdn {
+  display: inline-block;
+  font-size: 2em;
+  /*margin-top: -6px;*/
+}
+
+.bi-cdn-blu-2x {        /* change colour to blue */
+  font-size: 2rem;
+  color: cornflowerblue;
+}
+
+.bi-cdn-org {           /* change colour to blue */
+  color: orange;
+}
+
+
+.svg-ico {
+  margin-top: -6px;
+  /*align: center;*/
+  /*vertical-align: center;*/
+  /*stroke: white;*/
+  /*color: white;*/
+  fill: white;
+}
+
+
+
+
+
+/*
+Extra small (xs) devices (portrait phones, less than 576px)
+No media query since this is the default in Bootstrap
+
+Small (sm) devices (landscape phones, 576px and up)
+@media (min-width: 576px) { ... }
+
+Medium (md) devices (tablets, 768px and up)
+@media (min-width: 768px) { ... }
+
+Large (lg) devices (desktops, 992px and up)
+@media (min-width: 992px) { ... }
+
+Extra (xl) large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) { ... }
+*/

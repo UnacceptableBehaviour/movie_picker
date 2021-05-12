@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap 5 tests</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+  <!--to include icons w <i class="bi bi-arrow-repeat"></i> use below-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+  <link href="style_bs5.css" rel="stylesheet">
+</head>
+<body>
+  <h1>movie picker navbar dev</h1>
+	text
+	<div class='nav-container'>
+		<button class="bt-nav bt-nav-icon">HOME</button>
+		<button class="bt-nav bt-nav-icon">HEART</button>
+		<button class="bt-nav bt-nav-icon">OURS</button>
+		<button class="bt-nav bt-nav-icon">COG</button>
+
+		<inline class="bt-nav-space"></inline>
+
+		<button class="bt-nav bt-usr bt-usr-activ">U1</button>
+		<button class="bt-nav bt-usr bt-usr-inactiv">U2</button>
+		<button class="bt-nav bt-usr bt-usr-inactiv">U3</button>
+		<button class="bt-nav-icon bt-nav bt-usr bt-usr-inactiv">+</button>
+	</div>
+
+	<br>
+	bootstrap5 - buttons - font size 22 w margin & bt-nav2
+	<div class='nav-container'>
+		<button type="button" class="btn btn-success f-22 bt-nav2">HOME</button>
+		<button type="button" class="btn btn-secondary f-22 bt-nav2">HEART</button>
+		<button type="button" class="btn btn-secondary f-22 bt-nav2">OURS</button>
+		<button type="button" class="btn btn-secondary f-22 bt-nav2">COG</button>
+
+		<inline class="bt-nav-space"></inline>
+
+		<button type="button" class="btn btn-secondary f-22 bt-nav2 bt-usr">U1</button>
+		<button type="button" class='btn btn-warning f-22 bt-nav2 bt-usr'>U2</button>
+		<button type="button" class="btn btn-secondary f-22 bt-nav2 bt-usr">U3</button>
+		<button type="button" class="btn btn-secondary f-22 bt-nav2 bt-usr bt-usr-inactiv">+</button>
+	</div>
+
+	<br>
+	<h5>FINAL CDN VERSION<span style="font-size: 10px;"> bootstrap5 - icons i - cdn: /font/bootstrap-icons.css - icon sz:24px font:22px- bt-nav3 = bt-nav2 + f-22</span></h5>
+	<div class='nav-container'>
+    <!--<button type="button" class="btn btn-success bt-nav3 bt-nav-icon"><i class="bi bi-arrow-repeat icf-24"></i></button>-->
+    <button type="button" class="btn btn-success bt-nav3 bt-nav-icon"><i class="bi bi-film icf-24"></i></button>
+		<button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><i class="bi bi-heart-fill icf-24"></i></button>
+    <button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><i class="bi bi-clipboard-check icf-24"></i></button>
+    <!--<button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><i class="bi bi-people icf-24"></i></button>-->
+    <button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><i class="bi bi-people-fill icf-24"></i></button>
+    <button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><i class="bi bi-gear-fill icf-24"></i></button>
+
+		<inline class="bt-nav-space"></inline>
+
+
+		<button id="01" type="button" class="btn btn-secondary bt-nav3 bt-usr2">U1</button>
+		<button id="02" type="button" class='btn btn-warning bt-nav3 bt-usr2'>U2</button>
+		<button id="03" type="button" class="btn btn-secondary bt-nav3 bt-usr2">U3</button>
+		<button id="bt-usr-add"  type="button" class="btn btn-secondary bt-nav3 bt-usr2 bt-usr-inactiv">+</button>
+	</div>
+
+  <br>
+  <h5>FINAL LOCAL SVG VERSION<span style="font-size: 10px;"> bootstrap5 - file using img & svg file - use filter to control svg colour: img-svg-f-white - size 26px: svg-sz-26</span></h5>
+	<div class='nav-container'>
+
+    <button type="button" class="btn btn-success bt-nav3 bt-nav-icon"><img src='svg-sl/film.svg' class='svg-sz-26 img-svg-f-white'></img></button>
+		<button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><img src='svg-sl/heart-fill.svg' class='svg-sz-26 img-svg-f-white'></img></button>
+    <button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><img src='svg-sl/clipboard-check.svg' class='svg-sz-26 img-svg-f-white'></img></button>
+    <button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><img src='svg-sl/people-fill.svg' class='svg-sz-26 img-svg-f-white'></img></button>
+    <button type="button" class="btn btn-secondary bt-nav3 bt-nav-icon"><img src='svg-sl/gear-fill.svg' class='svg-sz-26 img-svg-f-white'></img></button>
+
+		<inline class="bt-nav-space"></inline>
+
+		<button id="01" type="button" class="btn btn-secondary bt-nav3 bt-usr2">U1</button>
+		<button id="02" type="button" class='btn btn-warning bt-nav3 bt-usr2'>U2</button>
+		<button id="03" type="button" class="btn btn-secondary bt-nav3 bt-usr2">U3</button>
+		<button id="bt-usr-add"  type="button" class="btn btn-secondary bt-nav3 bt-usr2 bt-usr-inactiv">+</button>
+	</div>
+
+</body>
+</html>
