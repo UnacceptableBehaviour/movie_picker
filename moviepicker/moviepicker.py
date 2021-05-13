@@ -445,6 +445,7 @@ class MMediaLib(Iterable):
 		self._sorted_by_year = sorted(self.media_files, key=lambda k: int(self.media_files[k].info['year']))	# in place media_files.sort(key=lambda x: x.year)
 		self._sorted_by_title = sorted(self.media_files, key=lambda k: self.media_files[k].info['title'])
 		self._sorted_by_rating = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['rating']), reverse=True)
+		# TODO - fix: TypeError: float() argument must be a string or a number, not 'NoneType' - probably Non record in data?
 		#self._sorted_by_most_recently_added = sorted(self.media_files, key=lambda k: float(self.media_files[k].info['when_added']), reverse=True)
 
 	def sorted_lists(self):

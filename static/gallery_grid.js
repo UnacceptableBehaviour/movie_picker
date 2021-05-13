@@ -12,8 +12,9 @@
 // seen_list: (9) ["0078718", "6294822", "0816692", "7556122", "6386748", "7497366", ...]
 // short_list: (3) ["9620292", "5867314", "7784604"]
 // uuid: "1d016209-52d9-4539-ac45-f82acfb841be"
-
-// style note
+//
+//
+// - - - style note
 // variable used on server python IE passed as JSON   server_var
 // variable coming from client JS                     clientVar
 // ref to html class                                  html-class
@@ -156,12 +157,12 @@ function clickHandler(e) {
   //postUpdatedPrefsToServerNOReload();
 
   // button classes
-  // ACTIVE USER  bt-usr      bt-usr-inactiv bt-usr-activ
+  // ACTIVE USER  bt-usr2     btn-warning bt-usr-inactiv bt-usr-activ
   // GENRES       btn_genre   genre-pos genre-neg
   // MOVIE PREFS  control-bt
 
 
-  if (Array.from(e.target.classList).includes('bt-usr')) {
+  if (Array.from(e.target.classList).includes('bt-usr2')) {
     console.log(`${e.target.id}`);
     changeUser(e.target.id);
     return;
@@ -208,43 +209,7 @@ function clickHandler(e) {
         default:
           updateMoviePrefsAndReload(e.target.value, e.target.name);
     }
-
   }
-  //if (e.target.id.includes('tag_btn_id_')) { // its a tag - toggle it
-  //  toggleTagInCategory(e.target);
-  //
-  //} else if (e.target.id.includes('_igd_btn_id')) {  // and an ingredients to exclude button
-  //  input = document.getElementById('add_igd_form');
-  //
-  //  console.log(`IGD EXC = ${input.value}`); console.log(input);
-  //
-  //  if ( input.value === '' ) return; // dont add blanks
-  //
-  //  if (e.target.id === 'add_igd_btn_id') {
-  //    ts = userInfo['tag_sets']['ingredient_exc'];           // add ingredient to tag sets to creat button
-  //    ts.indexOf(input.value) === -1 ? ts.push(input.value) : console.log(`ADD - ALREADY PRESENT: ${input.value} <`);
-  //
-  //    df = userInfo['default_filters']['ingredient_exc'];   // seeing as we're creating the button user probably want it set!
-  //    df.indexOf(input.value) === -1 ? df.push(input.value) : console.log(`ADD - ALREADY PRESENT: ${input.value} <`);
-  //
-  //  } else if (e.target.id === 'remove_igd_btn_id') {
-  //    ts = userInfo['tag_sets']['ingredient_exc'];            // remove ingredient fomr tag_sets
-  //    var index = ts.indexOf(input.value);
-  //    index === -1 ? console.log(`REMOVE - ALREADY PRESENT: ${input.value} <`) : ts.splice(index, 1);
-  //
-  //    df = userInfo['default_filters']['ingredient_exc'];     // seeing as we're removing the button remove from user defaults
-  //    index = df.indexOf(input.value);
-  //    index === -1 ? console.log(`REMOVE - ALREADY PRESENT: ${input.value} <`) : df.splice(index, 1);
-  //  }
-  //
-  //  postUpdatedPrefsToServerNOReload();
-  //
-  //  // TODO - chain promises?
-  //  console.log(`IGD EXC = RELOAD /settings`);
-  //  window.location.replace('/settings');
-  //
-  //}
-
 }
 
 
@@ -276,19 +241,17 @@ function setButtonColours() {
   );
 
   // current user button
-  Array.from(document.getElementsByClassName("bt-usr")).forEach(   // getElementsByClassName returns HTMLCollection - not array
+  Array.from(document.getElementsByClassName("bt-usr2")).forEach(   // getElementsByClassName returns HTMLCollection - not array
     function(element, index, array) {
       if (prefsInfo.name === element.innerText) {
-        element.classList.remove('bt-usr-inactiv');
-        element.classList.add('bt-usr-activ');
+        element.classList.remove('btn-secondary');  //highlight SELECTED user
+        element.classList.add('btn-warning');
       } else {
-        element.classList.remove('bt-usr-activ');
-        element.classList.add('bt-usr-inactiv');
+        element.classList.remove('btn-warning');
+        element.classList.add('btn-secondary');
       }
     }
   );
-
-
 }
 
 

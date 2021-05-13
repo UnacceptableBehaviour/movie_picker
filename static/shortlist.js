@@ -54,7 +54,7 @@ document.addEventListener('click', clickHandler);
 document.addEventListener('DOMContentLoaded', (event) => {
   console.log('DOMContentLoaded:shortlist.js - S');
 
-  Array.from(document.getElementsByClassName('bt-usr')).forEach(
+  Array.from(document.getElementsByClassName('bt-usr2')).forEach(
     function (element, index, array) {
         console.log(element);
         element.style.display = 'None';
@@ -71,4 +71,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
 
-console.log(`gallery_grid.js - END`);
+console.log(`shortlist.js - END`);

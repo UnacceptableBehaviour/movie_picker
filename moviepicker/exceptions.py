@@ -10,13 +10,13 @@
 # # it would have printed B, B, B  the FIRST matching except clause is triggered.
 # class B(Exception):
 #     pass
-# 
+#
 # class C(B):
 #     pass
-# 
+#
 # class D(C):
 #     pass
-# 
+#
 # for cls in [B, C, D]:
 #     try:
 #         raise cls()            # calls B(), then C()  then D()
@@ -30,7 +30,7 @@
 # try:
 #     with open('ingredient_db.json', 'w') as f:
 #         f.write(json.dumps(ingredient_db))
-#     
+#
 # except (NotImplementedError, DemoMultipleCatch) as e:
 #     print("WARNING FAILED to commit DB to disk")
 #     print(f"\n***\n{e} \n<")
@@ -38,7 +38,7 @@
 # else:
 #     # executes only if no exception is raised in try block
 #     pass
-# 
+#
 # finally:
 #     # make sure this happens
 #     pass
@@ -58,16 +58,16 @@ class MMediaLibError(Exception):
             self.log_exception()
         else:
             self.message = None
-    
+
     def __str__(self):
         return(f"MMediaLibError.__str__ {self.__class__.__name__} : Error: '{self.message}' <")
-        
+
     def log_exception(self):
         print(self)
         pprint(self.args)
         print("> - - -")
         # implement logging
-        
+
 
 class MMediaLibWarning(Warning):
     '''Base warning used by this module.'''
@@ -121,5 +121,11 @@ class IncorrectURLForImageRetrieval(RetrievalError):
     def __init__(self, msg, url):
         #MMediaLibError.__init__(self, msg, url) # 2.7
         super().__init__(msg, url)               # 3.x # super() -> same as super(__class__, self)
-    
 
+
+
+
+
+# class UserUuidMismatch(MMediaLibError):
+#     '''could not update user with prefs_info UUID does NOT match'''
+#     pass

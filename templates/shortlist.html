@@ -10,6 +10,7 @@
   console.log(`shortlist.html JS prefsInfo uuid:\n ${prefsInfo['uuid']} - inline`);  // sanity check
   console.log(prefsInfo);
 </script>
+<script id='gg' src="static/gallery_grid.js"></script>
 <script id='msl' src="static/shortlist.js"></script>
 <link rel="stylesheet" href="{{ url_for( 'static', filename='gallery_grid.css') }}">
 {% endblock %}
@@ -18,9 +19,8 @@
 {% block content %}
 <h2>{{title}}</h2>
 
-<h5>offline recipe gallery - add discard button</h5>
     {% for movie_info in movies %}
-    <div class='grid-movie-card-v2' id='ink'>
+    <div class='grid-movie-card-v2' id="{{ movie_info['id'] }}">
         <div class='poster'><image class='img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>
         <div class='title'>{{ movie_info['title'] }}<span class='year'>&nbsp({{ movie_info['year']}})</span></div>
         <span class='runtime'>{{ movie_info['runtime_hm'] }}</span>
@@ -35,14 +35,15 @@
         </div>
         <div class='genre' id='id_genre'>
             {% for genre in movie_info['genres'] %}
-                <button class='genre-bt bt_{{genre}}'>{{ genre }}</button>
+                <button class='btn btn-secondary genre-bt bt_{{genre}}'>{{ genre }}</button>
             {% endfor %}
         </div>
         <div class='control'>
-            <button type='submit' class='control-bt' name='mov_prefs_rate' value="{{  movie_info['id']  }}">RATE</button>
-            <button type='submit' class='control-bt' name='mov_prefs_seen' value="{{  movie_info['id']  }}">SEEN</button>
-            <button type='submit' class='control-bt' name='mov_prefs_sl'   value="{{  movie_info['id']  }}">REMOVE</button>
-            <button type='submit' class='control-bt' name='mov_prefs_play' value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
+            <div class='rt-stars' id="rt-stars-{{ movie_info['id'] }}"></div>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_rate' value="{{  movie_info['id']  }}">RATE</button>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_seen' value="{{  movie_info['id']  }}">SEEN</button>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_sl'   value="{{  movie_info['id']  }}">REMOVE</button>
+            <button type='submit' class='btn btn-info control-bt' name='mov_prefs_play' value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
         </div>
     </div>
     {% endfor %}

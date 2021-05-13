@@ -1,9 +1,6 @@
 {% extends 'nav_buttons_thin.html' %}
 
 {% block header %}
-<link rel="stylesheet" href="{{ url_for( 'static', filename='remote_control.css') }}">
-<link rel="stylesheet" href="{{ url_for( 'static', filename='gallery_grid.css') }}">
-
 <script>
   var movie = {{ movies[0]|tojson }};
   console.log(`play_movie.html JS movie ${movie['title']} - ${movie['genres']} - inline`);  // sanity check
@@ -11,11 +8,12 @@
   console.log(`play_movie.html - inline CONCLUDED`);  // sanity check
 </script>
 <script src='/static/play_movie.js'></script>
+<script id='gg' src="/static/gallery_grid.js"></script>
 
-<!--TODO REMOVE temporaritly here from nav_buttons thin-->
-<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
-<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
-<!--<script src="https://use.fontawesome.com/releases/v5.7.0/js/all.js"></script>-->
+<link rel="stylesheet" href="{{ url_for( 'static', filename='remote_control.css') }}">
+<link rel="stylesheet" href="{{ url_for( 'static', filename='gallery_grid.css') }}">
+
+
 {% endblock %}
 
 
@@ -45,7 +43,7 @@
     </div>
 
     {% for movie_info in movies %}
-    <div class='grid-movie-card-v2' id='ink'>
+    <div class='grid-movie-card-v2' id="{{ movie_info['id'] }}">
         <div class='poster'><image class='img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>
         <div class='title'>{{ movie_info['title'] }}<span class='year'>&nbsp({{ movie_info['year']}})</span></div>
         <span class='runtime'>{{ movie_info['runtime_hm'] }}</span>
@@ -60,12 +58,13 @@
         </div>
         <div class='genre' id='id_genre'>
             {% for genre in movie_info['genres'] %}
-                <button class='genre-bt bt_{{genre}}'>{{ genre }}</button>
+                <button class='btn btn-secondary genre-bt bt_{{genre}}'>{{ genre }}</button>
             {% endfor %}
         </div>
         <div class='control'>
-            <button class='control-bt' id='bt-rate'>RATE</button>
-            <button class='control-bt' id='bt-seen'>SEEN</button>
+            <div class='rt-stars' id="rt-stars-{{ movie_info['id'] }}"></div>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_rate' value="{{  movie_info['id']  }}">RATE</button>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_seen' value="{{  movie_info['id']  }}">SEEN</button>
         </div>
     </div>
     {% endfor %}

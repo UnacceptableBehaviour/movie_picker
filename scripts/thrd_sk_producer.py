@@ -37,5 +37,9 @@
 # https://gist.github.com/shubhamjain/9809108
 # saved to /moviepicker/vlc_http.py
 
-
-
+# producing a 'random' numbers that fit a distribution curve
+from random import choice
+pool = [1.5, 2, 2.0, 3, 3.0, 3.5, 4, 4.0, 4.5]
+for i in range(500):
+    for n in range(6):
+        s = [choice(pool) for i in range(n)]

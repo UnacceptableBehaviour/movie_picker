@@ -5,7 +5,7 @@
   --font-size-title: 1.5em;
   --font-size-synopsis: 1.2em;
   --font-size-cast: 1.3em;
-  --font-size-buttons: 1.4em;
+  --font-size-buttons: 1em;
 }
 
 body {
@@ -106,11 +106,39 @@ h2 {
 /* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Box_Alignment_in_CSS_Grid_Layout */
 /* Minmax https://developer.mozilla.org/en-US/docs/Web/CSS/minmax() */
 .genre .genre-bt {
+  height: 34px;
+  min-width: 50px;      /* SB min-width 50px */
+  padding: 1px;
+  padding-left: 2px;
+  padding-right: 2px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-right: 2px;
+  margin-left: 2px;
   font-size: var(--font-size-buttons);
+  text-align: center;
+}
+
+.solo-star{
+  min-width: 32px;      /* TODO overide control bt min-width 50px */
 }
 .control .control-bt{
+  height: 34px;
+  min-width: 32px;      /* SB min-width 50px */
+  padding: 1px;
+  padding-left: 2px;
+  padding-right: 2px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-right: 2px;
+  margin-left: 2px;
   font-size: var(--font-size-buttons);
+  text-align: center;
 }
+
+
+
+
 .genre button {
   margin: 3px;
 }
@@ -160,11 +188,12 @@ h2 {
     /*grid-area: grid-row-start / grid-column-start / grid-row-end / grid-column-end */
     /*grid-area: 1 / 1 /  9 / 5;*/            /*3wx6h - block 70px*/
     justify-content: flex-end;    /* FLEX-HORIZ    center, space-between etc */
-    align-items: center;          /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
+    align-items: top;          /* FLEX-VERTICAL flex-start (align top), center, flex-end (align bottom) etc */
   }
   .poster > .img-poster {
     height: 400px; /*height: 100%;*/
     width: auto;
+    vertical-align: top;
   }
 }
 

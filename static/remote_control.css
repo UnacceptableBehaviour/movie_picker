@@ -1,6 +1,6 @@
 body {
     background-color: #f2fcff;
-    font-family: arial, sans-serif;
+    font-family: Poppins, sans-serif;
 }
 
 /* Flex Box REMOTER CONTROL layout - - - - - - - - - - - - - - - - - - - - GRID */
@@ -28,6 +28,7 @@ body {
 }
 .remote-control .rc-item {
     background-color: #ffedde;
+    color: #444444;
     font-size: 2em;
     padding: 8px;
     border: 4px solid tomato;

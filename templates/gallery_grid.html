@@ -5,7 +5,7 @@
 <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
 <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
 <!--<script src="https://use.fontawesome.com/releases/v5.7.0/js/all.js"></script>-->
-<script id='fp2' src="static/fingerprint2.js"></script>
+<script id='fp2' src="/static/fingerprint2.js"></script>
 <script id='filter'>
   var prefsInfo = {{ prefs_info|tojson }};
   console.log(`gallery_grid.html JS prefsInfo uuid:\n ${prefsInfo['uuid']} - inline`);  // sanity check
@@ -17,22 +17,21 @@
 
 
 {% block content %}
-<form action='/'>
-    <h2 style="display:inline-block;">SORT BY</h2>
-    <button type="submit" class='btn_sort bt-sort-gen' name='sort_type' formmethod="post" value='year'>YEAR</button>
-    <button type="submit" class='btn_sort bt-sort-gen' name='sort_type' formmethod="post" value='rating'>RATING</button>
-    <button type="submit" class='btn_sort bt-sort-gen' name='sort_type' formmethod="post" value='title'>TITLE</button>
-    <button type="submit" class='btn_sort bt-sort-gen' name='sort_type' formmethod="post" value='added'>ADDED</button>
+<form action='/' class='bt-sort-bar'>
+    <span style="font-size:26px; padding-right:4px;">SORT BY</span>
+    <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='year'>YEAR</button>
+    <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='rating'>RATING</button>
+    <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='title'>TITLE</button>
+    <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='added'>ADDED</button>
 </form>
 
 
-<form action='/' background-color='white'>
+<form action='/'>
     {% for g in genres %}
-    <button type='submit' class='btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='{{g}}'>{{g}}</button>
+    <button type='submit' class='btn btn-secondary btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='{{g}}'>{{g}}</button>
     {% endfor %}
 </form>
-<inline><img src="static/SVG/star.svg" fill="gold"></inline>
-<h5>offline recipe gallery - add discard button</h5>
+
     {% for movie_info in movies %}
     <div class='grid-movie-card-v2' id="{{ movie_info['id'] }}">
         <div class='poster'><image class='img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>
@@ -49,16 +48,16 @@
         </div>
         <div class='genre' id='id_genre'>
             {% for genre in movie_info['genres'] %}
-                <button class='genre-bt bt_{{genre}}'>{{ genre }}</button>
+                <button class='btn btn-secondary genre-bt bt_{{genre}}'>{{ genre }}</button>
             {% endfor %}
         </div>
         <div class='control'>
             <div class='rt-stars' id="rt-stars-{{ movie_info['id'] }}"></div>
-            <button type='submit' class='control-bt' name='mov_prefs_rate' value="{{  movie_info['id']  }}">RATE</button>
-            <button type='submit' class='control-bt' name='mov_prefs_ni'   value="{{  movie_info['id']  }}">NI</button>
-            <button type='submit' class='control-bt' name='mov_prefs_seen' value="{{  movie_info['id']  }}">SEEN</button>
-            <button type='submit' class='control-bt' name='mov_prefs_sl'   value="{{  movie_info['id']  }}">+List</button>
-            <button type='submit' class='control-bt' name='mov_prefs_play' value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_rate' value="{{  movie_info['id']  }}">RATE</button>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_ni'   value="{{  movie_info['id']  }}">NI</button>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_seen' value="{{  movie_info['id']  }}">SEEN</button>
+            <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_sl'   value="{{  movie_info['id']  }}">+List</button>
+            <button type='submit' class='btn btn-info control-bt' name='mov_prefs_play' value="{{  movie_info['title']  }}"><a href="{{url_for('play_movie', movie_id=movie_info['id'])}}">PLAY</a></button>
         </div>
     </div>
     {% endfor %}

@@ -2,25 +2,15 @@
 <html>
 
     <head>
-        {% if doc_title %}
-        <title>{{ doc_title }}</title>
-        {% else %}
-        <title>Movie Picker</title>
-        {% endif %}
+        <title>moviepicker</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>-->
-        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>-->
-
-        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
-        <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
-        <!--<script src="https://use.fontawesome.com/releases/v5.7.0/js/all.js"></script>-->
+        <link href="/static/bs5_css/bootstrap.min.css" rel="stylesheet">
 
         <!--JS-->
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Picker Integration</title>
 
-        <link rel="stylesheet" href="/static/nav_buttons_thin.css">
+        <link href="/static/nav_buttons_local.css" rel="stylesheet">
         {% block header %}
         {% endblock%}
 
@@ -28,34 +18,34 @@
 
     <body id='debug_target'>
         <div class='nav-container'>
-            <button id='bt_home' class="bt-nav bt-nav-icon">
-                <!--<a href="{{url_for('movie_gallery_home')}}"><img src="/static/PNG/check1.png" alt="tick" srcset="/static/SVG/check1.svg"></a>-->
-                <a href="{{url_for('movie_gallery_home')}}"><img src="/static/PNG/refresh.png" alt="tick" srcset="/static/SVG/refresh.svg"></a>
+            <button id='bt_home' type="button" class="btn btn-success bt-nav3">
+                <a href="{{url_for('movie_gallery_home')}}"><img src='/static/svg-sl/film.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+            </button>
+            <button type="button" class="btn btn-secondary bt-nav3">
+                <a href="{{url_for('short_list')}}"><img src='/static/svg-sl/heart-fill.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+            </button>
+            <button type="button" class="btn btn-secondary bt-nav3">
+                <a href="{{url_for('combined_short_list')}}"><img src='/static/svg-sl/clipboard-check.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+            </button>
+            <button type="button" class="btn btn-secondary bt-nav3">
+                <a href="{{url_for('spare_route')}}"><img src='/static/svg-sl/people-fill.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+            </button>
+            <button type="button" class="btn btn-secondary bt-nav3">
+                <a href="{{url_for('spare_route')}}"><img src='/static/svg-sl/gear-fill.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
             </button>
 
-            <button id='bt_gallery' class="bt-nav bt-nav-icon">
-                <a href="{{url_for('short_list')}}"><img src="/static/PNG/heart.png" alt="tick" srcset="/static/SVG/heart.svg"></a>
-            </button>
 
-            <button class="bt-nav bt-nav-icon">
-                <a href="{{url_for('combined_short_list')}}"><img src="/static/PNG/pencil.png" alt="tick" srcset="/static/SVG/pencil.svg"></a>
-                <!--<a href="{{url_for('play_movie', movie_id='0')}}"><img src="/static/PNG/arrow-circle-o-up.png" alt="tick" srcset="/static/SVG/arrow-circle-o-up.svg"></a>-->
-            </button>
-
-            <button class="bt-nav bt-nav-icon">
-                <a href="{{url_for('spare_route')}}"><img src="/static/PNG/cog.png" alt="tick" srcset="/static/SVG/cog.svg"></a>
-            </button>
-
-            <inline class="bt-nav-space">HELLO HERE I AM</inline>
+            <span class="bt-nav-space"></span>
 
             {% for u in users_nav_bar %}
-            <button id="{{ u['user_uuid'] }}" class='bt-nav bt-usr bt-usr-inactiv'>
+            <button id="{{ u['user_uuid'] }}" type="button" class='btn btn-secondary bt-nav3 bt-usr2'>
                 {{ u['usr'] }}
             </button>
             {% endfor %}
-            <button id="bt-usr-add" class='bt-nav-icon bt-nav bt-usr bt-usr-inactiv'>
+            <button id="bt-usr-add" type="button" class='btn btn-secondary bt-nav3 bt-usr2'>
                 +
             </button>
+
         </div>
 
         {% block content %}
