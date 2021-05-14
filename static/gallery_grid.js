@@ -158,7 +158,7 @@ function clickHandler(e) {
 
   // button classes
   // ACTIVE USER  bt-usr2     btn-warning bt-usr-inactiv bt-usr-activ
-  // GENRES       btn_genre   genre-pos genre-neg
+  // GENRES       btn_genre   btn-success btn-danger
   // MOVIE PREFS  control-bt
 
 
@@ -231,11 +231,11 @@ function setButtonColours() {
     function(element, index, array) {
       //console.log(element.value);
       if (prefsInfo.prefs_genre.neg.includes(element.value)) {
-        element.classList.remove('genre-pos');
-        element.classList.add('genre-neg');
+        element.classList.remove('btn-success');
+        element.classList.add('btn-danger');
       } else if (prefsInfo.prefs_genre.pos.includes(element.value)) {
-        element.classList.remove('genre-neg');
-        element.classList.add('genre-pos');
+        element.classList.remove('btn-danger');
+        element.classList.add('btn-success');
       }
     }
   );

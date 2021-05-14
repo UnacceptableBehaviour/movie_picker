@@ -6,7 +6,15 @@
   --font-size-synopsis: 1.2em;
   --font-size-cast: 1.3em;
   --font-size-buttons: 1em;
+  --font-size-remote: 1.3em;
 }
+/*:root {   this NO work?
+  --font-size-title: 30px;
+  --font-size-synopsis: 24px;
+  --font-size-cast: 26px;
+  --font-size-buttons: 20px;
+  --font-size-remote: 30px;
+}*/
 
 body {
     background-color: #111111;
@@ -294,9 +302,4 @@ h2 {
 /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
 
 /* GENRE buttons scheme - - - - - - - - - - - - - - - - - - - - */
-.genre-pos {
-    background-color: #8BCE51;
-}
-.genre-neg {
-    background-color: #CC516A;
-}
+
