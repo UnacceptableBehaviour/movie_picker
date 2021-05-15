@@ -1,0 +1,32 @@
+{
+	"938c2c7f-15ee-441d-bc5d-e98e42e540a3": {
+		"uuid": "938c2c7f-15ee-441d-bc5d-e98e42e540a3",
+		"name": "mum",
+		"current_user": true
+	},
+	"1d016209-52d9-4539-ac45-f82acfb841be": {
+		"uuid": "1d016209-52d9-4539-ac45-f82acfb841be",
+		"name": "M2",
+		"current_user": false
+	},
+	"5961e5d4-e4f7-4296-8049-b1a68d273926": {
+		"uuid": "5961e5d4-e4f7-4296-8049-b1a68d273926",
+		"name": "M3",
+		"current_user": false
+	},
+	"e75da0f6-551b-4c69-93ca-00ef31f5e701": {
+		"uuid": "e75da0f6-551b-4c69-93ca-00ef31f5e701",
+		"name": "simon",
+		"current_user": false
+	},
+	"e75da0f6-551b-4c69-93ca-00ef31f55555": {
+		"uuid": "e75da0f6-551b-4c69-93ca-00ef31f55555",
+		"name": "scifi",
+		"current_user": false
+	},
+	"e75da0f6-551b-4c69-93ca-00ef31f55566": {
+		"uuid": "e75da0f6-551b-4c69-93ca-00ef31f55566",
+		"name": "E1",
+		"current_user": false
+	}
+}
