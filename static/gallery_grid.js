@@ -20,49 +20,9 @@
 // ref to html class                                  html-class
 
 
-console.log(`gallery_grid.js - START`);
+console.log(`gallery_grid.js - - - - - - - - S ${prefsInfo.name}`);
 
 
-// IIFE - check what scripts loaded
-(function(){
-  //var desiredSource = 'https://sitename.com/js/script.js';
-  var scripts       = document.getElementsByTagName('script');
-  var alreadyLoaded = false;
-
-  if(scripts.length){
-    for(var scriptIndex in scripts) {
-      console.log(`id:${scripts[scriptIndex].id}\t- script: ${scripts[scriptIndex].src}`);
-      //if(!alreadyLoaded && desiredSource === scripts[scriptIndex].src) {
-      //    alreadyLoaded = true;
-      //}
-    }
-  }
-  if(!alreadyLoaded){
-    // Run your code in this block?
-  }
-})();
-
-
-var d1 = new Date();
-
-// IIFE - get FP asap!
-(function (time=d1) {
-  console.log(`Calling FP2 ${time}`)
-
-  Fingerprint2.getV18(function(result) {
-    console.log(`FP2 callback ${result}`);
-    var d2 = new Date();
-    var timeString = (d2 - d1) + "ms";
-    if(typeof window.console !== "undefined") {
-      console.log(`FP ${result}`);
-      console.log(timeString);
-    }
-    if (!prefsInfo.fingerprints.includes(result)){
-      prefsInfo.fingerprints.push(result);
-    }
-    //textOp.innerText = `Fingerprint calc took: ${timeString}`;
-  });
-})();
 
 // update prefs W/O RELOADING
 function postUpdatedPrefsToServerNOReload(){
@@ -131,7 +91,6 @@ function goldStars(e) {
   let movRating = 0;
 
   Array.from(stars).forEach( a => {
-    console.log(`star scan ${a.value}`);
     if (a.value <= e.target.value) {
       a.classList.remove('star-grey');
       a.classList.add('star-gold');
@@ -142,7 +101,6 @@ function goldStars(e) {
     }
   });
 
-  console.log(`movie rating ${movRating}`);
   prefsInfo.ratings[movId] = movRating;
 }
 
@@ -173,41 +131,41 @@ function clickHandler(e) {
     console.log(`${e.target.value}`);
     let movId = e.target.closest('.grid-movie-card-v2').id;   // go up node tree until find first class='bla'
     switch (e.target.name) {
-        case 'mov_prefs_rate':
-          console.log(`RATE CLICKED: ${e.target.name}`);
+      case 'mov_prefs_rate':
+        console.log(`RATE CLICKED: ${e.target.name}`);
 
-          console.log(`movId: ${movId}`);
-          let rtStars = document.getElementById(`rt-stars-${movId}`);
+        console.log(`movId: ${movId}`);
+        let rtStars = document.getElementById(`rt-stars-${movId}`);
 
-          if (rtStars.children.length > 0) { // send rating
-            console.log(`RATE > SEND RATING as PREFS JSON : ${prefsInfo.ratings[movId]}`);
-            postUpdatedPrefsToServerNOReload();
-          } else { // add stars to rate movie
-            console.log(`rtStars.children.length == 0: ${rtStars.children.length}`);
-            for (let s = 1; s < 11; s += 1) {
-              let starColour = 'star-grey';
-              if (s <= prefsInfo.ratings[movId]) { starColour = 'star-gold'; }
-              greyStar = document.createElement('img');
-              greyStar.value = s;
-              greyStar.name = 'mov_prefs_star';
-              greyStar.className = "control-bt solo-star " + starColour;
-              greyStar.srcset = "static/SVG/star.svg";
-              greyStar.src="static/PNG/star.png";
-              greyStar.alt="rating star";
-              greyStar.addEventListener('mouseenter', function(e){ goldStars(e); });
-              //greyStar.addEventListener('mouseenter', goldStars);   // w/o argument
-              rtStars.appendChild(greyStar);
-            }
-          }
-          break;
-
-        case 'mov_prefs_star':
-          console.log(`STAR > SEND RATING as PREFS JSON: ${prefsInfo.ratings[movId]}`);
+        if (rtStars.children.length > 0) { // send rating
+          console.log(`RATE > SEND RATING as PREFS JSON : ${prefsInfo.ratings[movId]}`);
           postUpdatedPrefsToServerNOReload();
-          break;
+        } else { // add stars to rate movie
+          console.log(`rtStars.children.length == 0: ${rtStars.children.length}`);
+          for (let s = 1; s < 11; s += 1) {
+            let starColour = 'star-grey';
+            if (s <= prefsInfo.ratings[movId]) { starColour = 'star-gold'; }
+            greyStar = document.createElement('img');
+            greyStar.value = s;
+            greyStar.name = 'mov_prefs_star';
+            greyStar.className = "control-bt solo-star " + starColour;
+            greyStar.srcset = "/static/SVG/star.svg";
+            greyStar.src="/static/PNG/star.png";
+            greyStar.alt="rating star";
+            greyStar.addEventListener('mouseenter', function(e){ goldStars(e); });
+            //greyStar.addEventListener('mouseenter', goldStars);   // w/o argument
+            rtStars.appendChild(greyStar);
+          }
+        }
+        break;
 
-        default:
-          updateMoviePrefsAndReload(e.target.value, e.target.name);
+      case 'mov_prefs_star':
+        console.log(`STAR > SEND RATING as PREFS JSON: ${prefsInfo.ratings[movId]}`);
+        postUpdatedPrefsToServerNOReload();
+        break;
+
+      default:
+        updateMoviePrefsAndReload(e.target.value, e.target.name);
     }
   }
 }
@@ -254,16 +212,59 @@ function setButtonColours() {
   );
 }
 
-
+function customiseButtons() {
+  let body = document.getElementsByTagName("BODY")[0];
+  console.log(`customiseButtons - bodyID = ${body.id}`);
+  // TODO page customisation
+  switch (body.id) {
+    case 'movie_gallery_home':
+      break;
+    case 'play_movie':
+      break;
+    case 'short_list':
+      Array.from(document.getElementsByClassName('bt-usr2')).forEach(   // TODO - can we use fall through for DRY code
+        function (element, index, array) {
+            console.log(element);
+            element.style.display = 'None';
+        }
+      );
+      break;
+    case 'combined_short_list':
+      Array.from(document.getElementsByClassName('bt-usr2')).forEach(   // TODO - can we use fall through for DRY code
+        function (element, index, array) {
+            console.log(element);
+            element.style.display = 'None';
+        }
+      );
+      Array.from(document.getElementsByName('mov_prefs_rate')).forEach(
+        function (element, index, array) {
+            console.log(element);
+            element.style.display = 'None';
+        }
+      );
+      Array.from(document.getElementsByName('mov_prefs_seen')).forEach(
+        function (element, index, array) {
+            console.log(element);
+            element.style.display = 'None';
+        }
+      );
+      break;
+    case 'tile_view':
+      break;
+    default:
+  }
+}
 
 document.addEventListener('click', clickHandler);
 
 document.addEventListener('DOMContentLoaded', (event) => {
-  console.log('document. - S');
+  console.log('DOMContentLoaded:gallery_grid.js - S');
 
   setButtonColours();
 
-  console.log('document. - E');
+  customiseButtons();
+
+  console.log('DOMContentLoaded:gallery_grid.js - E');
 });
 
 
@@ -273,4 +274,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
 
-console.log(`gallery_grid.js - END`);
+console.log(`gallery_grid.js - - - - - - - - E`);

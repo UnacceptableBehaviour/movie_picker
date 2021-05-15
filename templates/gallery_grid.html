@@ -1,17 +1,14 @@
 {% extends 'nav_buttons_thin.html' %}
 
 {% block header %}
-<!--TODO REMOVE temporaritly here from nav_buttons thin-->
-<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
-<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
-<!--<script src="https://use.fontawesome.com/releases/v5.7.0/js/all.js"></script>-->
 <script id='fp2' src="/static/fingerprint2.js"></script>
-<script id='filter'>
+<script id='filter_gg'>
   var prefsInfo = {{ prefs_info|tojson }};
   console.log(`gallery_grid.html JS prefsInfo uuid:\n ${prefsInfo['uuid']} - inline`);  // sanity check
   console.log(prefsInfo);
 </script>
 <script id='gg' src="static/gallery_grid.js"></script>
+<script id='gfp' src="static/get_fp.js"></script>
 <link rel="stylesheet" href="{{ url_for( 'static', filename='gallery_grid.css') }}">
 {% endblock %}
 

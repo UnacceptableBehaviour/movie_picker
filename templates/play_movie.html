@@ -1,14 +1,17 @@
 {% extends 'nav_buttons_thin.html' %}
 
 {% block header %}
-<script>
+<script id='filter_pm'>
+  var prefsInfo = {{ prefs_info|tojson }};  // TODO do we REALLY need this? - rating movie - multiuser - thoughts..
   var movie = {{ movies[0]|tojson }};
   console.log(`play_movie.html JS movie ${movie['title']} - ${movie['genres']} - inline`);  // sanity check
   console.log(movie);  // sanity check
   console.log(`play_movie.html - inline CONCLUDED`);  // sanity check
 </script>
-<script src='/static/play_movie.js'></script>
+
 <script id='gg' src="/static/gallery_grid.js"></script>
+
+<script id='pm' src='/static/play_movie.js'></script>
 
 <link rel="stylesheet" href="{{ url_for( 'static', filename='remote_control.css') }}">
 <link rel="stylesheet" href="{{ url_for( 'static', filename='gallery_grid.css') }}">

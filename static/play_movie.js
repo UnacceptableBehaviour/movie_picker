@@ -1,12 +1,8 @@
 // add the fetch interface to VLC
 // simple POC
 
-
-var movie_display_name='movie odyssey v0.0';
-console.log(`RUNNING: ${movie_display_name}`);
-
 // assign movie info to local parameter
-console.log(`JS movie local ${movie['title']} - ${movie['genres']} - inline`);
+console.log(`play_movie.js - - - - - - - - - - S: ${movie['title']} - ${movie['genres']}`);
 
 const ST_PAUSED = 10;
 const ST_PLAYING = 20;
@@ -117,14 +113,14 @@ function consoleButton(e){
 
 // register button click events
 document.addEventListener("DOMContentLoaded", function(event) {
-  console.log('DOMContentLoaded triggered - - - - - S');
-  Array.from(document.getElementsByClassName('bt-usr')).forEach(
+  console.log('DOMContentLoaded:/play_movie.js - - - - - S');
+  Array.from(document.getElementsByClassName('bt-usr2')).forEach(
     function (element, index, array) {
         console.log(element);
         element.style.display = 'None';
     }
   );
-  console.log('DOMContentLoaded triggered - - - - - M');
+  console.log('DOMContentLoaded:/play_movie.js - - - - - M');
   document.querySelector('.rc-item.rc-start').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-back30s').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-play').addEventListener('click', consoleButton);
@@ -138,6 +134,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   document.querySelector('.rc-item.rc-s1').addEventListener('click', consoleButton);
   document.querySelector('.rc-item.rc-s2').addEventListener('click', consoleButton);
+  console.log('DOMContentLoaded/play_movie.js - - - - - E');
 });
 
 // S1
@@ -179,3 +176,5 @@ function sendCommand (cmd) {
 function getStatus ( route=`/play_movie/${movie.id}` ) {
 
 }
+
+console.log('play_movie.js - - - - - - - - - - E');

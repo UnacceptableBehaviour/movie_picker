@@ -477,7 +477,7 @@ def movie_gallery_home():
         users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
 
-    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres)
+    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='movie_gallery_home')
 
 
 
@@ -607,11 +607,14 @@ def play_movie(movie_id):
 
     print(f"play_movie: movie ID:{movie_id}")
 
+    prefs_info = current_user.get_prefs()
+    pprint(prefs_info)
+
     users_nav_bar = []
     for key_uuid,user_prefs in user_device_DB.items():
         users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
-    return render_template('play_movie.html', movies=movies, users_nav_bar=users_nav_bar)
+    return render_template('play_movie.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, page='play_movie')
 
 
 @app.route('/short_list', methods=["GET", "POST"])
@@ -665,7 +668,7 @@ def short_list():
     #     users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
     title = f"{prefs_info['name']}'s movie shortlist . . ."
-    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title)
+    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title, page='short_list')
 
 
 
@@ -702,7 +705,7 @@ def combined_short_list():
     print("- - - combo SL - - - E")
 
     title = "combined movie shortlists . . ."
-    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title)
+    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title, page='combined_short_list')
 
 
 
@@ -711,7 +714,7 @@ def combined_short_list():
 def tile_view():
     headline_py = "tile_view.html"
     movies = []
-    return render_template('tile_view.html', movies=movies)
+    return render_template('tile_view.html', movies=movies, page='tile_view')
 
 
 
