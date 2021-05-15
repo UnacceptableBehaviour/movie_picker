@@ -142,6 +142,7 @@ h2 {
   margin-left: 2px;
   font-size: var(--font-size-buttons);
   text-align: center;
+  align-self: center;     /* NOTHING! star dont vertically align - grrr */
 }
 
 

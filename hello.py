@@ -191,8 +191,9 @@ class UserPrefs:
             neg = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['neg']) )) * 500
             m['prefScore'] += pos
             m['prefScore'] -= neg
-            if m['id'] in self.prefs_info['seen_list']: m['prefScore'] -= 250
-            if m['id'] in self.prefs_info['ni_list']: m['prefScore'] -= 750
+            if m['id'] in self.prefs_info['seen_list']: m['prefScore'] -= 2500
+            if m['id'] in self.prefs_info['ni_list']: m['prefScore'] -= 2500
+            if m['id'] in self.prefs_info['short_list']: m['prefScore'] -= 2000 # dont't bubble to top if shortlisted
 
         scored_and_sorted_movies  = sorted(movie_list, key=lambda k: k['prefScore'], reverse=True)
 
@@ -677,7 +678,29 @@ def short_list():
 def combined_short_list():
     # filter out duplicates and order most frequent first!
 
+
     print("- - - combo SL - - - S")
+    if request.method == 'POST':
+        if request.is_json:
+            print("combined_short_list: request.method == 'POST_JSON'")
+            settings = request.get_json() # parse JSON into DICT
+            pprint(settings)
+
+            if settings != None  and 'mov_id_prefs' in settings:
+                button = re.sub('mov_prefs_','', settings['button']) # which movie pref button?
+                mov_id = settings['mov_id_prefs']
+                if button == 'sl':      # REMOVE button
+                    print(f"combined_short_list: REMOVE - mov_id:{mov_id}")
+
+                    for usr_id,usr in user_device_DB.items():
+                        print(f"u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
+                        if mov_id in usr.prefs_info['short_list']: usr.prefs_info['short_list'].remove(mov_id)
+
+                    commit_dict_to_DB(user_device_DB)
+                    return json.dumps({}), 201
+    else:
+        print(f"combined_short_list: request.method == {request.method}")
+        
     pprint(user_device_DB)
     # combine all users shortlists
     movies = []

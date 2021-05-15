@@ -118,8 +118,8 @@ class vlc_http:
             except (ConnectionError, ConnectionRefusedError):
                 retries += 1
                 print(f"Waiting for vlc hhtp interface - retry: {retries}")
-                sleep(0.1)
-                if retries > 9: raise ConnectionProblem
+                sleep(1)
+                if retries > 19: raise ConnectionProblem
                 continue
             break
 
@@ -128,7 +128,7 @@ class vlc_http:
         while state['state'] == 'stopped':
             retries += 1
             print(f"Waiting for movie to start - retry: {retries}")
-            sleep(0.1)
+            sleep(0.5)
             state = self.get_attributes()
 
         self.set_sec_percentage()

@@ -63,6 +63,48 @@ function updateMoviePrefsAndReload(movId, buttonPref, movieRating=-1) {
   });
 }
 
+// shortlist rout update
+// TODO add route as parameter and refactor w/ above - route is only difference
+function updateMoviePrefsSL(movId, buttonPref, movieRating=-1) {
+  console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
+
+  fetch( '/short_list', {
+    method: 'POST',                                             // method (default is GET)
+    headers: {'Content-Type': 'application/json' },             // JSON
+    body: JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating } ) // Payload
+
+  }).then( function(response) {
+    return response.json();
+
+  }).then( function(jsonResp) {
+    console.log(`mov prefs UPDATED: ${movId} - ${jsonResp}`);
+    window.location.replace('/short_list');
+  }).catch( function(err){
+    console.log(err);
+  });
+}
+
+function updateMoviePrefsComboL(movId, buttonPref, movieRating=-1) {
+  console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
+
+  fetch( '/combined_short_list', {
+    method: 'POST',                                             // method (default is GET)
+    headers: {'Content-Type': 'application/json' },             // JSON
+    body: JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating } ) // Payload
+
+  }).then( function(response) {
+    return response.json();
+
+  }).then( function(jsonResp) {
+    console.log(`mov prefs UPDATED: ${movId} - ${jsonResp}`);
+    window.location.replace('/combined_short_list');
+  }).catch( function(err){
+    console.log(err);
+  });
+}
+
+
+
 function changeUser(new_id) {
   console.log( JSON.stringify( { 'new_id':new_id }) );
 
@@ -127,12 +169,15 @@ function clickHandler(e) {
   }
 
   if (Array.from(e.target.classList).includes('control-bt')) {
-    console.log(`${e.target.name}`);
-    console.log(`${e.target.value}`);
-    let movId = e.target.closest('.grid-movie-card-v2').id;   // go up node tree until find first class='bla'
-    switch (e.target.name) {
+    let targetButton = e.target.name;
+    let routeId = document.getElementsByTagName("BODY")[0].id;
+    let movId = e.target.closest('.grid-movie-card-v2').id.replace('gmc','');   // go up node tree until find first class='bla'
+    console.log(`BUT: ${targetButton}`);
+    console.log(`movId: ${e.target.value}`);
+    console.log(`route: ${routeId}`);
+    switch (targetButton) {
       case 'mov_prefs_rate':
-        console.log(`RATE CLICKED: ${e.target.name}`);
+        console.log(`RATE CLICKED: ${targetButton}`);
 
         console.log(`movId: ${movId}`);
         let rtStars = document.getElementById(`rt-stars-${movId}`);
@@ -152,7 +197,8 @@ function clickHandler(e) {
             greyStar.srcset = "/static/SVG/star.svg";
             greyStar.src="/static/PNG/star.png";
             greyStar.alt="rating star";
-            greyStar.addEventListener('mouseenter', function(e){ goldStars(e); });
+            //greyStar.addEventListener('mouseenter', goldStars(e) ); // calls function and uses result as callback!
+            greyStar.addEventListener('mouseenter', function(e){ goldStars(e); });  // do this instead!
             //greyStar.addEventListener('mouseenter', goldStars);   // w/o argument
             rtStars.appendChild(greyStar);
           }
@@ -163,9 +209,51 @@ function clickHandler(e) {
         console.log(`STAR > SEND RATING as PREFS JSON: ${prefsInfo.ratings[movId]}`);
         postUpdatedPrefsToServerNOReload();
         break;
-
+      case 'mov_prefs_sl': // REMOVE BUTTON in SL & combined_SL
+        switch (routeId) {
+          case 'movie_gallery_home':
+            console.log('+List BUTTON - ROUTE: movie_gallery_home');
+            updateMoviePrefsAndReload(e.target.value, e.target.name);
+            break;
+          case 'short_list':
+            console.log('REMOVE BUTTON - ROUTE: short_list');
+            //updateMoviePrefsSL(e.target.value, e.target.name);  // < was - reloads page
+            updateMoviePrefsSL(movId, 'mov_prefs_sl');  // < was - reloads page
+            // post remove w/o reload & remove gallery card
+            break;
+          case 'combined_short_list':
+            updateMoviePrefsComboL(movId, 'mov_prefs_sl');
+            break;
+        }
+        break;
+      case 'mov_prefs_seen': // SEEN BUTTON in SL & gallery
+        switch (routeId) {
+          case 'movie_gallery_home':
+            console.log('SEEN BUTTON - ROUTE: movie_gallery_home');
+            updateMoviePrefsAndReload(e.target.value, e.target.name);
+            break;
+          case 'short_list':
+            console.log('SEEN BUTTON - ROUTE: short_list');
+            //updateMoviePrefsSL(e.target.value, e.target.name);  // < was - reloads page
+            updateMoviePrefsSL(movId, 'mov_prefs_seen');  // < was - reloads page
+            // post SEEN w/o reload & remove gallery card
+            break;
+          case 'combined_short_list':
+            console.log('SEEN BUTTON - ROUTE: combined_short_list'); // DOESN'T EXIST
+            break;
+        }
+        break;
+      case 'mov_prefs_ni': // NOT INTERESTED
+        switch (routeId) {
+          case 'movie_gallery_home':
+            console.log('NI BUTTON - ROUTE: movie_gallery_home');
+            updateMoviePrefsAndReload(e.target.value, e.target.name);
+            break;
+        }
+        break;
       default:
-        updateMoviePrefsAndReload(e.target.value, e.target.name);
+        console.log(`default: * * * * WARNING * * * *  button shouldn't exit: ${e.target.name} - id: ${e.target.value}`);
+
     }
   }
 }
@@ -213,10 +301,10 @@ function setButtonColours() {
 }
 
 function customiseButtons() {
-  let body = document.getElementsByTagName("BODY")[0];
-  console.log(`customiseButtons - bodyID = ${body.id}`);
+  let routeId = document.getElementsByTagName("BODY")[0].id;
+  console.log(`customiseButtons - routeId = ${routeId}`);
   // TODO page customisation
-  switch (body.id) {
+  switch (routeId) {
     case 'movie_gallery_home':
       break;
     case 'play_movie':

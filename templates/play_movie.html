@@ -45,7 +45,7 @@
     </div>
 
     {% for movie_info in movies %}
-    <div class='grid-movie-card-v2' id="{{ movie_info['id'] }}">
+    <div class='grid-movie-card-v2' id="gmc{{ movie_info['id'] }}">
         <div class='poster'><image class='img-poster' src="{{ url_for('static', filename='covers/') }}{{movie_info['hires_image']}}"></image></div>
         <div class='title'>{{ movie_info['title'] }}<span class='year'>&nbsp({{ movie_info['year']}})</span></div>
         <span class='runtime'>{{ movie_info['runtime_hm'] }}</span>
