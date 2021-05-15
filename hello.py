@@ -457,7 +457,7 @@ def movie_gallery_home():
     #     movies.append(all_movies[i])
 
 
-    movies = current_user.filter_list(all_movies)[10:19]
+    movies = current_user.filter_list(all_movies)#[10:19]
 
     # print("Incorrectly classified:")
     # for movie in bad_labels:
@@ -700,7 +700,7 @@ def combined_short_list():
                     return json.dumps({}), 201
     else:
         print(f"combined_short_list: request.method == {request.method}")
-        
+
     pprint(user_device_DB)
     # combine all users shortlists
     movies = []

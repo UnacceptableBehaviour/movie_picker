@@ -157,10 +157,15 @@ class MMedia:
 	# Usage (keys): https://imdbpy.readthedocs.io/en/latest/usage/movie.html#movies
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	def query_imdb_for_movie_info(self):
+		skip_list = ['Alien Directors Cut 1979']
 		url = None
 		search_year = self.info['year'] if len(str(self.info['year'])) > 3 else ''
 
 		query = f"{self.info['file_title']} {search_year}"
+
+		if query in skip_list:
+			print(f"\n\n\n\n\n\n\n- - - - - - SKIPPING {query}\n\n\n\n\n\n\n")
+			return
 
 		if self.info['file_title'].lower() == 'sample' and search_year == '':
 			return
