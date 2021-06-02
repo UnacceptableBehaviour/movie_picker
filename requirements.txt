@@ -12,9 +12,6 @@ lxml==4.6.2
 MarkupSafe==1.1.1
 pathlib==1.0.1
 psutil==5.8.0
-PyQt5==5.15.4
-PyQt5-Qt5==5.15.2
-PyQt5-sip==12.8.1
 python-vlc==3.0.11115
 redcmd==1.2.10
 redlib==1.5.7
