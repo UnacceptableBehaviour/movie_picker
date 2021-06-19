@@ -52,16 +52,18 @@ test_mode_library_name = Path('/Users/simon/a_syllabus/lang/python/movie_picker/
 
 import platform
 running_os = platform.system()
-# AIX: 'aix', Linux:'linux', Windows: 'win32', Windows/Cygwin: 'cygwin', macOS: 'darwin'
+# AIX: 'aix', Linux:'Linux', Windows: 'win32', Windows/Cygwin: 'ygwin', macOS: 'Darwin'
 running_os_release = platform.release()
 
-# hostname = socket.gethostname()
-# print("Your Computer Name is:" + hostname)
-# IPAddr = socket.gethostbyname(hostname)
-# print("Your Computer IP Address is:" + IPAddr)
-# print(f"OS: {running_os} - {running_os_release}")
-IPAddr = '192.168.1.13' # TODO FIX - aBOVE
-hostname = 'dtk.health'
+hostname = socket.gethostname()
+print("Your Computer Name is:" + hostname)
+IPAddr = socket.gethostbyname(hostname)
+print("Your Computer IP Address is:" + IPAddr)
+print(f"OS: {running_os} - {running_os_release}")
+# IPAddr = '192.168.1.13' # TODO FIX - aBOVE
+# hostname = 'dtk.health'
+# IPAddr = '192.168.1.17' # TODO FIX - aBOVE
+# hostname = 'rpi-C1'
 
 if IPAddr == '192.168.1.13':    # local - osx box
     REMOTE_LINUX = Path('/Volumes/Home Directory/MMdia/__media_data2/medialib2.pickle')
@@ -86,13 +88,19 @@ if IPAddr == '192.168.1.13':    # local - osx box
     # local disc - small library - export FLASK_ENV=development
     #media_lib = MMediaLib(test_mode_library_name)   < DOESNT exit & files too small to recreate!
 
-elif IPAddr == '192.168.1.16':  # remote - linux box
-    LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')
+elif IPAddr == '192.168.1.17':  # remote - linux box
+    #LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')  # opt-1
+    LOCAL_LINUX = Path('/media/pi/time_box_2018/movies/','__media_data2/medialib2.pickle') # opt-2
     media_lib = MMediaLib(LOCAL_LINUX)
-    media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/home/pi/MMdia/')
+    #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/home/pi/MMdia/')  # opt-1
+    media_lib.rebase_media_DB('/Volumes/time_box_2018/','/media/pi/time_box_2018/')  # opt-2
 
 if not media_lib:
-    print("EXITIING - NO media libraries were found")
+    print("EXITIING - NO media libraries were found\nChecked:")
+    print(f"IP: {IPAddr} OS:{running_os} ver:{running_os_release}")
+    for p in volume_checklist:
+      print(p)
+
     sys.exit(0)
 
 LOCAL_IMAGE_CACHE = Path('./static/covers')
@@ -497,7 +505,11 @@ def play_movie(movie_id):
     # fire up VLC and a connection to it
     if movie_process == None:
         print(f"\n\n\n-=-=-=-=- STARTING MOVIE -=-=-=-=-\n")
-        movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC -f '{movie['file_path']}' --extraintf http", shell=True)
+        print(f"running_os:{running_os}")
+        if running_os == 'Linux':
+            movie_process = subprocess.Popen(f"vlc -f '{movie['file_path']}' --extraintf http", shell=True)
+        elif running_os == 'Darwin':
+            movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC -f '{movie['file_path']}' --extraintf http", shell=True)
         # how to get a callback on processed termination
         # https://wiki.videolan.org/Documentation:Advanced_Use_of_VLC/
         # how to open in full screen mode - need to check first? & toggle
@@ -769,12 +781,14 @@ if __name__ == '__main__':
         #app.run(host='192.168.1.13', port=52001)
         app.run(host='0.0.0.0', port=52001)
 
-    elif IPAddr == '192.168.1.16':
-        app.run(host='192.168.1.16', port=52001)
+    elif IPAddr == '192.168.1.17':
+        app.run(host='192.168.1.17', port=52001)
 
     else:
-        pprint(IPAddr)
         print("WARNING unknown host . . . bailing")
+        print("Your Computer Name is:" + hostname)
+        print("Your Computer IP Address is:" + IPAddr)
+        print(f"OS: {running_os} - {running_os_release}")
         sys.exit(0)
 
     # check this forum - VLC remote contol
