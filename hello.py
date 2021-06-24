@@ -65,7 +65,7 @@ print(f"OS: {running_os} - {running_os_release}")
 # IPAddr = '192.168.1.17' # TODO FIX - aBOVE
 # hostname = 'rpi-C1'
 
-if IPAddr == '192.168.1.13':    # local - osx box
+if running_os == 'Darwin':  # local - osx box
     REMOTE_LINUX = Path('/Volumes/Home Directory/MMdia/__media_data2/medialib2.pickle')
 
     # vcl = []
@@ -88,7 +88,7 @@ if IPAddr == '192.168.1.13':    # local - osx box
     # local disc - small library - export FLASK_ENV=development
     #media_lib = MMediaLib(test_mode_library_name)   < DOESNT exit & files too small to recreate!
 
-elif IPAddr == '192.168.1.17':  # remote - linux box
+elif running_os == 'Linux':  # remote - linux box
     #LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')  # opt-1
     LOCAL_LINUX = Path('/media/pi/time_box_2018/movies/','__media_data2/medialib2.pickle') # opt-2
     media_lib = MMediaLib(LOCAL_LINUX)
@@ -507,13 +507,14 @@ def play_movie(movie_id):
         print(f"\n\n\n-=-=-=-=- STARTING MOVIE -=-=-=-=-\n")
         print(f"running_os:{running_os}")
         if running_os == 'Linux':
-            movie_process = subprocess.Popen(f"vlc -f '{movie['file_path']}' --extraintf http", shell=True)
+            #cmd = ['vlc', '-f', movie['file_path'], '--extraintf', 'http']
+            cmd = ['vlc', movie['file_path'], '--extraintf', 'http']
+            movie_process = subprocess.Popen(cmd)
         elif running_os == 'Darwin':
             movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC -f '{movie['file_path']}' --extraintf http", shell=True)
         # how to get a callback on processed termination
         # https://wiki.videolan.org/Documentation:Advanced_Use_of_VLC/
-        # how to open in full screen mode - need to check first? & toggle
-        # direct command better
+        # how to open in full screen mode? -f option
         sleep(0.5)
         print(f"\n-=-=-=-=- STARTING MOVIE -=-=-=-=-\n\n\n")
 
@@ -521,6 +522,9 @@ def play_movie(movie_id):
         print(f"\n\n\n-=-=-=-=- CONNECTING -=-=-=-=-\n")
         vlc_http_channel = vlc_http(user='', pwd='p1')
         print(type(vlc_http_channel))
+        if running_os == 'Linux' and not vlc_http_channel.is_fullscreen():
+            print(f"VLC Window detected - going fukll screen")
+            vlc_http_channel.toggle_fullscreen()
         print(f"\n-=-=-=-=- CONNECTING -=-=-=-=-\n\n\n")
 
 
@@ -777,12 +781,13 @@ if __name__ == '__main__':
     #IPAddr = socket.gethostbyname(hostname)
     print("Your Computer IP Address is:" + IPAddr)
 
-    if IPAddr == '192.168.1.13':
+    if running_os == 'Darwin':  # local - osx box
         #app.run(host='192.168.1.13', port=52001)
         app.run(host='0.0.0.0', port=52001)
 
-    elif IPAddr == '192.168.1.17':
-        app.run(host='192.168.1.17', port=52001)
+    elif running_os == 'Linux':
+        #app.run(host='192.168.1.17', port=52001)
+        app.run(host='0.0.0.0', port=52001)
 
     else:
         print("WARNING unknown host . . . bailing")
