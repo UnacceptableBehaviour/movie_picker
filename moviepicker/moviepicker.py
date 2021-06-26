@@ -963,6 +963,10 @@ option
 		if db_path.exists():
 			mmdbs.append(MMediaLib(db_path))
 
+	import shutil
+	remove_from_disc = 'FAITHFUL500' # 'time_box_2018' 'meep' 'Osx4T'
+	remove_duplicates = False			# remove duplicates PARENT directory & ALL contents
+
 	all_media = {}
 	duplicates = []
 	for mmdb in mmdbs:
@@ -976,7 +980,18 @@ option
 				splitpath = str(all_media[m].info['file_path']).split('/')
 				report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]).ljust(20)} and {(str(mmdb.media_root).split('/')[2]).ljust(20)}"
 				duplicates.append(report)
-				print(report)
+				duplicate_in = (str(mmdb.media_root).split('/')[2])
+				loop_report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]).ljust(20)} and {duplicate_in.ljust(20)}"
+				print(loop_report)
+				if duplicate_in == remove_from_disc and remove_duplicates == True:
+					target_path = mmdb.media_files[m].info['file_path'].parent
+					print(f"\t\t{mmdb.media_files[m].info['file_path']}\n\t\t{target_path}")
+					# remove duplicate directories
+					try:
+						shutil.rmtree(target_path)
+					except:
+						pass
+
 
 	import random
 	print("\n\n\nMedia Object\n\n\n:")
