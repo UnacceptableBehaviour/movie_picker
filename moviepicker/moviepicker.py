@@ -360,8 +360,11 @@ look_in_repo = Path('./movies/')	# git demo
 PICKLED_MEDIA_LIB_FILE_REPO = look_in_repo.joinpath('__media_data2','medialib2.pickle')
 look_in_linux = Path('/home/pi/MMdia/')
 PICKLED_MEDIA_LIB_FILE_LINUX = look_in_linux.joinpath('__media_data2','medialib2.pickle')
+look_in_linux = Path('/media/pi/time_box_2018/movies/')
+PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX = look_in_linux.joinpath('__media_data2','medialib2.pickle')
 PICKLED_MEDIA_LIB_FILE_OSX4T = Path('/Volumes/Osx4T/tor/__media_data2/medialib2.pickle')
 KNOWN_PATHS = [
+	PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX,
 	PICKLED_MEDIA_LIB_FILE_OSX4T,
 	PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,
 	PICKLED_MEDIA_LIB_FILE_LINUX,
@@ -904,7 +907,8 @@ option
 		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)	# default
 		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX)
 		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
-		new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
+		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
+		new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX)
 
 		if '-d' not in sys.argv:	# -d = dont save results		as in WRITE mode unless blocked
 			new_media_lib.set_write_mode(READ_WRITE)
