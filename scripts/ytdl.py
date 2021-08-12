@@ -2,23 +2,38 @@
 
 # Download video URLs
 
-# place a list of urls in a text file
-# edit code:
-# url_file = file_path
-# cd /Volumes/Osx4T/05_download_tools_open_source/yt_dl
-# .pe   # fire up virtual environmeny .pe = . venv/bin/activate
+# setup
+# > curl https://raw.githubusercontent.com/UnacceptableBehaviour/movie_picker/master/scripts/ytdl.py > ytdl.py
+# > chmod +x ytdl.py
+# > python3 -m venv venv
+# > . venv/bin/activate           # or source venv/bin/activate
+# > pip install youtube_dl
+# > ./ytdl.py ./20210811_fun_stuff.txt      # dowload all URLs in text file
+#                       ^
+#                     place a list of video urls in a text file
 #
-# it will create a directory w/ same name as file (no extension) in
-# target_base_dir = '/Volumes/Osx4T/05_download_tools_open_source/yt_dl/'
+# File: 20210811_fun_stuff.txt
+# # this is a comment - will be ignored
+# # Geometric DL lectures
+# https://www.youtube.com/watch?v=PtA0lg_e5nA&list=PLn2-dEmQeTfQ8YVuHBOvAhUlnIPYxkeu3
+# # Wah?
+# https://www.youtube.com/watch?v=MmG2ah5Df4g
+# # Growing food PL
+# https://www.youtube.com/c/UrbanFarmerCurtisStone/videos
 #
-# dloads will be numbered in the order they are in the list
+# Files will be store in a directory of the same name as the text file (no extension) in
+# target_base_dir = same directory as the text file
+#
+# downloads will be numbered in the order they are in the list - or decompressed playlist
 
-# Next steps20210731_deepmind_intro_to_DL_UCL
+# NEXT - TODO
 # how to get feedback from the process - parse it's stdout ?
-# get DL speed - kill it if it drops below threshold
+#   NO there a callback HOOK use that to get progress (& download speed)
 #
+# get DL speed - kill it if it drops below threshold
+#   then restart it
 
-
+# More on youtube-dl
 # https://www.programcreek.com/python/example/98358/youtube_dl.YoutubeDL
 
 import sys                          # argv - cli args
@@ -104,22 +119,22 @@ def get_playlist(pl_url, quiet_mode=True):
 
             #loops entries to grab each video_url
             for i, item in enumerate(video):
-                print(f"= = = i: {i}")
-                print(f"= = = = item = = =S \ ")
-                #pprint(item)
+                # print(f"= = = i: {i}")
+                # print(f"= = = = item = = =S \ ")
+                # #pprint(item)
                 print(f"item['webpage_url']: {item['webpage_url']}")
                 print(f"item['title']: {item['title']}")
-                print(f"item['uploader']: {item['uploader']}")
-                print(f"item['playlist']: {item['playlist']}")
-                print(f"item['playlist_index']: {item['playlist_index']}")
-                #print(f"item['']: {item['']}")
-                print(f"= = = = item = = =E / ")
+                # print(f"item['uploader']: {item['uploader']}")
+                # print(f"item['playlist']: {item['playlist']}")
+                # print(f"item['playlist_index']: {item['playlist_index']}")
+                # #print(f"item['']: {item['']}")
+                # print(f"= = = = item = = =E / ")
                 video = result['entries'][i]
                 play_list.append(item['webpage_url'])
 
-            print('get_playlist - - dbg S')
-            pprint(play_list)
-            print('get_playlist - - dbg E')
+            # print('get_playlist - - dbg S')
+            # pprint(play_list)
+            # print('get_playlist - - dbg E')
 
     return play_list
 
@@ -142,6 +157,7 @@ def append_commented_urls_to_file(filepath, file_list):
     for line in file_list:
         text_content = text_content + f"# {line}\n"
 
+    text_content = text_content + '# -'
     print(text_content)
 
     with open(filepath, 'a') as f:
@@ -155,6 +171,7 @@ if __name__ == '__main__':
     # get file from command line
     if len(sys.argv) > 1 and Path(sys.argv[1]).exists():
         downloads_filename = Path(sys.argv[1])
+
         file_urls = get_urls_from_file(downloads_filename)
         pprint(file_urls)
 
@@ -172,14 +189,14 @@ if __name__ == '__main__':
         print('replace_targets - - dbg E')
 
         for pl, pl_items in replace_targets.items():
-            print(f"pl - {pl}")
-            print(f"file_urls.index(pl) - {file_urls.index(pl)}")
-            print(f"pl_items - {pl_items}")
+            # print(f"pl - {pl}")
+            # print(f"file_urls.index(pl) - {file_urls.index(pl)}")
+            # print(f"pl_items - {pl_items}")
             file_urls[file_urls.index(pl)] = pl_items
             file_urls = flatten_stable(file_urls) # - return out of order list
 
-        print('file_urls:')
-        pprint(file_urls)
+        # print('file_urls:')
+        # pprint(file_urls)
 
     else:
         print(Path(__file__).name)
@@ -188,7 +205,7 @@ if __name__ == '__main__':
 
     append_commented_urls_to_file(downloads_filename, file_urls)
 
-    target_base_dir = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/')
+    target_base_dir = downloads_filename.parent
     target_dir = Path(target_base_dir,downloads_filename.name.split('.')[0]) # url_file name w/o extension
 
     # create directory for downloads
@@ -279,85 +296,3 @@ if __name__ == '__main__':
 #                            'url': 'https://r5---sn-cu-cime7.googlevideo.com/videoplayback?expire=1627163547&ei=Ozf8YMGzGda_mLAPzYi7-AE&ip=146.200.4.51&id=o-AB4TcEni60C1mVJG-1sxbLXOOU9idssMIZqhVvANgWNQ&itag=249&source=youtube&requiressl=yes&mh=3h&mm=31%2C29&mn=sn-cu-cime7%2Csn-cu-c9il&ms=au%2Crdu&mv=m&mvi=5&pl=25&initcwndbps=1013750&vprv=1&mime=audio%2Fwebm&ns=I_lhVItqsCVhuli_0uCNtvgG&gir=yes&clen=31438931&dur=5023.461&lmt=1541987094373032&mt=1627141724&fvip=5&keepalive=yes&fexp=24001373%2C24007246&c=WEB&txp=5411222&n=yskZJLFstthnB5&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cns%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRQIgZJk5vKcuJE_wgTCpio5mzO-MEFIr8IOJEpOUgWOyrksCIQDOCpgGhfjWRKVM0WvFSTCnUwdfWTRufnCdEWXxduU2qA%3D%3D&lsparams=mh%2Cmm%2Cmn%2Cms%2Cmv%2Cmvi%2Cpl%2Cinitcwndbps&lsig=AG3C_xAwRQIhANII7bZEZZRm8K1etj0jGVmm8P8HWYNhMhVvA7F0Hf9SAiBWt8-YGozy6damrciVha7ZQ10MABib9pwBZYzMh4hJcQ%3D%3D',
 #                            'vcodec': 'none',
 #                            'width': None},
-
-
-
-
-
-#
-# def get_title_and_urls(ytdl_result):
-#     title = ''
-#     url_list = []
-#
-#     if 'entries' in ytdl_result:
-#         videos = ytdl_result['entries']           # list of dict
-#         # print(f"= = = = videos = = =S \ ")
-#         # pprint(videos)
-#         # print(f"playlist_title- {videos[0]['playlist_title']}")
-#
-#         title = videos[0]['playlist_title']
-#
-#         #loops entries to grab each video_url
-#         for i, item in enumerate(videos):
-#             # print(f"= = = i: {i}")
-#             # print(f"= = = = item = = =S \ ")
-#             # #pprint(item)
-#             # print(f"item['webpage_url']: {item['webpage_url']}")
-#             # print(f"item['title']: {item['title']}")
-#             # print(f"item['uploader']: {item['uploader']}")
-#             # print(f"item['playlist']: {item['playlist']}")
-#             # print(f"item['playlist_index']: {item['playlist_index']}")
-#             # #print(f"item['']: {item['']}")
-#             # print(f"= = = = item = = =E / ")
-#             url_list.append(item['webpage_url'])
-#             #video = result['entries'][i]
-#     return( (title, url_list) )
-
-
-
-
-
-# OTHER - REF - - - - -
-
-# # or
-#
-# import os
-# import threading
-# import youtube_dl
-#
-# COOKIE_JAR = "path_to_my_cookie_jar"
-#
-# def download_task(videos, output_dir):
-#
-#     if not os.path.isdir(output_dir):
-#         os.makedirs(output_dir)
-#
-#     if not os.path.isfile(COOKIE_JAR):
-#         raise FileNotFoundError("Cookie Jar not found\n")
-#
-#     ydl_opts = {
-#         'cookiefile': COOKIE_JAR,
-#         'outtmpl': f'{output_dir}/%(title)s.%(ext)s'
-#     }
-#
-#     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-#         ydl.download(videos)
-#
-#
-# if __name__ == "__main__":
-#
-#     output_dir = "./root_dir"
-#
-#     threads = []
-#     for playlist in many_playlists:
-#         output_dir = f"{output_dir}/playlist.name"
-#         thread = threading.Thread(target=download_task, args=(playlist, output_dir))
-#         threads.append(thread)
-#
-#     # Actually start downloading
-#     for thread in threads:
-#         thread.start()
-#
-#     # Wait for all the downloads to complete
-#     for thread in threads:
-#         thread.join()
