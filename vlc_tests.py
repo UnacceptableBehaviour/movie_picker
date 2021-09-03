@@ -116,7 +116,8 @@ def python_vlc_http_package(media_file=None):
     #movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC    '{media_file}' --extraintf http", shell=True)
 
     # on linux window
-    movie_process = subprocess.Popen(f"vlc '{media_file}' --extraintf http")
+    # see line 299
+    # movie_process = subprocess.Popen(f"vlc '{media_file}' --extraintf http")
 
 
     # wait for http interface to come live
@@ -295,7 +296,7 @@ def vlc_http_py_moviepicker(media_file=None):
     elif running_os == 'Linux':
         # on linux window
         #movie_process = subprocess.Popen((f"vlc '{media_file}' --extraintf http").split(), shell=True)
-        cmd = ['vlc',f"{media_file}",'--extraintf','http']
+        cmd = ['vlc', media_file,'--extraintf','http'] #
         print(f"Command list: {cmd}")
         print(" - - - starting vlc - - - ")
         #movie_process = subprocess.Popen(cmd, shell=True)
