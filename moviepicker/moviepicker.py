@@ -360,13 +360,28 @@ look_in_repo = Path('./movies/')	# git demo
 PICKLED_MEDIA_LIB_FILE_REPO = look_in_repo.joinpath('__media_data2','medialib2.pickle')
 look_in_linux = Path('/home/pi/MMdia/')
 PICKLED_MEDIA_LIB_FILE_LINUX = look_in_linux.joinpath('__media_data2','medialib2.pickle')
+look_in_linux = Path('/media/pi/time_box_2018/movies/')
+PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX = look_in_linux.joinpath('__media_data2','medialib2.pickle')
 PICKLED_MEDIA_LIB_FILE_OSX4T = Path('/Volumes/Osx4T/tor/__media_data2/medialib2.pickle')
+# NFS mounts
+# /home/pi/media/nfs_C2_500G_JEN	# 192.168.1.15:/mnt/nfs_500G_JEN
+# /home/pi/media/nfs_C3_500G_FAITH	# 192.168.1.14:/mnt/nfs_500G_FAITH
+# /home/pi/media/nfs_C4_1TB_FLAKEY	# 192.168.1.16:/mnt/nfs_1TB_FLAKEY
+look_in_linux_local_nfs_mounts = Path('/home/pi/media/')
+PICKLED_MEDIA_LIB_FILE_JEN 	  = look_in_linux_local_nfs_mounts.joinpath('nfs_C2_500G_JEN','__media_data2','medialib2.pickle')
+PICKLED_MEDIA_LIB_FILE_FAITH  = look_in_linux_local_nfs_mounts.joinpath('nfs_C3_500G_FAITH','__media_data2','medialib2.pickle')
+PICKLED_MEDIA_LIB_FILE_FLAKEY = look_in_linux_local_nfs_mounts.joinpath('nfs_C4_1TB_FLAKEY','__media_data2','medialib2.pickle')
+
 KNOWN_PATHS = [
+	PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX,
 	PICKLED_MEDIA_LIB_FILE_OSX4T,
 	PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,
 	PICKLED_MEDIA_LIB_FILE_LINUX,
 	PICKLED_MEDIA_LIB_FILE_V2_F500,
 	#PICKLED_MEDIA_LIB_FILE_REPO,
+	PICKLED_MEDIA_LIB_FILE_JEN,
+	PICKLED_MEDIA_LIB_FILE_FAITH,
+	PICKLED_MEDIA_LIB_FILE_FLAKEY
 ]
 READ_ONLY = 'r'
 READ_WRITE = 'w'
@@ -808,6 +823,12 @@ def main():
 if __name__ == '__main__':
 	#'/Volumes/meep/temp_delete/'
 	#Path('/Volumes/Home Directory/MMdia/')
+	pprint(PICKLED_MEDIA_LIB_FILE_JEN)
+	pprint(PICKLED_MEDIA_LIB_FILE_FAITH)
+	pprint(PICKLED_MEDIA_LIB_FILE_FLAKEY)
+	print(' - o - ')
+	pprint(KNOWN_PATHS)
+	sys.exit(0)
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# -help = list file extensions found
@@ -904,7 +925,8 @@ option
 		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)	# default
 		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX)
 		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
-		new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
+		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
+		new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX)
 
 		if '-d' not in sys.argv:	# -d = dont save results		as in WRITE mode unless blocked
 			new_media_lib.set_write_mode(READ_WRITE)
@@ -963,6 +985,10 @@ option
 		if db_path.exists():
 			mmdbs.append(MMediaLib(db_path))
 
+	import shutil
+	remove_from_disc = 'FAITHFUL500' # 'time_box_2018' 'meep' 'Osx4T'
+	remove_duplicates = False			# remove duplicates PARENT directory & ALL contents
+
 	all_media = {}
 	duplicates = []
 	for mmdb in mmdbs:
@@ -976,7 +1002,18 @@ option
 				splitpath = str(all_media[m].info['file_path']).split('/')
 				report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]).ljust(20)} and {(str(mmdb.media_root).split('/')[2]).ljust(20)}"
 				duplicates.append(report)
-				print(report)
+				duplicate_in = (str(mmdb.media_root).split('/')[2])
+				loop_report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]).ljust(20)} and {duplicate_in.ljust(20)}"
+				print(loop_report)
+				if duplicate_in == remove_from_disc and remove_duplicates == True:
+					target_path = mmdb.media_files[m].info['file_path'].parent
+					print(f"\t\t{mmdb.media_files[m].info['file_path']}\n\t\t{target_path}")
+					# remove duplicate directories
+					try:
+						shutil.rmtree(target_path)
+					except:
+						pass
+
 
 	import random
 	print("\n\n\nMedia Object\n\n\n:")

@@ -34,11 +34,21 @@ import vlc
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # helpers
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+import platform
+running_os = platform.system()
+# AIX: 'aix', Linux:'Linux', Windows: 'win32', Windows/Cygwin: 'ygwin', macOS: 'Darwin'
 
-PATH_TO_MKV = Path('/Volumes/Osx4T/tor/_vlc_test/test_mv_mkv.mkv')
-PATH_TO_AVI = Path('/Volumes/Osx4T/tor/_vlc_test/test_mv_avi.avi')
-PATH_TO_MP4 = Path('/Volumes/Osx4T/tor/_vlc_test/test_mv_mp4.mp4')
-PATH_TO_MP3 = Path('/Volumes/Osx4T/tor/_vlc_test/test_mv_mp3.mp3')
+if running_os == 'Darwin':  # local - osx box
+    PATH_TO_MKV = Path('/Volumes/Osx4T/tor/_vlc_test/test_mv_mkv.mkv')
+    PATH_TO_AVI = Path('/Volumes/Osx4T/tor/_vlc_test/test_mv_avi.avi')
+    PATH_TO_MP4 = Path('/Volumes/Osx4T/tor/_vlc_test/test_mv_mp4.mp4')
+    PATH_TO_MP3 = Path('/Volumes/Osx4T/tor/_vlc_test/test_mv_mp3.mp3')
+elif running_os == 'Linux':
+    PATH_TO_MKV = Path('/media/pi/time_box_2018/movies/_vlc_test/test_mv_mkv.mkv')
+    PATH_TO_AVI = Path('/media/pi/time_box_2018/movies/_vlc_test/test_mv_avi.avi')
+    PATH_TO_MP4 = Path('/media/pi/time_box_2018/movies/_vlc_test/test_mv_mp4.mp4')
+    PATH_TO_MP3 = Path('/media/pi/time_box_2018/movies/_vlc_test/test_mv_mp3.mp3')
+
 
 def vlc_module(media_file=None):
     # attempt 1 - using plain old vlc module
@@ -100,10 +110,14 @@ def python_vlc_http_package(media_file=None):
 
     # start VLC
     # https://wiki.videolan.org/Documentation:Advanced_Use_of_VLC/
-    # fullscreen
+    # osx fullscreen
     #movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC -f '{media_file}' --extraintf http", shell=True)
-    # window
-    movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC    '{media_file}' --extraintf http", shell=True)
+    # osx window
+    #movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC    '{media_file}' --extraintf http", shell=True)
+
+    # on linux window
+    movie_process = subprocess.Popen(f"vlc '{media_file}' --extraintf http")
+
 
     # wait for http interface to come live
     sleep(0.2)
@@ -247,6 +261,7 @@ def python_vlc_http_package(media_file=None):
 
 
 def vlc_http_py_moviepicker(media_file=None):
+    global running_os
     #https://stackoverflow.com/questions/16981921/relative-imports-in-python-3
 
     #from .moviepicker.vlc_http import vlc_http
@@ -268,11 +283,26 @@ def vlc_http_py_moviepicker(media_file=None):
     print(f"vlc_http_py_moviepicker: LOADING {media_file}")
     # start VLC
     # https://wiki.videolan.org/Documentation:Advanced_Use_of_VLC/
-    # fullscreen
-    #movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC -f '{media_file}' --extraintf http", shell=True)
-    # window
-    movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC    '{media_file}' --extraintf http", shell=True)
 
+    print(f"OS: {running_os}")
+
+    if running_os == 'Darwin':  # local - osx box
+        # fullscreen
+        #movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC -f '{media_file}' --extraintf http", shell=True)
+        # window
+        movie_process = subprocess.Popen(f"exec /Applications/VLC.app/Contents/MacOS/VLC    '{media_file}' --extraintf http", shell=True)
+
+    elif running_os == 'Linux':
+        # on linux window
+        #movie_process = subprocess.Popen((f"vlc '{media_file}' --extraintf http").split(), shell=True)
+        cmd = ['vlc',f"{media_file}",'--extraintf','http']
+        print(f"Command list: {cmd}")
+        print(" - - - starting vlc - - - ")
+        #movie_process = subprocess.Popen(cmd, shell=True)
+        movie_process = subprocess.Popen(cmd)
+        print(" - - - starting vlc started ? - - - ")
+
+    sleep(0.2)
     vlc_http_channel = vlc_http(user='', pwd='p1')
 
     print(f"vlc_http_channel: {type(vlc_http_channel)}")
@@ -418,8 +448,8 @@ if __name__ == '__main__':
     #code_base = JUST_VLC_MODULE_SND            # WORKS
     #code_base = JUST_VLC_MODULE_VID            # NO work - requires a canvas to work - see QT5_APP
     #code_base = PYTHON_VLC_HTTP_PACKAGE        # WORKING - couple of patches - enough for full remote - PULL requst commited
-    #code_base = MOVIEPICKER_VLC_HTTP_PY
-    code_base = QT5_APP
+    code_base = MOVIEPICKER_VLC_HTTP_PY
+    #code_base = QT5_APP
 
     if code_base == JUST_VLC_MODULE_SND:
         print("running codebase: JUST_VLC_MODULE_SND")
