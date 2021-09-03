@@ -52,7 +52,7 @@ test_mode_library_name = Path('/Users/simon/a_syllabus/lang/python/movie_picker/
 
 import platform
 running_os = platform.system()
-# AIX: 'aix', Linux:'Linux', Windows: 'win32', Windows/Cygwin: 'ygwin', macOS: 'Darwin'
+# AIX: 'aix', Linux:'Linux', Windows: 'win32', Windows/Cygwin: 'cygwin', macOS: 'Darwin'
 running_os_release = platform.release()
 
 hostname = socket.gethostname()
@@ -60,10 +60,6 @@ print("Your Computer Name is:" + hostname)
 IPAddr = socket.gethostbyname(hostname)
 print("Your Computer IP Address is:" + IPAddr)
 print(f"OS: {running_os} - {running_os_release}")
-# IPAddr = '192.168.1.13' # TODO FIX - aBOVE
-# hostname = 'dtk.health'
-# IPAddr = '192.168.1.17' # TODO FIX - aBOVE
-# hostname = 'rpi-C1'
 
 if running_os == 'Darwin':  # local - osx box
     REMOTE_LINUX = Path('/Volumes/Home Directory/MMdia/__media_data2/medialib2.pickle')
