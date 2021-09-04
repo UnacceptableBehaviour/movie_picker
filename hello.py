@@ -16,9 +16,7 @@ import inspect                      # inspect.getmembers(object[, predicate])
 
 #        dir        file
 # this causes __init_.py to execute
-from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD
-from moviepicker import PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE_V2_F500,PICKLED_MEDIA_LIB_FILE_REPO
-from moviepicker import PICKLED_MEDIA_LIB_FILE_OSX4T, KNOWN_PATHS
+from moviepicker import MMediaLib,MMedia,REVERSE,FORWARD,media_cloud
 from pathlib import Path
 import random
 import re                                                               # regex
@@ -38,17 +36,19 @@ movie_process = None
 media_lib = None
 
 
-# load info if 1st time round
-# media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX)
+# Look for available DBs & load info
+# Note
+# default_library_name = 'medialib2.pickle'
+# default_parent_folder = '__media_data2'
+# default_media_parent = 'movies'
 #
-# check for available discs and merge them
-#
-# if MMediaLib.exists(PICKLED_MEDIA_LIB_FILE_V2_F500):
-#     media_lib.join(MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500))
-default_library_name = 'medialib2.pickle'
+# disk_path/movies/__media_data2/medialib2.pickle
+#     |       |        |            |
+#     |       |        |            DB file
+#     |       |  DB parent folder
+#     |    media folder
+#  rebaseable parent path
 
-volume_checklist = KNOWN_PATHS
-test_mode_library_name = Path('/Users/simon/a_syllabus/lang/python/movie_picker/movies/__media_data2/medialib2.pickle')
 
 import platform
 running_os = platform.system()
@@ -62,39 +62,24 @@ print("Your Computer IP Address is:" + IPAddr)
 print(f"OS: {running_os} - {running_os_release}")
 
 if running_os == 'Darwin':  # local - osx box
-    REMOTE_LINUX = Path('/Volumes/Home Directory/MMdia/__media_data2/medialib2.pickle')
 
-    # vcl = []
-    # for path in volume_checklist:
-    #     full_path = Path('Volumes', path)
-    #     vcl.append(full_path) if full_path.exists()
-    # load medialibs & merge TODO
-
-    for media_path in volume_checklist:
-        if media_path.exists():
-            media_lib = MMediaLib(media_path)
-            #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)
-            #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
-            #media_lib = MMediaLib(REMOTE_LINUX)
-            #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/Volumes/Home Directory/MMdia/')
-            #media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
-            if media_path == PICKLED_MEDIA_LIB_FILE_OSX4T:
-                media_lib.rebase_media_DB('/Volumes/meep/temp_delete/','/Volumes/Osx4T/')
-
-    # local disc - small library - export FLASK_ENV=development
-    #media_lib = MMediaLib(test_mode_library_name)   < DOESNT exit & files too small to recreate!
+    if media_cloud.main:
+        media_lib = MMediaLib(media_cloud.main)
+        # rebase check
+        # media_lib.rebase_media_DB('/Volumes/meep/temp_delete/','/Volumes/Osx4T/')
 
 elif running_os == 'Linux':  # remote - linux box
-    #LOCAL_LINUX = Path('/home/pi/MMdia/','__media_data2/medialib2.pickle')  # opt-1
-    LOCAL_LINUX = Path('/media/pi/time_box_2018/movies/','__media_data2/medialib2.pickle') # opt-2
-    media_lib = MMediaLib(LOCAL_LINUX)
-    #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/home/pi/MMdia/')  # opt-1
-    media_lib.rebase_media_DB('/Volumes/time_box_2018/','/media/pi/time_box_2018/')  # opt-2
+
+    if media_cloud.main:
+        media_lib = MMediaLib(media_cloud.main)
+        # rebase check
+        #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/home/pi/MMdia/')  # opt-1
+        #media_lib.rebase_media_DB('/Volumes/time_box_2018/','/media/pi/time_box_2018/')  # opt-2
 
 if not media_lib:
     print("EXITIING - NO media libraries were found\nChecked:")
     print(f"IP: {IPAddr} OS:{running_os} ver:{running_os_release}")
-    for p in volume_checklist:
+    for p in media_cloud.known_paths:
       print(p)
 
     sys.exit(0)
@@ -768,36 +753,19 @@ def spare_route():
 
 
 if __name__ == '__main__':
-    # setup notes:
-    # http://flask.pocoo.org/docs/1.0/config/
-    # export FLASK_ENV=development add to ~/.bash_profile
-    #app.run(host='0.0.0.0', port=52001)
-    #hostname = socket.gethostname()
+
     print("Your Computer Name is:" + hostname)
-    #IPAddr = socket.gethostbyname(hostname)
     print("Your Computer IP Address is:" + IPAddr)
 
-    if running_os == 'Darwin':  # local - osx box
-        #app.run(host='192.168.1.13', port=52001)
-        app.run(host='0.0.0.0', port=52001)
-
-    elif running_os == 'Linux':
-        #app.run(host='192.168.1.17', port=52001)
+    if running_os == 'Darwin' or running_os == 'Linux':
         app.run(host='0.0.0.0', port=52001)
 
     else:
         print("WARNING unknown host . . . bailing")
-        print("Your Computer Name is:" + hostname)
-        print("Your Computer IP Address is:" + IPAddr)
         print(f"OS: {running_os} - {running_os_release}")
         sys.exit(0)
 
-    # check this forum - VLC remote contol
-    # https://forum.videolan.org/viewtopic.php?f=11&t=148606
-    # add control interface for post movies select
-
-    #
-    #
+    # TODO
     #
     #  have a look at source code for https://pypi.org/project/black/
     #
@@ -808,19 +776,6 @@ if __name__ == '__main__':
     # > python -m black {source_file_or_directory}  # You can run Black as a package if running it as a script doesn't work:
     #
     #
-    #
-
-    # media_lib = MMediaLib()
-    #
-    # ten_movies = ''
-    # for count, movie in enumerate(media_lib.sorted_by_year(REVERSE)):
-    #     #print(movie)
-    #     #print(movie.as_json)
-    #     t = movie.info['title']
-    #     y = movie.info['year']
-    #     print(f"'{t} ({y} film)',")
-    #     if count >= 20: break
-
 
 # EG movie:
 # <class 'movie_info_disk.MMdia'>.movie_data

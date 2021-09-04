@@ -10,6 +10,10 @@ else:
 	from .helpers import creation_date, hr_readable_from_nix
 
 from collections import Counter
+from collections import OrderedDict # popitem(last=True) pairs are returned in LIFO order
+									# popitem(last=False) pairs are returned in FIFO order
+									# move_to_end(key, last=True)
+									# iter: od.items()  rev_iter: reversed(od.items())
 import re
 import imdb
 import urllib.request
@@ -351,33 +355,85 @@ class MediaLibIter(Iterator):
 
 		return return_item
 
-# TODO - refactor - check presence of each - merge into one DB
-mmdia_root2a = Path('/Volumes/time_box_2018/movies/')
-PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX = mmdia_root2a.joinpath('__media_data2','medialib2.pickle')
-mmdia_root2b = Path('/Volumes/FAITHFUL500/')
-PICKLED_MEDIA_LIB_FILE_V2_F500 = mmdia_root2b.joinpath('__media_data2','medialib2.pickle')
-look_in_repo = Path('./movies/')	# git demo
-PICKLED_MEDIA_LIB_FILE_REPO = look_in_repo.joinpath('__media_data2','medialib2.pickle')
-look_in_linux = Path('/home/pi/MMdia/')
-PICKLED_MEDIA_LIB_FILE_LINUX = look_in_linux.joinpath('__media_data2','medialib2.pickle')
-look_in_linux = Path('/media/pi/time_box_2018/movies/')
-PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX = look_in_linux.joinpath('__media_data2','medialib2.pickle')
-PICKLED_MEDIA_LIB_FILE_OSX4T = Path('/Volumes/Osx4T/tor/__media_data2/medialib2.pickle')
-KNOWN_PATHS = [
-	PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX,
-	PICKLED_MEDIA_LIB_FILE_OSX4T,
-	PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,
-	PICKLED_MEDIA_LIB_FILE_LINUX,
-	PICKLED_MEDIA_LIB_FILE_V2_F500,
-	#PICKLED_MEDIA_LIB_FILE_REPO,
-]
+
+
+# TODO remove if not used - handles/keys may well be useful to refer to DB paths
+class MMediaCloudOD:
+	known_paths = None
+
+	def __init__(self, *args):
+		known_paths = collections.OrderedDict(*args)
+
+	def register_path(self, name, path):
+		known_paths[name] = Path(path)
+
+	def remove_path(self, name):
+		known_paths.move_to_end(name)	# delete name - default last=True
+		popitem(name)
+
+
+
+class MMediaCloud:
+	db_paths_file = Path('./scratch/db_paths.txt')
+	known_paths = []
+	paths_to_check = []
+	main = None
+
+	def __init__(self, paths_file=None):
+		if not paths_file: paths_file = MMediaCloud.db_paths_file
+
+		MMediaCloud.paths_to_check = self.get_paths_from_file(paths_file)
+
+		MMediaCloud.known_paths = [path for path in MMediaCloud.paths_to_check if path.exists()]
+
+		if len(MMediaCloud.known_paths) > 0:
+			MMediaCloud.main = MMediaCloud.known_paths[0]
+
+	def report_DBs_found(self):
+		db_list = ''
+		for path in MMediaCloud.paths_to_check:
+			if path.exists():
+				report = f"found DB @ - {path}"
+			else:
+				report = f"NOT found DB @ - {path}"
+				if path.parent.parent.exists():
+					report = f"\tBut MEDIA dir found @ - {path.parent.parent}"
+			db_list = db_list + f"{report}\n"
+			print(report)
+		return db_list
+
+	def register_path(self, path):
+		MMediaCloud.known_paths.append(Path(path))
+
+	def remove_path(self, path):
+		MMediaCloud.known_paths.remove(path)
+
+	def get_paths_from_file(self, filename):
+		with open(filename, 'r') as f:
+			content = f.read()
+
+		path_list = []
+		for line in content.split('\n'):
+			if len(line.strip()) == 0: continue
+			if re.findall('^#', line): continue
+			path_list.append(Path(line.strip()))
+
+		return path_list
+
+	def get_path_def_location(self):
+		return(db_paths_file)
+
+
+media_cloud = MMediaCloud()
+
+
 READ_ONLY = 'r'
 READ_WRITE = 'w'
 class MMediaLib(Iterable):
 
 	imdb_search = imdb.IMDb()
 
-	def __init__( self, lib_file_path=PICKLED_MEDIA_LIB_FILE_V2_F500, media_root=None ):
+	def __init__( self, lib_file_path=None, media_root=None ):
 		self.lib_file_path = lib_file_path
 		self.media_root = media_root
 
@@ -801,7 +857,14 @@ def get_doc_vector_word(doc):
 
 	return vector
 
+# TODO remove when propper args processing added
+def get_valid_path(args):
+	ret_path = None
 
+	for p in args:
+		if Path(p).exists(): ret_path = Path(p)
+
+	return ret_path
 
 
 def main():
@@ -809,9 +872,6 @@ def main():
 
 
 if __name__ == '__main__':
-	#'/Volumes/meep/temp_delete/'
-	#Path('/Volumes/Home Directory/MMdia/')
-
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# -help = list file extensions found
 	if ('-h' in sys.argv) or ('-help' in sys.argv) or ('--help' in sys.argv):
@@ -828,6 +888,9 @@ $ ./moviepicker/moviepicker.py -ldb /Volumes/Osx4T/tor/__media_data2/medialib2.p
 
 $ ./moviepicker/moviepicker.py -u -d 		# find info about new additions to movie directory
 											# - dummy run (NO WRITE)
+											# or
+$ ./moviepicker/moviepicker.py -u -d /Volumes/nfs/nfs_C2_500G_JEN/movies
+
 $ ./moviepicker/moviepicker.py -u   		# find info about new additions to movie directory UPDATE DB
 
 option
@@ -849,21 +912,8 @@ option
 		sys.exit()
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	# load media lib
-	# timebox_media_lib = MMediaLib()	# default
-	# new_media_lib = timebox_media_lib
-	#
-	# repo_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
-	# new_media_lib = repo_media_lib
-
-	# alt_media_lib = MMediaLib(None,'/Volumes/time_box_2018/movies_Chris/__for_chris/movies_recomended') # create DB.pickle in search dir
-	# new_media_lib = alt_media_lib
-	# print(f"** movie picker main() - new_media_lib: {new_media_lib.media_root} **")
 
 
-
-	#
-	#
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# -ec = list file extensions found
 	if '-ec' in sys.argv:
@@ -901,30 +951,31 @@ option
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# -u dir_name = update searching in directory for media
 	if '-u' in sys.argv:
-		# PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX
-		# PICKLED_MEDIA_LIB_FILE_V2_F500
-		# PICKLED_MEDIA_LIB_FILE_REPO
-		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_F500)	# default
-		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX)
-		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_REPO)
-		#new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_OSX4T)
-		new_media_lib = MMediaLib(PICKLED_MEDIA_LIB_FILE_LINUX_TIMEBOX)
+		# check for a path in the args if none use media_cloud.main
+		media_path = get_valid_path(sys.argv[1:len(sys.argv)])
+
+		# cases: path to DB
+		#        no path use media_cloud.main
+		#		 media directory w/o DB
+
+		#
+		if 'medialib2.pickle' in str(media_path):
+			print(f"USING DB located: {media_path}")
+			new_media_lib = MMediaLib(media_path)
+
+		elif not media_path:
+			print(f"USING DB located: {media_cloud.main}")
+			new_media_lib = MMediaLib(media_cloud.main)
+
+		else:
+			print(f"BUILDING new DB based on content of: {media_path}")
+			new_media_lib = MMediaLib(None, media_root=media_path)
 
 		if '-d' not in sys.argv:	# -d = dont save results		as in WRITE mode unless blocked
 			new_media_lib.set_write_mode(READ_WRITE)
 
-		#new_media_lib.add_directory_to_library('/Volumes/Home Directory/MMdia/')
-		#Path('/Volumes/FAITHFUL500/')
-		new_media_lib.add_directory_to_library()	# will look in the PICKLED_MEDIA_ROOT
+		new_media_lib.add_directory_to_library()	# will look for new files in specified directory
 
-		# try:
-		# 	search_directory = sys.argv[sys.argv.index('-u')+1]
-		#
-		# 	if Path(search_directory).exists():
-		# 		new_media_lib.add_directory_to_library(search_directory)
-		#
-		# except IndexError:
-		# 	new_media_lib.add_directory_to_library()
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# list entries in a pickleDB
@@ -963,7 +1014,7 @@ option
 	# 	print(m.as_json())
 
 	mmdbs = []
-	for db_path in KNOWN_PATHS:
+	for db_path in media_cloud.known_paths:
 		if db_path.exists():
 			mmdbs.append(MMediaLib(db_path))
 
@@ -1022,5 +1073,11 @@ option
 	# print("- - - - - - - - - - - - - - - - - - - - - - - - -  mmdb_any.media_with_id('0076929') - - - - - - - - - - - - - - - - - - - - - - - - - " )
 	# print( mmdb_any.media_with_id('0076929') )
 	# print("- - - - - - - - - - - - - - - - - - - - - - - - -  mmdb_any.media_with_id('0076929') - - - - - - - - - - - - - - - - - - - - - - - - - " )
+
+	print('- - - media_cloud.known_paths')
+	print(media_cloud.known_paths)
+	media_cloud.report_DBs_found()
+	print(media_cloud.main)
+	sys.exit()
 
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB

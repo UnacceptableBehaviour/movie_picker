@@ -3,7 +3,7 @@
 # print("-----------------------------")
 # print("-- __init__.py moviepicker --")
 # print("-----------------------------")
-from .moviepicker import MMediaLib,MMedia,REVERSE,FORWARD,PICKLED_MEDIA_LIB_FILE_V2_TIMEBOX,PICKLED_MEDIA_LIB_FILE_V2_F500,PICKLED_MEDIA_LIB_FILE_REPO,PICKLED_MEDIA_LIB_FILE_OSX4T,KNOWN_PATHS
+from .moviepicker import MMediaLib,MMedia,REVERSE,FORWARD,media_cloud
 from .vlc_http import vlc_http, kill_running_vlc
 #from .helpers import creation_date, hr_readable_from_nix
 #from .exceptions import *
@@ -11,7 +11,7 @@ from .vlc_http import vlc_http, kill_running_vlc
 
 # print(dir())
 
-__version__ = (0, 0, 1)
+__version__ = (0, 0, 2)
 
 # note on access to functionality in different files - EG display
 # https://stackoverflow.com/questions/2618425/exposing-classes-inside-modules-within-a-python-package-directly-in-the-package
