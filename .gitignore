@@ -4,6 +4,8 @@
 .AppleDouble
 ./moviepicker/userDB.json
 
+moviepicker/userDB.json
+
 # ignore directory and contents
 /movie_picker/__pycache__
 /__pycache__

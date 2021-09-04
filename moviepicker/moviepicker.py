@@ -356,7 +356,6 @@ class MediaLibIter(Iterator):
 		return return_item
 
 
-
 # TODO remove if not used - handles/keys may well be useful to refer to DB paths
 class MMediaCloudOD:
 	known_paths = None
@@ -425,6 +424,7 @@ class MMediaCloud:
 
 
 media_cloud = MMediaCloud()
+
 
 
 READ_ONLY = 'r'
@@ -872,6 +872,7 @@ def main():
 
 
 if __name__ == '__main__':
+
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# -help = list file extensions found
 	if ('-h' in sys.argv) or ('-help' in sys.argv) or ('--help' in sys.argv):
