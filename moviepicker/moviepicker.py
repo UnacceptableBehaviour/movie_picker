@@ -901,7 +901,6 @@ option
 -d  			run but don't save results to disk (dummy run)
 -u 				udate entries on default target
 -u /path/		udate entries on default target with path
-				NOT IMPLEMENTED - TODO
 
 -udev	update from local repo movie directory
 
@@ -957,7 +956,7 @@ option
 
 		# cases: path to DB
 		#        no path use media_cloud.main
-		#		 media directory w/o DB
+		#		 media directory w/o DB - build new DB based on contents
 
 		#
 		if 'medialib2.pickle' in str(media_path):
@@ -1034,7 +1033,7 @@ option
 				print(m)
 			else:
 				splitpath = str(all_media[m].info['file_path']).split('/')
-				report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]).ljust(20)} and {(str(mmdb.media_root).split('/')[2]).ljust(20)}"
+				report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]+'/'+splitpath[3]).ljust(20)} and {(str(mmdb.media_root).split('/')[2]).ljust(20)}"
 				duplicates.append(report)
 				duplicate_in = (str(mmdb.media_root).split('/')[2])
 				loop_report = f"{(all_media[m].info['title']).ljust(40)} in {(splitpath[2]).ljust(20)} and {duplicate_in.ljust(20)}"
