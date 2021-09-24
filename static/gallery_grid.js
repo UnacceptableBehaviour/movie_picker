@@ -107,18 +107,24 @@ function updateMoviePrefsComboL(movId, buttonPref, movieRating=-1) {
 
 function changeUser(new_id) {
   console.log( JSON.stringify( { 'new_id':new_id }) );
+  source = document.querySelector('body').id;
+  if ( source === 'movie_gallery_home') {
+    return_route = '/';
+  } else {
+    return_route = `/${source}`;
+  };
 
   fetch( '/', {
     method: 'POST',                                             // method (default is GET)
     headers: {'Content-Type': 'application/json' },             // JSON
-    body: JSON.stringify( { 'new_id':new_id } )          // Payload
+    body: JSON.stringify( { 'new_id':new_id } )                 // Payload
 
   }).then( function(response) {
     return response.json();
 
   }).then( function(jsonResp) {
     console.log(`user CHANGED to: ${prefsInfo.name} - ${jsonResp}`);
-    window.location.replace('/');
+    window.location.replace(return_route);
   });
 }
 

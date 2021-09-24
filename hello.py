@@ -80,15 +80,17 @@ if not media_lib:
     print("EXITIING - NO media libraries were found\nChecked:")
     print(f"IP: {IPAddr} OS:{running_os} ver:{running_os_release}")
     for p in media_cloud.known_paths:
-      print(p)
+        print(p)
 
     sys.exit(0)
 
 LOCAL_IMAGE_CACHE = Path('./static/covers')
 LOCAL_IMAGE_CACHE.mkdir(parents=True, exist_ok=True)
 
+# TODO this may still be on an external disk - avoid using local SDcard on rpi /
 media_lib.cache_images_locally(LOCAL_IMAGE_CACHE)
 print(f"LOADED: {len(media_lib)}")
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 

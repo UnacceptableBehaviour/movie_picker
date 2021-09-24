@@ -474,6 +474,7 @@ class MMediaLib(Iterable):
 			with open(self.lib_file_path, 'rb') as f:
 				self.media_files = pickle.load(f)
 			print(f"Loaded:{len(self.media_files)} - {type(self.media_files)}")
+			self.auto_rebase()
 
 		self._sorted_by_year = list
 		self._sorted_by_title = []
@@ -485,6 +486,41 @@ class MMediaLib(Iterable):
 		self.sort_lists()
 		self.build_id_lookup()
 		print(" . . . Done")
+
+	def auto_rebase (self):
+		ROOT=0
+		FILE=1
+		print(f"::::auto_rebase>")
+		print(f"::::--{self.lib_file_path}")
+		print(f"::::--{self.media_root}")
+		root_count = Counter()
+		for key,m in self.media_files.items():
+			if str(self.media_root) in str(m.file_path()):
+				root_count[self.media_root] += 1
+			else: # need to rebase - disk moved location after original cataloging
+				media_folder = self.lib_file_path.parent.parent.name
+				root_mediafolder_file = str(m.file_path()).split(f"/{media_folder}/")
+				root_count[root_mediafolder_file[ROOT]] += 1
+				rebased_path = Path.joinpath(self.media_root,root_mediafolder_file[FILE])
+				if Path.exists(rebased_path):
+					m.info['file_path'] = rebased_path
+				else:
+					print(f"::::--WARNING NOT THERE! {rebased_path}")
+		pprint(root_count)
+
+		root_count = Counter()	# report rebase activity
+		for key,m in self.media_files.items():
+			if str(self.media_root) in str(m.file_path()):
+				root_count[self.media_root] += 1
+			else:
+				media_folder = self.lib_file_path.parent.parent.name
+				root_mediafolder_file = str(m.file_path()).split(f"/{media_folder}/")
+				root_count[root_mediafolder_file[ROOT]] += 1
+		print(f"::::--rebased to")
+		pprint(root_count)
+		print(f"::::--E")
+
+
 
 
 	def __iter__(self) -> MediaLibIter:					#  -> MediaLibIter is optional guide to coder & toolchain
@@ -727,11 +763,14 @@ class MMediaLib(Iterable):
 				cache_image = cache_dir.joinpath(Path(info['hires_image']).name)
 				source_path = info['file_path'].parent
 				source_image = source_path.joinpath(info['hires_image'])
-				#print(f"{source_image}")
-				#print(f"{cache_image}")
+				# print(f"info['hires_image']:  {info['hires_image']}")
+				# print(f"info['file_path']:  {info['file_path']}")
+				# print(f"source_path:  {source_path}")
+				# print(f"source_image: {source_image}")
+				# print(f"cache_image:  {cache_image}")
 				if not source_image.exists():
 					print(f"WARNING SOURCE IMAGE <{source_image}> NOT FOUND ***** < < <")
-					#TODO raise error thsi shouldn't happen
+					#TODO raise error this shouldn't happen
 					continue
 				if cache_image.exists():
 					#print(f"PRESENT: {cache_image}")
