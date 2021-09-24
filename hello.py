@@ -290,7 +290,7 @@ def movie_gallery_home():
     #                                                                                               #
     # catch this in JS land - if multiple devices connect                                           #
     # TODO - think through multiuser use cases                                                      #
-    # back to selections menu - kill movie window                                                   #
+    # back to selections menu - kills movie window                                                   #
     global movie_process                                                                            #
     global vlc_http_channel                                                                         #
                                                                                                     #
@@ -416,7 +416,7 @@ def movie_gallery_home():
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    # generate galery sorted by request
+    # generate gallery sorted by request
     #
     test_version = '0.0.0'
     print(f"Vs: {test_version}")
@@ -461,6 +461,7 @@ def movie_gallery_home():
     #prefs_info = current_user.prefs_info  # TODO make property
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
+    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
     users_nav_bar = []
     pprint(user_device_DB)
     for key_uuid,user_prefs in user_device_DB.items():
@@ -469,7 +470,56 @@ def movie_gallery_home():
 
     return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='movie_gallery_home')
 
+#<a href="{{url_for('/', user_id=u['user_uuid'])}}">{{ u['usr'] }}</a>   < - - - - - - #
+#@app.route('/<user_id>', methods=["GET", "POST"])                                      #
+@app.route('/slider_tests', methods=["GET", "POST"])                                    #
+def slider_tests():                                                                     #
+    global current_user         # TODO - should be a user session / login - passed in  /
+    movies = []
+    all_slider_movies = []
+    bad_labels = []
+    genres = set()
 
+    print('> > /slider_tests')
+    print(f"media_lib size: {len(media_lib)}")
+    for count, movie in enumerate(media_lib.sorted_by_year()):
+        #pprint(movie)
+        genres.update(movie.info['genres'])
+        if movie.info['title'] == 'And Then There Were None':
+            bad_labels.append(movie)
+        else:
+            if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
+            movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
+            slider_movie = {}
+            slider_movie['id'] = movie.info['id']
+            slider_movie['hires_image'] = movie.info['hires_image']
+            slider_movie['genres'] = movie.info['genres']
+            #slider_movie[''] = movie.info['']
+            all_slider_movies.append(slider_movie)
+
+    # choose a small random set of movies - for quick debug
+    num_of_random_movies = 100
+    for i in range(num_of_random_movies):
+        movies.append(random.choice(all_slider_movies))
+
+    print("Bad Labels encountered:")
+    pprint(bad_labels)
+    print("= = = \n\n")
+    print("Genres encountered:")
+    print(','.join(genres))
+    print("= = = \n")
+
+    #prefs_info = current_user.prefs_info  # TODO make property
+    prefs_info = current_user.get_prefs()
+    pprint(prefs_info)
+    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
+    users_nav_bar = []
+    pprint(user_device_DB)
+    for key_uuid,user_prefs in user_device_DB.items():
+        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
+
+    #return render_template('slider_tests.html', movies=all_slider_movies)
+    return render_template('slider_tests.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
 
 
 @app.route('/play_movie/<movie_id>', methods=["GET", "POST"])
@@ -608,6 +658,7 @@ def play_movie(movie_id):
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
 
+    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
     users_nav_bar = []
     for key_uuid,user_prefs in user_device_DB.items():
         users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
@@ -656,11 +707,18 @@ def short_list():
         print(f"short_list: request.method == {request.method}")
     print(f"\nshort_list: - - - - - - - - debug - - - - - - - - - - - - - - - - E\n")
 
-    movies = [media_lib.media_with_id(mov_id) for mov_id in current_user.prefs_info['short_list']]
+    # TODO - remove this try: clause or fix up
+    try:
+        movies = [media_lib.media_with_id(mov_id) for mov_id in current_user.prefs_info['short_list']]
+    except Exception:
+        movies = []
+        pass
+
 
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
 
+    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
     users_nav_bar = []
     # for key_uuid,user_prefs in user_device_DB.items():
     #     users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
@@ -708,7 +766,14 @@ def combined_short_list():
     movies_ids_ordered_by_frequency = [ mov for mov,count in Counter(movies).most_common() ]
     pprint(movies_ids_ordered_by_frequency)
 
-    movies = [media_lib.media_with_id(mov_id) for mov_id in movies_ids_ordered_by_frequency]
+    # TODO - remove this try: clause or fix up
+    try:
+        movies = [media_lib.media_with_id(mov_id) for mov_id in movies_ids_ordered_by_frequency]
+    except Exception:
+        movies = []
+        pass
+
+
     for m in movies:
         #pprint(m)
         print(m['title'])
@@ -718,6 +783,7 @@ def combined_short_list():
     # prefs_info = current_user.get_prefs()
     # pprint(prefs_info)
 
+    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
     users_nav_bar = []
     for key_uuid,user_prefs in user_device_DB.items():
         users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
@@ -727,14 +793,6 @@ def combined_short_list():
     title = "combined movie shortlists . . ."
     return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title, page='combined_short_list')
 
-
-
-
-@app.route('/tile_view', methods=["GET", "POST"])
-def tile_view():
-    headline_py = "tile_view.html"
-    movies = []
-    return render_template('tile_view.html', movies=movies, page='tile_view')
 
 
 

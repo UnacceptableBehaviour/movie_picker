@@ -337,7 +337,7 @@ function customiseButtons() {
         }
       );
       break;
-    case 'tile_view':
+    case 'slider_tests':
       break;
     default:
   }

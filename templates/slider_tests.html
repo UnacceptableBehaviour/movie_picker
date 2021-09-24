@@ -1,0 +1,27 @@
+{% extends 'nav_buttons_thin.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for( 'static', filename='slider_tests.css') }}">
+<link rel="stylesheet" href="{{ url_for( 'static', filename='glider.css') }}">
+<script src="static/glider.js"></script>
+<script>
+  var movies = {{ movies|tojson }};
+  console.log(`slider_tests.html JS movies ${movies.length} - inline`);  // sanity check
+  console.log(movies[0]);  // sanity check
+  console.log(`slider_tests.html - inline CONCLUDED`);  // sanity check
+  var prefsInfo = {{ prefs_info|tojson }};
+  console.log(`slider_tests.html JS prefsInfo uuid:\n ${prefsInfo['uuid']} - inline`);  // sanity check
+  console.log(prefsInfo);
+</script>
+<script id='gg' src="static/gallery_grid.js"></script>
+<script id='gfp' src="static/get_fp.js"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+<h2>slider tests</h2>
+<div id='glider-supercontainer'></div>
+<script src='/static/slider_tests.js'></script>
+{% endblock %}

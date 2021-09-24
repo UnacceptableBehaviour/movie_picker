@@ -6,7 +6,7 @@ umount /Volumes/nfs/nfs_C2_500G_JEN
 umount /Volumes/nfs/nfs_C3_500G_FAITH
 umount /Volumes/nfs/nfs_C4_1TB_FLAKEY
 
-sudo mount -o rw,noowners -t nfs 192.168.1.15:/mnt/nfs_500G_JEN /Volumes/nfs/nfs_C1_2TB_THX1138
+sudo mount -o rw,noowners -t nfs 192.168.1.17:/mnt/nfs_2TB_THX1138 /Volumes/nfs/nfs_C1_2TB_THX1138
 sudo mount -o rw,noowners -t nfs 192.168.1.15:/mnt/nfs_500G_JEN /Volumes/nfs/nfs_C2_500G_JEN
 sudo mount -o rw,noowners -t nfs 192.168.1.14:/mnt/nfs_500G_FAITH /Volumes/nfs/nfs_C3_500G_FAITH
 sudo mount -o rw,noowners -t nfs 192.168.1.16:/mnt/nfs_1TB_FLAKEY /Volumes/nfs/nfs_C4_1TB_FLAKEY

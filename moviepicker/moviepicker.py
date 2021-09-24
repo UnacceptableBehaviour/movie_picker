@@ -390,15 +390,18 @@ class MMediaCloud:
 
 	def report_DBs_found(self):
 		db_list = ''
+		print('> - - - - - - - - - DB report - - - - - - - - - < S')
 		for path in MMediaCloud.paths_to_check:
+			#print(f"\nChecking: {path}")
 			if path.exists():
-				report = f"found DB @ - {path}"
+				report = f"\tfound DB @ - {path}"
 			else:
-				report = f"NOT found DB @ - {path}"
+				report = f"\tNOT found DB @ - {path}"
 				if path.parent.parent.exists():
-					report = f"\tBut MEDIA dir found @ - {path.parent.parent}"
+					report = report + f"\n\t\tBut MEDIA dir found @ - {path.parent.parent}"
 			db_list = db_list + f"{report}\n"
 			print(report)
+		print('> - - - - - - - - - DB report - - - - - - - - - < E')
 		return db_list
 
 	def register_path(self, path):

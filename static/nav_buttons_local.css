@@ -67,6 +67,10 @@ html, body {
   align-items: center;
 }
 
+#bt_home_flix_img {
+  transform: rotate(90deg);
+}
+
 .bt-nav3 {
   text-align: center;
   height: 34px;
