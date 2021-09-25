@@ -276,10 +276,11 @@ print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - J
 # each app.route is an endpoint
 
 #<a href="{{url_for('/', user_id=u['user_uuid'])}}">{{ u['usr'] }}</a>
-
+show_single_movie = None
 #@app.route('/<user_id>', methods=["GET", "POST"])
 @app.route('/', methods=["GET", "POST"])
 def movie_gallery_home():
+    global show_single_movie
     global current_user
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     # reset vlc process                                                                             #
@@ -320,6 +321,11 @@ def movie_gallery_home():
             print("movie_gallery_home: request.method == 'POST_JSON'")
             settings = request.get_json() # parse JSON into DICT
             pprint(settings)
+
+            if settings != None  and 'show_mov_id' in settings:
+                print(f"> > SHOW SINGLE MOVIE REQUEST - < {settings['show_mov_id']} >")
+                show_single_movie = settings['show_mov_id']
+                return json.dumps({}), 201 # created
 
             if settings != None  and 'prefs_info' in settings:
                 try:
@@ -404,10 +410,19 @@ def movie_gallery_home():
 
 
 
-    else:                                                                                          #
-        print(f"movie_gallery_home: request.method == {request.method}")                           #
-        #pprint(request)                                                                            #
-    print(f"\nmovie_gallery_home: - - - - - - - - debug - - - - - - - - - - - - - - - - E\n")          #
+    else:
+        if request.is_json:
+            print("movie_gallery_home: request.method == 'POST_JSON'")
+            settings = request.get_json() # parse JSON into DICT
+            pprint(settings)
+
+            if settings != None  and 'show_mov_id' in settings:
+                print(f"> > SHOW SINGLE MOVIE REQUEST - < {settings['show_mov_id']} >")
+        else:
+            print(f"movie_gallery_home: request.method == {request.method}")
+            print(f"PROCESSING SINGLE MOVIE REQUEST - {show_single_movie} - <")
+
+    print(f"\nmovie_gallery_home: - - - - - - - - debug - - - - - - - - - - - - - - - - E\n")
     #                                                                                              #
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
 
@@ -422,37 +437,46 @@ def movie_gallery_home():
     bad_labels = []
     genres = set()
 
+    if show_single_movie:
+        print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < S")
+        movie = media_lib.media_with_id(show_single_movie)
+        pprint(movie)
+        if movie['hires_image'] == None: movie['hires_image'] = 'movie_image_404.png'
+        movie['hires_image'] = str(Path(movie['hires_image']).name)   # convert full path to name
+        movies.append(movie)
+        show_single_movie = None
+        print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < E")
+    else:
+        # by year, name, most recent etc
+        for count, movie in enumerate(chosen_sort[sort_by]()):
+            #if count >= 10: break
+            #print(movie)
+            genres.update(movie.info['genres'])
+            if movie.info['title'] == 'And Then There Were None':
+                bad_labels.append(movie)
+            else:
+                if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
+                movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
+                all_movies.append(movie.info)
 
-    # by year, name, most recent etc
-    for count, movie in enumerate(chosen_sort[sort_by]()):
-        #if count >= 10: break
-        #print(movie)
-        genres.update(movie.info['genres'])
-        if movie.info['title'] == 'And Then There Were None':
-            bad_labels.append(movie)
-        else:
-            if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
-            movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
-            all_movies.append(movie.info)
-
-    # choose a small random set of movies - for quick debug
-    # num_of_random_movies = 10
-    # start_from = random.randint(0, len(all_movies)-11)
-    # for i in range(start_from, start_from + num_of_random_movies):
-    #     movies.append(all_movies[i])
+        # choose a small random set of movies - for quick debug
+        # num_of_random_movies = 10
+        # start_from = random.randint(0, len(all_movies)-11)
+        # for i in range(start_from, start_from + num_of_random_movies):
+        #     movies.append(all_movies[i])
 
 
-    movies = current_user.filter_list(all_movies)#[10:19]
+        movies = current_user.filter_list(all_movies)#[10:19]
 
-    # print("Incorrectly classified:")
-    # for movie in bad_labels:
-    #     print(Path(movie.info['file_path']).name)
-    #
-    # pprint(movies[9])
-    # print(" - - - - ")
-    print("Genres encountered:")
-    print(','.join(genres))
-    print("= = = \n")
+        # print("Incorrectly classified:")
+        # for movie in bad_labels:
+        #     print(Path(movie.info['file_path']).name)
+        #
+        # pprint(movies[9])
+        # print(" - - - - ")
+        print("Genres encountered:")
+        print(','.join(genres))
+        print("= = = \n")
 
     #prefs_info = current_user.prefs_info  # TODO make property
     prefs_info = current_user.get_prefs()
@@ -489,13 +513,16 @@ def slider_tests():                                                             
             slider_movie['id'] = movie.info['id']
             slider_movie['hires_image'] = movie.info['hires_image']
             slider_movie['genres'] = movie.info['genres']
+            slider_movie['title'] = movie.info['title']
+            slider_movie['root'] = str(movie.info['file_path'])
             #slider_movie[''] = movie.info['']
+            #slider_movie = movie.info           # < - - - - - - - - - - < DEBUG OVERWRITE
             all_slider_movies.append(slider_movie)
 
     # choose a small random set of movies - for quick debug
-    num_of_random_movies = 100
-    for i in range(num_of_random_movies):
-        movies.append(random.choice(all_slider_movies))
+    # num_of_random_movies = 100
+    # for i in range(num_of_random_movies):
+    #     movies.append(random.choice(all_slider_movies))
 
     print("Bad Labels encountered:")
     pprint(bad_labels)
@@ -513,8 +540,8 @@ def slider_tests():                                                             
     for key_uuid,user_prefs in user_device_DB.items():
         users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
-    #return render_template('slider_tests.html', movies=all_slider_movies)
-    return render_template('slider_tests.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
+    return render_template('slider_tests.html', movies=all_slider_movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
+    #return render_template('slider_tests.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
 
 
 @app.route('/play_movie/<movie_id>', methods=["GET", "POST"])
@@ -708,7 +735,7 @@ def short_list():
         if media_lib.media_with_id(mov_id):
             movies.append(media_lib.media_with_id(mov_id))
         else:
-            print(f"* * WARNING * * Movie ID {mov_id} not found - removing from user ({current_user.prefs_info.name}) shortlist")
+            print(f"* * WARNING * * Movie ID {mov_id} not found - removing from user ({current_user.prefs_info['name']}) shortlist")
             current_user.prefs_info['short_list'].remove(mov_id)
             commit_dict_to_DB(user_device_DB)   # keep things tidy if swapping media disk in and out
 

@@ -152,6 +152,28 @@ function goldStars(e) {
   prefsInfo.ratings[movId] = movRating;
 }
 
+
+// display single movie
+function showMovieWithID(movId) {
+  console.log( JSON.stringify( { 'show_mov_id':movId }) );
+
+  fetch( '/', {
+    method: 'POST',                                              // method (default is GET)
+    headers: {'Content-Type': 'application/json' },             // JSON
+    body: JSON.stringify( { 'show_mov_id':movId })  // Payload
+
+  }).then( function(response) {
+    return response.json();
+
+  }).then( function(jsonResp) {
+    console.log(`mov prefs UPDATED: ${movId} - ${jsonResp}`);
+    window.location.replace('/');
+  }).catch( function(err){
+    console.log(err);
+  });
+}
+
+
 function clickHandler(e) {
   console.log("\n-\n-\n");
   console.log(e);
@@ -167,6 +189,11 @@ function clickHandler(e) {
   // GENRES       btn_genre   btn-success btn-danger
   // MOVIE PREFS  control-bt
 
+  if (Array.from(e.target.classList).includes('glid-div-box')) {
+    console.log(`slider click: ${e.target.id}`);
+    showMovieWithID(e.target.id);
+    return;
+  }
 
   if (Array.from(e.target.classList).includes('bt-usr2')) {
     console.log(`${e.target.id}`);

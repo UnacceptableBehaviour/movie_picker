@@ -8,23 +8,41 @@ head, body {
 }
 
 .glid-div-box {
+    position: relative;
     /*border: 1px solid pink;*/
     height: 246px;
     width: 162px;
     margin: 2px;
+
+}
+
+.mv-info {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*text-align: center;*/
+    /*justify-content: center;*/
+}
+.bt-sl {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    opacity: 0.5;
 }
 
 .slider-title {
     font-family: 'Catamaran', sans-serif;
     font-weight: 500;
     font-size: 1.5em;
-    border: 1px solid yellowgreen;
+    /*border: 1px solid yellowgreen;*/
     padding-left: 0.2em;
     margin-top: 0.4em;
 }
 
 /* get image to fit and all be same size */
 .fit-box img {
+    /*opacity: 30%;*/
     width: 100%;
     height: 100%;
     border-radius: 6px;

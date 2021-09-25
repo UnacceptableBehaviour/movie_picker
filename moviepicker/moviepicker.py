@@ -559,6 +559,19 @@ class MMediaLib(Iterable):
 
 			except KeyError:
 				print(f"- - - - - - KeyError: removing {remove_key}")
+		# remove awkward buggers - TODO - DB edit
+		try:
+			self.media_files.pop('exvid-mysticpizza.avi')
+		except Exception:
+			pass
+		try:
+			self.media_files.pop('exvid-earthlings-cd1.avi')
+		except Exception:
+			pass
+		try:
+			self.media_files.pop('exvid-earthlings-cd2.avi')
+		except Exception:
+			pass
 
 	def __iter__(self) -> MediaLibIter:					#  -> MediaLibIter is optional guide to coder & toolchain
 		keys = list(self.media_files.keys())

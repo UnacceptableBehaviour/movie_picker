@@ -41,15 +41,13 @@ class Slider {
 
     allGlidersContainer.appendChild(gliderContain);
 
-    console.log(this.id);
+    //console.log(this.id);
     gliderDiv = document.getElementById(this.id);
-    console.log(gliderDiv);
+    //console.log(gliderDiv);
 
     for (var i in this.items) {
       gliderDiv.appendChild(this.createSliderElement(this.items[i]));
     }
-
-
   }
 
   //<div class='poster'>
@@ -60,19 +58,39 @@ class Slider {
   createSliderElement(i){
     // create basic container w/ image for (now
     let sDiv = document.createElement('div');
-    sDiv.classList.add('glid-div-box');
-    sDiv.classList.add('fit-box');
-    sDiv.classList.add('opt-1');
+    sDiv.classList.add('glid-div-box','fit-box','opt-1');
+    sDiv.id = i.id;
 
-    //sDiv.textContent = `${i.id} - ${i.hires_image}`;
-    console.log(`createSliderElement ${i}`);
+    if (i.hires_image.includes('movie_image_404.png')) {  // no image put text in
 
-    //let image = document.createElement('picture');
-    let image = document.createElement('img');
-    let src = `/static/covers/${i.hires_image}`;
-    image.src = src;
+      let title = document.createElement('div');
+      //title.textContent = `${i.id}<br>${i.title}<br>${i.root}`;
+      //let volume = (i.root.replace('/Volumes/nfs/','').split('/'))[0];
+      //title.innerHTML = `${i.id}<br>${i.title}<br>${volume}`;
+      title.textContent = i.title;
+      title.classList.add('mv-info');
+      title.value = i.hires_image;
+      sDiv.appendChild(title);
 
-    sDiv.appendChild(image);
+    } else { // image is good enough for (athousand words!
+
+      //let image = document.createElement('picture');
+      let image = document.createElement('img');
+      let src = `/static/covers/${i.hires_image}`;
+      image.src = src; // check for /static/covers/movie_image_404.png
+      image.value = i.id;
+      sDiv.appendChild(image);
+
+    }
+
+    // button looks naff - don't bother
+    //let sl_button = document.createElement('button');
+    //sl_button.value = i.id;
+    //sl_button.textContent = '+L';
+    //sl_button.classList.add('bt-sl','btn','btn-secondary');
+    //sDiv.appendChild(sl_button);
+
+    //console.log(`createSliderElement ${i}`);
 
     //i.hires_image
     //let img = document.createElement('image');
@@ -158,14 +176,14 @@ console.log(typeof(movies));
 console.log(movies);
 
 for (var m of movies) {
-  console.log(`* * * * * * ${slider_names.join(' - ')}`);
-  console.log(`${m.id} - ${m.genres}`);
+  //console.log(`* * * * * * ${slider_names.join(' - ')}`);
+  //console.log(`${m.id} - ${m.genres}`);
 
   for (var g in m.genres) {
     const genre = m.genres[g];
 
     if (slider_names.includes(genre)) {
-      console.log(`${genre} in slider_names`);
+      //console.log(`${genre} in slider_names`);
       // add id to slider
       sliders[genre].addItem(m);       // add movie to relevant slider
     } else {
@@ -202,23 +220,41 @@ for (s in sliders) {
 window.addEventListener('load',function(){
   document.querySelector('.glider').addEventListener('glider-slide-visible', function(event){
       var glider = Glider(this);
-      console.log('Slide Visible %s', event.detail.slide)
+      //console.log('Slide Visible %s', event.detail.slide)
   });
   document.querySelector('.glider').addEventListener('glider-slide-hidden', function(event){
-      console.log('Slide Hidden %s', event.detail.slide)
+      //console.log('Slide Hidden %s', event.detail.slide)
   });
   document.querySelector('.glider').addEventListener('glider-refresh', function(event){
-      console.log('Refresh')
+      //console.log('Refresh')
   });
   document.querySelector('.glider').addEventListener('glider-loaded', function(event){
-      console.log('Loaded')
+      console.log('Loaded: glider-loaded')
   });
 
 
   for (s in sliders) {
       let div_id = sliders[s].id;
-      console.log(`addGlider: ${div_id} ${s}`);
+      //console.log(`addGlider: ${div_id} ${s}`);
       sliders[s].addGlider(div_id);
   }
 
 });
+
+
+
+//function sliderClickHandler(e) {
+//  console.log("\n-\n-\n");
+//  console.log(e);
+//  console.log(e.target);
+//  console.log(e.target.classList);
+//  //console.log(e.target.parentNode.id);
+//  //console.log(e.target.parentNode.classList);
+//  console.log("\n-\n-\n");
+//
+//  if (Array.from(e.target.classList).includes('glid-div-box')) {
+//    console.log(`slider click: ${e.target.id}`);
+//  }
+//}
+//
+//document.addEventListener('click', sliderClickHandler);
