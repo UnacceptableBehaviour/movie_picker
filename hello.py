@@ -65,16 +65,11 @@ if running_os == 'Darwin':  # local - osx box
 
     if media_cloud.main:
         media_lib = MMediaLib(media_cloud.main)
-        # rebase check
-        # media_lib.rebase_media_DB('/Volumes/meep/temp_delete/','/Volumes/Osx4T/')
 
 elif running_os == 'Linux':  # remote - linux box
 
     if media_cloud.main:
         media_lib = MMediaLib(media_cloud.main)
-        # rebase check
-        #media_lib.rebase_media_DB('/Volumes/FAITHFUL500/','/home/pi/MMdia/')  # opt-1
-        #media_lib.rebase_media_DB('/Volumes/time_box_2018/','/media/pi/time_box_2018/')  # opt-2
 
 if not media_lib:
     print("EXITIING - NO media libraries were found\nChecked:")
@@ -264,8 +259,8 @@ else:
     # commit_dict_to_DB(user_device_DB)
 
 for usr_id,usr in user_device_DB.items():
-    print(f"\n===== u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
-    pprint(usr.get_prefs())
+    #print(f"\n===== u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
+    #pprint(usr.get_prefs())
     if usr.prefs_info['current_user']: current_user = usr
 
 
@@ -467,7 +462,6 @@ def movie_gallery_home():
     pprint(user_device_DB)
     for key_uuid,user_prefs in user_device_DB.items():
         users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
-
 
     return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='movie_gallery_home')
 

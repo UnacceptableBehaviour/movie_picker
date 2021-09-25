@@ -475,6 +475,7 @@ class MMediaLib(Iterable):
 				self.media_files = pickle.load(f)
 			print(f"Loaded:{len(self.media_files)} - {type(self.media_files)}")
 			self.auto_rebase()
+			self.remove_internal_duplicate_versions_w_same_id()
 
 		self._sorted_by_year = list
 		self._sorted_by_title = []
@@ -501,6 +502,7 @@ class MMediaLib(Iterable):
 				media_folder = self.lib_file_path.parent.parent.name
 				root_mediafolder_file = str(m.file_path()).split(f"/{media_folder}/")
 				root_count[root_mediafolder_file[ROOT]] += 1
+				#print(self.media_root,root_mediafolder_file)
 				rebased_path = Path.joinpath(self.media_root,root_mediafolder_file[FILE])
 				if Path.exists(rebased_path):
 					m.info['file_path'] = rebased_path
@@ -520,8 +522,43 @@ class MMediaLib(Iterable):
 		pprint(root_count)
 		print(f"::::--E")
 
+	def scan_for_versions_w_same_id (self):
+		# find media that may be different quality / version w/ same ID
 
+		mids = {}
+		alts = []
+		for n,m in enumerate(self.media_files):
+			#print(f"Title:{}")
+			mid = self.media_files[m].info['id']
+			if mid in mids:
+				alts.append((mid, m, mids[mid]))		# mov_id, first_key, second_key
+			else:
+				mids[mid] = m
 
+			#if n > 10: break
+
+		#pprint(mids)
+		print(f"== Duplicate Version w/ Same ID on single MMdia lib,\n Location: {self.lib_file_path}")
+		pprint(alts)
+		return alts
+
+	def remove_internal_duplicate_versions_w_same_id(self):
+		targets = self.scan_for_versions_w_same_id()
+		print(f"=== REMOVING Duplicate Version w/ Same ID on single MMdia lib,\n Location: {self.lib_file_path}")
+		for mid,v1,v2 in targets:
+			print(mid)
+			print(v1,v2)
+			try:
+				if '1080p' in v2 or 'dvdrip' in v2:		# giant hack - but at least leaves disc 1 of 1 & 2 in place
+					remove_key = v1
+				else:
+					remove_key = v2
+
+				print(f"REMOVING:{remove_key}")
+				self.media_files.pop(remove_key)
+
+			except KeyError:
+				print(f"- - - - - - KeyError: removing {remove_key}")
 
 	def __iter__(self) -> MediaLibIter:					#  -> MediaLibIter is optional guide to coder & toolchain
 		keys = list(self.media_files.keys())
@@ -1093,6 +1130,7 @@ option
 						pass
 
 
+
 	import random
 	print("\n\n\nMedia Object\n\n\n:")
 	pprint( random.choice(list(all_media.items())) ) # pprint a randon dict item to look at object
@@ -1101,8 +1139,13 @@ option
 	for d in duplicates:
 		print(d)
 
-	print(f"\n\nUnique movies: {len(all_media)}")
+	print(f"\n\nSEARCHING Available DB's for INTERNAL DUPLICATES - - - - - - - S")
+	for mmdb in mmdbs:
+		mmdb.remove_internal_duplicate_versions_w_same_id()
+	print(f"SEARCHED Available DB's for INTERNAL DUPLICATES - - - - - - - E")
 
+
+	print(f"\n\nUnique movies: {len(all_media)}")
 
 	print(f"Available DATABASES:")
 	# for mmdb in mmdbs:
@@ -1123,6 +1166,7 @@ option
 	print(media_cloud.known_paths)
 	media_cloud.report_DBs_found()
 	print(media_cloud.main)
+
 	sys.exit()
 
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB
