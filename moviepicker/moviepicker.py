@@ -566,8 +566,11 @@ class MMediaLib(Iterable):
 			self._id_to_movie_keys[media_id] = media_key
 
 	def media_with_id(self, media_id):
-		media_key = self._id_to_movie_keys[media_id]
-		return self.media_files[media_key].info
+		ret_media = None
+		if media_id in self._id_to_movie_keys:
+			media_key = self._id_to_movie_keys[media_id]
+			ret_media = self.media_files[media_key].info
+		return ret_media
 
 	def rebase_media_DB(self, old_root, new_root):
 		# this needs to be OS independant

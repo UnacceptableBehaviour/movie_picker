@@ -2,8 +2,9 @@
 .DS_Store
 *.pyc
 .AppleDouble
-./moviepicker/userDB.json
 
+# these don't wok???
+./moviepicker/userDB.json
 moviepicker/userDB.json
 
 # ignore directory and contents

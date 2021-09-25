@@ -124,8 +124,6 @@ class UserPrefs:
                            'current_user': False
                            }
         self.prefs_info.update(info)
-        print(type(info))
-        print(type(self.prefs_info))
 
         self.prefs_info['uuid'] = uuid
         if name: self.prefs_info['name'] = name
@@ -266,7 +264,8 @@ else:
     # commit_dict_to_DB(user_device_DB)
 
 for usr_id,usr in user_device_DB.items():
-    print(f"u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
+    print(f"\n===== u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
+    pprint(usr.get_prefs())
     if usr.prefs_info['current_user']: current_user = usr
 
 
@@ -709,12 +708,16 @@ def short_list():
         print(f"short_list: request.method == {request.method}")
     print(f"\nshort_list: - - - - - - - - debug - - - - - - - - - - - - - - - - E\n")
 
-    # TODO - remove this try: clause or fix up
-    try:
-        movies = [media_lib.media_with_id(mov_id) for mov_id in current_user.prefs_info['short_list']]
-    except Exception:
-        movies = []
-        pass
+    # movies = [media_lib.media_with_id(mov_id) for mov_id in current_user.prefs_info['short_list'] if media_lib.media_with_id(mov_id)]
+    movies = []
+    for mov_id in current_user.prefs_info['short_list']:
+        if media_lib.media_with_id(mov_id):
+            movies.append(media_lib.media_with_id(mov_id))
+        else:
+            print(f"* * WARNING * * Movie ID {mov_id} not found - removing from user ({current_user.prefs_info.name}) shortlist")
+            current_user.prefs_info['short_list'].remove(mov_id)
+            commit_dict_to_DB(user_device_DB)   # keep things tidy if swapping media disk in and out
+
 
 
     prefs_info = current_user.get_prefs()
@@ -768,13 +771,7 @@ def combined_short_list():
     movies_ids_ordered_by_frequency = [ mov for mov,count in Counter(movies).most_common() ]
     pprint(movies_ids_ordered_by_frequency)
 
-    # TODO - remove this try: clause or fix up
-    try:
-        movies = [media_lib.media_with_id(mov_id) for mov_id in movies_ids_ordered_by_frequency]
-    except Exception:
-        movies = []
-        pass
-
+    movies = [media_lib.media_with_id(mov_id) for mov_id in movies_ids_ordered_by_frequency if media_lib.media_with_id(mov_id)]
 
     for m in movies:
         #pprint(m)
