@@ -61,14 +61,25 @@ IPAddr = socket.gethostbyname(hostname)
 print("Your Computer IP Address is:" + IPAddr)
 print(f"OS: {running_os} - {running_os_release}")
 
-if running_os == 'Darwin':  # local - osx box
 
-    if media_cloud.main:
-        media_lib = MMediaLib(media_cloud.main)
+if running_os == 'Darwin' or running_os == 'Linux':
+    # m1 = MMediaLib(media_cloud.known_paths[0])
+    # m2 = MMediaLib(media_cloud.known_paths[2])
+    # m1.addLibAndRebuild(m2)
+    # media_lib = m1
+    print("Building media_lib from the following sources:")
+    pprint(media_cloud.known_paths)
+    if len(media_cloud.known_paths) > 1:
 
-elif running_os == 'Linux':  # remote - linux box
+        for m in media_cloud.known_paths:
+            mmdbs = [MMediaLib(db_path) for db_path in media_cloud.known_paths]
 
-    if media_cloud.main:
+        media_lib = mmdbs.pop()
+
+        while len(mmdbs) > 0:
+            media_lib.addLibAndRebuild(mmdbs.pop())
+
+    elif media_cloud.main:
         media_lib = MMediaLib(media_cloud.main)
 
 if not media_lib:

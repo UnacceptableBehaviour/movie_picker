@@ -437,6 +437,7 @@ class MMediaLib(Iterable):
 	imdb_search = imdb.IMDb()
 
 	def __init__( self, lib_file_path=None, media_root=None ):
+
 		self.lib_file_path = lib_file_path
 		self.media_root = media_root
 
@@ -572,6 +573,28 @@ class MMediaLib(Iterable):
 			self.media_files.pop('exvid-earthlings-cd2.avi')
 		except Exception:
 			pass
+
+
+	def addLib(self, media_lib):
+		if type(media_lib) == MMediaLib:
+			#print(f"addLib: type:{type(media_lib)} - {media_lib}")
+			for k,m in media_lib.media_files.items():
+				if m.info['id'] not in self._id_to_movie_keys:
+					print(f"addLibAndRebuild:   + {m.info['file_path'].name}")
+					self.media_files[k] = m
+				else:
+					print(f"addLibAndRebuild:skip {m.info['file_path'].name}")
+		else:
+			# raise(MustBeAnotherMMediaLibObjectError)
+			pass
+
+	def addLibAndRebuild(self, media_lib):
+		self.addLib(media_lib)
+		print("MMediaLib: addLibAndRebuild - building sorted lists . . .")
+		self.sort_lists()
+		self.build_id_lookup()
+		print("addLibAndRebuild . . . Done")
+
 
 	def __iter__(self) -> MediaLibIter:					#  -> MediaLibIter is optional guide to coder & toolchain
 		keys = list(self.media_files.keys())
@@ -1110,8 +1133,7 @@ option
 
 	mmdbs = []
 	for db_path in media_cloud.known_paths:
-		if db_path.exists():
-			mmdbs.append(MMediaLib(db_path))
+		mmdbs.append(MMediaLib(db_path))
 
 	import shutil
 	remove_from_disc = 'FAITHFUL500' # 'time_box_2018' 'meep' 'Osx4T'
