@@ -467,6 +467,8 @@ class MMediaLib(Iterable):
 
 		self.other_files = []
 
+		self.genres = set()
+
 		# run pickler on exit
 		atexit.register(self.exit_handler)
 
@@ -487,6 +489,7 @@ class MMediaLib(Iterable):
 		print("MMediaLib: building sorted lists . . .")
 		self.sort_lists()
 		self.build_id_lookup()
+		self.compile_genre_list()
 		print(" . . . Done")
 
 	def auto_rebase (self):
@@ -593,8 +596,12 @@ class MMediaLib(Iterable):
 		print("MMediaLib: addLibAndRebuild - building sorted lists . . .")
 		self.sort_lists()
 		self.build_id_lookup()
+		self.compile_genre_list()
 		print("addLibAndRebuild . . . Done")
 
+	def compile_genre_list(self):
+		for k,m in self.media_files.items():
+			self.genres.update(m.info['genres'])
 
 	def __iter__(self) -> MediaLibIter:					#  -> MediaLibIter is optional guide to coder & toolchain
 		keys = list(self.media_files.keys())
@@ -1201,7 +1208,7 @@ option
 	print(media_cloud.known_paths)
 	media_cloud.report_DBs_found()
 	print(media_cloud.main)
-
+	#pprint(mmdbs[0].genres)
 	sys.exit()
 
 	sys.exit()			# MMediaLib() pickles info on exit - in case crash / Ctrl+C during building DB

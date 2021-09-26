@@ -2,7 +2,7 @@
 
 # see notes at head of thrd_sk_producer.py
 
-# button_html = "<button type='submit' class='btn_genre' name='sort_type' formmethod='post' value='genre_type'>button_text</button>"
+# button_html = "<button type='submit' class='btn-genre' name='sort_type' formmethod='post' value='genre_type'>button_text</button>"
 #
 # genre_type = ['history','war','sci-fi','music','sport','romance','adventure','action','mystery','thriller','documentary','musical','biography','news','fantasy','animation','family','crime','drama','comedy','horror','western']
 #

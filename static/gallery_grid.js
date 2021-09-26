@@ -186,7 +186,7 @@ function clickHandler(e) {
 
   // button classes
   // ACTIVE USER  bt-usr2     btn-warning bt-usr-inactiv bt-usr-activ
-  // GENRES       btn_genre   btn-success btn-danger
+  // GENRES       btn-genre   btn-success btn-danger
   // MOVIE PREFS  control-bt
 
   if (Array.from(e.target.classList).includes('glid-div-box')) {
@@ -295,7 +295,7 @@ function clickHandler(e) {
 
 
 //HTMLCollection.prototype.forEach = Array.prototype.forEach;
-//genre_buttons = document.getElementsByClassName('btn_genre'); // returns HTMLCollection - not array
+//genre_buttons = document.getElementsByClassName('btn-genre'); // returns HTMLCollection - not array
 //genre_buttons.forEach(  // requires HTMLCollection.prototype.forEach = Array.prototype.forEach;
 //  function(element, index, array) {
 //    console.log(index, element);
@@ -306,7 +306,7 @@ function setButtonColours() {
 
   //console.log('User buttons -S');
   // genre buttons
-  Array.from(document.getElementsByClassName("btn_genre")).forEach(   // getElementsByClassName returns HTMLCollection - not array
+  Array.from(document.getElementsByClassName("btn-genre")).forEach(   // getElementsByClassName returns HTMLCollection - not array
     function(element, index, array) {
       //console.log(element.value);
       if (prefsInfo.prefs_genre.neg.includes(element.value)) {

@@ -61,26 +61,24 @@ IPAddr = socket.gethostbyname(hostname)
 print("Your Computer IP Address is:" + IPAddr)
 print(f"OS: {running_os} - {running_os_release}")
 
+media_lib = MMediaLib(media_cloud.main)
 
-if running_os == 'Darwin' or running_os == 'Linux':
-    # m1 = MMediaLib(media_cloud.known_paths[0])
-    # m2 = MMediaLib(media_cloud.known_paths[2])
-    # m1.addLibAndRebuild(m2)
-    # media_lib = m1
-    print("Building media_lib from the following sources:")
-    pprint(media_cloud.known_paths)
-    if len(media_cloud.known_paths) > 1:
-
-        for m in media_cloud.known_paths:
-            mmdbs = [MMediaLib(db_path) for db_path in media_cloud.known_paths]
-
-        media_lib = mmdbs.pop()
-
-        while len(mmdbs) > 0:
-            media_lib.addLibAndRebuild(mmdbs.pop())
-
-    elif media_cloud.main:
-        media_lib = MMediaLib(media_cloud.main)
+# if running_os == 'Darwin' or running_os == 'Linux':
+#
+#     print("Building media_lib from the following sources:")
+#     pprint(media_cloud.known_paths)
+#     if len(media_cloud.known_paths) > 1:
+#
+#         for m in media_cloud.known_paths:
+#             mmdbs = [MMediaLib(db_path) for db_path in media_cloud.known_paths]
+#
+#         media_lib = mmdbs.pop()
+#
+#         while len(mmdbs) > 0:
+#             media_lib.addLibAndRebuild(mmdbs.pop())
+#
+#     elif media_cloud.main:
+#         media_lib = MMediaLib(media_cloud.main)
 
 if not media_lib:
     print("EXITIING - NO media libraries were found\nChecked:")
@@ -122,6 +120,7 @@ class UserPrefs:
                            'seen_list':[],
                            'ni_list':[],
                            'ratings':{},
+                           'chosen_sort':'year',
                            'prefs_genre': {'neg':[],
                                           #"genres_all":["History","War","Sci-Fi","Music","Sport","Romance","Adventure","Action","Mystery","Thriller","Documentary","Musical","Biography","News","Fantasy","Animation","Family","Crime","Drama","Comedy","Horror","Western"],
                                           'pos':[]},
@@ -165,6 +164,14 @@ class UserPrefs:
     @name.setter
     def name(self, name):
         self.prefs_info['name'] = name
+
+    @property
+    def sort_by(self):
+        return self.prefs_info['chosen_sort']
+
+    @sort_by.setter
+    def sort_by(self, sort_by):
+        self.prefs_info['chosen_sort'] = sort_by
 
 
     def add_fingerprint(self, fingerprint):
@@ -274,7 +281,14 @@ for usr_id,usr in user_device_DB.items():
     #pprint(usr.get_prefs())
     if usr.prefs_info['current_user']: current_user = usr
 
+users_nav_bar = []
+def update_users_for_navbar():
+    global users_nav_bar
+    users_nav_bar.clear()
+    for key_uuid,user_prefs in user_device_DB.items():
+        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
 
+update_users_for_navbar()
 
 print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - JSON DB - E")
 
@@ -288,11 +302,21 @@ print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - J
 
 #<a href="{{url_for('/', user_id=u['user_uuid'])}}">{{ u['usr'] }}</a>
 show_single_movie = None
+# TODO find better place for this!!
+chosen_sort = {
+    'year':     media_lib.sorted_by_year,
+    'rating':   media_lib.sorted_by_rating,
+    'title':    media_lib.sorted_by_title,
+    'added':    media_lib.sorted_by_rating                   # TODO - return to correct sort
+    #'added':    media_lib.sorted_by_most_recently_added     # TODO - fix this sort
+}
+
 #@app.route('/<user_id>', methods=["GET", "POST"])
 @app.route('/', methods=["GET", "POST"])
 def movie_gallery_home():
     global show_single_movie
     global current_user
+    global chosen_sort
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     # reset vlc process                                                                             #
     #                                                                                               #
@@ -317,14 +341,6 @@ def movie_gallery_home():
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -#
     # processing incoming msgs                                                                     #
     # https://stackoverflow.com/questions/10434599/get-the-data-received-in-a-flask-request
-    sort_by = 'year'
-    chosen_sort = {
-        'year':     media_lib.sorted_by_year,
-        'rating':   media_lib.sorted_by_rating,
-        'title':    media_lib.sorted_by_title,
-        'added':    media_lib.sorted_by_rating                   # TODO - return to correct sort
-        #'added':    media_lib.sorted_by_most_recently_added     # TODO - fix this sort
-    }
 
     print(f"\nmovie_gallery_home: - - - - - - - - debug - - - - - - - - - - - - - - - - S\n")          #
     if request.method == 'POST':                                                                   #
@@ -396,37 +412,11 @@ def movie_gallery_home():
 
             print("\nrequest.form - - - - <")
             pprint(request.form)
-            # cycle through form items
-            for key, val in request.form.items():
-                print(f"{key} - {val}")
-                if 'change_genre' == key:       # easier to do this in JS land and post new prefs No?
-                    selected_genre = request.form['change_genre']
-                    if selected_genre in current_user.prefs_info['prefs_genre']['neg']:
-                        # del from neg move to pos
-                        current_user.prefs_info['prefs_genre']['neg'].remove(selected_genre)
-                        current_user.prefs_info['prefs_genre']['pos'].append(selected_genre)
-
-                    elif selected_genre in current_user.prefs_info['prefs_genre']['pos']:
-                        # del from pos move to don't care (not in either)
-                        current_user.prefs_info['prefs_genre']['pos'].remove(selected_genre)
-
-                    elif request.form['change_genre'] not in (current_user.prefs_info['prefs_genre']['neg'] +
-                                                            current_user.prefs_info['prefs_genre']['pos']):
-                        # move to neg
-                        current_user.prefs_info['prefs_genre']['neg'].append(selected_genre)
-
-                if 'sort_type' == key:
-                    if request.form['sort_type'] in chosen_sort:
-                        sort_by = request.form['sort_type']
-
-
-
     else:
         if request.is_json:
             print("movie_gallery_home: request.method == 'POST_JSON'")
             settings = request.get_json() # parse JSON into DICT
             pprint(settings)
-
             if settings != None  and 'show_mov_id' in settings:
                 print(f"> > SHOW SINGLE MOVIE REQUEST - < {settings['show_mov_id']} >")
         else:
@@ -459,7 +449,7 @@ def movie_gallery_home():
         print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < E")
     else:
         # by year, name, most recent etc
-        for count, movie in enumerate(chosen_sort[sort_by]()):
+        for count, movie in enumerate(chosen_sort[current_user.sort_by]()):
             #if count >= 10: break
             #print(movie)
             genres.update(movie.info['genres'])
@@ -493,10 +483,7 @@ def movie_gallery_home():
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
     # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
-    users_nav_bar = []
-    pprint(user_device_DB)
-    for key_uuid,user_prefs in user_device_DB.items():
-        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
+    global users_nav_bar
 
     return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='movie_gallery_home')
 
@@ -545,11 +532,8 @@ def slider_tests():                                                             
     #prefs_info = current_user.prefs_info  # TODO make property
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
-    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
-    users_nav_bar = []
-    pprint(user_device_DB)
-    for key_uuid,user_prefs in user_device_DB.items():
-        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
+
+    global users_nav_bar
 
     return render_template('slider_tests.html', movies=all_slider_movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
     #return render_template('slider_tests.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
@@ -691,10 +675,7 @@ def play_movie(movie_id):
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
 
-    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
-    users_nav_bar = []
-    for key_uuid,user_prefs in user_device_DB.items():
-        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
+    global users_nav_bar
 
     return render_template('play_movie.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, page='play_movie')
 
@@ -755,13 +736,8 @@ def short_list():
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
 
-    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
-    users_nav_bar = []
-    # for key_uuid,user_prefs in user_device_DB.items():
-    #     users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
-
     title = f"{prefs_info['name']}'s movie shortlist . . ."
-    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title, page='short_list')
+    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=[], title=title, page='short_list')
 
 
 
@@ -809,29 +785,59 @@ def combined_short_list():
         #pprint(m)
         print(m['title'])
 
-
-    prefs_info = []
-    # prefs_info = current_user.get_prefs()
-    # pprint(prefs_info)
-
-    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
-    users_nav_bar = []
-    for key_uuid,user_prefs in user_device_DB.items():
-        users_nav_bar.append({'usr':user_prefs.name, 'user_uuid':key_uuid})
-
     print("- - - combo SL - - - E")
 
     title = "combined movie shortlists . . ."
-    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, title=title, page='combined_short_list')
+    return render_template('shortlist.html', movies=movies, prefs_info=[], users_nav_bar=[], title=title, page='combined_short_list')
 
 
 
 
 @app.route('/settings', methods=["GET", "POST"])
 def settings():
-    headline_py = "Settings"
-    movies = []
-    return "SETTINGS route unimplemented <a href='/'>HOME</a>" #render_template('spare_route.html', movies=movies)
+    #global user_device_DB
+
+    print(f"\nsettings: - - - - - - - - debug - - - - - - - - - - - - - - - - S\n")
+    if request.method == 'POST':
+        print("\nrequest.args - - - - <")
+        pprint(request.args)
+        for key in request.args.keys():
+            print(f"{key} - {request.args[key]}")
+
+        print("\nrequest.form - - - - <")
+        pprint(request.form)
+        # cycle through form items
+        for key, val in request.form.items():
+            print(f"{key} - {val}")
+            if 'change_genre' == key:       # easier to do this in JS land and post new prefs No? TODO
+                selected_genre = request.form['change_genre']
+                if selected_genre in current_user.prefs_info['prefs_genre']['neg']:
+                    # del from neg move to pos
+                    current_user.prefs_info['prefs_genre']['neg'].remove(selected_genre)
+                    current_user.prefs_info['prefs_genre']['pos'].append(selected_genre)
+
+                elif selected_genre in current_user.prefs_info['prefs_genre']['pos']:
+                    # del from pos move to don't care (not in either)
+                    current_user.prefs_info['prefs_genre']['pos'].remove(selected_genre)
+
+                elif request.form['change_genre'] not in (current_user.prefs_info['prefs_genre']['neg'] +
+                                                        current_user.prefs_info['prefs_genre']['pos']):
+                    # move to neg
+                    current_user.prefs_info['prefs_genre']['neg'].append(selected_genre)
+
+            if 'sort_type' == key:
+                if request.form['sort_type'] in chosen_sort:
+                    current_user.sort_by = request.form['sort_type']
+
+        commit_dict_to_DB(user_device_DB)
+
+    prefs_info = current_user.get_prefs()
+    pprint(prefs_info)
+
+    global users_nav_bar
+
+    return render_template('settings.html', prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=media_lib.genres, page='settings')
+
 
 @app.route('/spare_route', methods=["GET", "POST"])
 def spare_route():

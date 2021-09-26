@@ -14,7 +14,7 @@
 
 
 {% block content %}
-<form action='/' class='bt-sort-bar'>
+<!--<form action='/' class='bt-sort-bar'>
     <span style="font-size:26px; padding-right:4px;">SORT BY</span>
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='year'>YEAR</button>
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='rating'>RATING</button>
@@ -25,9 +25,9 @@
 
 <form action='/'>
     {% for g in genres %}
-    <button type='submit' class='btn btn-secondary btn_genre bt-sort-gen' name='change_genre' formmethod='post' value='{{g}}'>{{g}}</button>
+    <button type='submit' class='btn btn-secondary btn-genre bt-sort-gen' name='change_genre' formmethod='post' value='{{g}}'>{{g}}</button>
     {% endfor %}
-</form>
+</form>-->
 
     {% include "movie_tile.html" %}
     <br>
