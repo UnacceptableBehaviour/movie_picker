@@ -43,7 +43,29 @@ function postUpdatedPrefsToServerNOReload(){
   });
 }
 
+function updateMoviePrefs(movId, buttonPref, route, reLoad=null, movieRating=-1) {
+  console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
+
+  fetch( route, {
+    method: 'POST',                                             // method (default is GET)
+    headers: {'Content-Type': 'application/json' },             // JSON
+    body: JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating } ) // Payload
+
+  }).then( function(response) {
+    return response.json();
+
+  }).then( function(jsonResp) {
+    console.log(`mov prefs UPDATED: ${movId} - ${jsonResp}`);
+    if (reLoad) {
+      window.location.replace(reLoad);
+    }
+  }).catch( function(err){
+    console.log(err);
+  });
+}
+
 // update prefs W/ RELOAD - change offered movies based on button
+// updateMoviePrefs(movId, buttonPref, '/', '/', movieRating=-1)
 function updateMoviePrefsAndReload(movId, buttonPref, movieRating=-1) {
   console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
 
@@ -62,47 +84,6 @@ function updateMoviePrefsAndReload(movId, buttonPref, movieRating=-1) {
     console.log(err);
   });
 }
-
-// shortlist rout update
-// TODO add route as parameter and refactor w/ above - route is only difference
-function updateMoviePrefsSL(movId, buttonPref, movieRating=-1) {
-  console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
-
-  fetch( '/short_list', {
-    method: 'POST',                                             // method (default is GET)
-    headers: {'Content-Type': 'application/json' },             // JSON
-    body: JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating } ) // Payload
-
-  }).then( function(response) {
-    return response.json();
-
-  }).then( function(jsonResp) {
-    console.log(`mov prefs UPDATED: ${movId} - ${jsonResp}`);
-    window.location.replace('/short_list');
-  }).catch( function(err){
-    console.log(err);
-  });
-}
-
-function updateMoviePrefsComboL(movId, buttonPref, movieRating=-1) {
-  console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
-
-  fetch( '/combined_short_list', {
-    method: 'POST',                                             // method (default is GET)
-    headers: {'Content-Type': 'application/json' },             // JSON
-    body: JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating } ) // Payload
-
-  }).then( function(response) {
-    return response.json();
-
-  }).then( function(jsonResp) {
-    console.log(`mov prefs UPDATED: ${movId} - ${jsonResp}`);
-    window.location.replace('/combined_short_list');
-  }).catch( function(err){
-    console.log(err);
-  });
-}
-
 
 
 function changeUser(new_id) {
@@ -204,7 +185,8 @@ function clickHandler(e) {
   if (Array.from(e.target.classList).includes('control-bt')) {
     let targetButton = e.target.name;
     let routeId = document.getElementsByTagName("BODY")[0].id;
-    let movId = e.target.closest('.grid-movie-card-v2').id.replace('gmc','');   // go up node tree until find first class='bla'
+    let movieCard = e.target.closest('.grid-movie-card-v2');
+    let movId = movieCard.id.replace('gmc','');   // go up node tree until find first class='bla'
     console.log(`BUT: ${targetButton}`);
     console.log(`movId: ${e.target.value}`);
     console.log(`route: ${routeId}`);
@@ -246,16 +228,17 @@ function clickHandler(e) {
         switch (routeId) {
           case 'movie_gallery_home':
             console.log('+List BUTTON - ROUTE: movie_gallery_home');
-            updateMoviePrefsAndReload(e.target.value, e.target.name);
+            updateMoviePrefs(movId, 'mov_prefs_sl', '/');
+            movieCard.remove();
             break;
           case 'short_list':
             console.log('REMOVE BUTTON - ROUTE: short_list');
-            //updateMoviePrefsSL(e.target.value, e.target.name);  // < was - reloads page
-            updateMoviePrefsSL(movId, 'mov_prefs_sl');  // < was - reloads page
-            // post remove w/o reload & remove gallery card
+            updateMoviePrefs(movId, 'mov_prefs_sl', '/short_list');
+            movieCard.remove();
             break;
           case 'combined_short_list':
-            updateMoviePrefsComboL(movId, 'mov_prefs_sl');
+            updateMoviePrefs(movId, 'mov_prefs_sl', '/combined_short_list');
+            movieCard.remove();
             break;
         }
         break;
@@ -263,16 +246,18 @@ function clickHandler(e) {
         switch (routeId) {
           case 'movie_gallery_home':
             console.log('SEEN BUTTON - ROUTE: movie_gallery_home');
-            updateMoviePrefsAndReload(e.target.value, e.target.name);
+            updateMoviePrefs(movId, 'mov_prefs_seen', '/');
+            movieCard.remove();
             break;
           case 'short_list':
             console.log('SEEN BUTTON - ROUTE: short_list');
-            //updateMoviePrefsSL(e.target.value, e.target.name);  // < was - reloads page
-            updateMoviePrefsSL(movId, 'mov_prefs_seen');  // < was - reloads page
-            // post SEEN w/o reload & remove gallery card
+            updateMoviePrefs(movId, 'mov_prefs_seen', '/short_list');
+            movieCard.remove();
             break;
-          case 'combined_short_list':
-            console.log('SEEN BUTTON - ROUTE: combined_short_list'); // DOESN'T EXIST
+          case 'combined_short_list':                                // WTF?
+            console.log('SEEN BUTTON - ROUTE: combined_short_list'); // DOESN'T EXIST - TODO WHY NOT MOST LIKELY NEEDED
+            updateMoviePrefs(movId, 'mov_prefs_seen', '/combined_short_list');
+            movieCard.remove();
             break;
         }
         break;
@@ -280,7 +265,8 @@ function clickHandler(e) {
         switch (routeId) {
           case 'movie_gallery_home':
             console.log('NI BUTTON - ROUTE: movie_gallery_home');
-            updateMoviePrefsAndReload(e.target.value, e.target.name);
+            updateMoviePrefs(movId, 'mov_prefs_ni', '/');
+            movieCard.remove();
             break;
         }
         break;
