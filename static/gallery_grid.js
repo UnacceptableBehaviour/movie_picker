@@ -59,29 +59,8 @@ function updateMoviePrefs(movId, buttonPref, route, reLoad=null, movieRating=-1)
     if (reLoad) {
       window.location.replace(reLoad);
     }
-  }).catch( function(err){
-    console.log(err);
-  });
-}
-
-// update prefs W/ RELOAD - change offered movies based on button
-// updateMoviePrefs(movId, buttonPref, '/', '/', movieRating=-1)
-function updateMoviePrefsAndReload(movId, buttonPref, movieRating=-1) {
-  console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
-
-  fetch( '/', {
-    method: 'POST',                                             // method (default is GET)
-    headers: {'Content-Type': 'application/json' },             // JSON
-    body: JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating } ) // Payload
-
-  }).then( function(response) {
-    return response.json();
-
-  }).then( function(jsonResp) {
-    console.log(`mov prefs UPDATED: ${movId} - ${jsonResp}`);
-    window.location.replace('/');
-  }).catch( function(err){
-    console.log(err);
+  }).catch( function(jsonResp){
+    console.log(`setting UPDATED? - ${jsonResp}`);
   });
 }
 
@@ -231,6 +210,10 @@ function clickHandler(e) {
             updateMoviePrefs(movId, 'mov_prefs_sl', '/');
             movieCard.remove();
             break;
+          case 'movie_gallery_single':
+            console.log('+List BUTTON - ROUTE: movie_gallery_single');
+            updateMoviePrefs(movId, 'mov_prefs_sl', '/', '/slider_tests');
+            break;
           case 'short_list':
             console.log('REMOVE BUTTON - ROUTE: short_list');
             updateMoviePrefs(movId, 'mov_prefs_sl', '/short_list');
@@ -248,6 +231,10 @@ function clickHandler(e) {
             console.log('SEEN BUTTON - ROUTE: movie_gallery_home');
             updateMoviePrefs(movId, 'mov_prefs_seen', '/');
             movieCard.remove();
+            break;
+          case 'movie_gallery_single':
+            console.log('SEEN BUTTON - ROUTE: movie_gallery_single');
+            updateMoviePrefs(movId, 'mov_prefs_seen', '/', '/slider_tests');
             break;
           case 'short_list':
             console.log('SEEN BUTTON - ROUTE: short_list');
@@ -267,6 +254,10 @@ function clickHandler(e) {
             console.log('NI BUTTON - ROUTE: movie_gallery_home');
             updateMoviePrefs(movId, 'mov_prefs_ni', '/');
             movieCard.remove();
+            break;
+          case 'movie_gallery_single':
+            console.log('SEEN BUTTON - ROUTE: movie_gallery_single');
+            updateMoviePrefs(movId, 'mov_prefs_ni', '/', '/slider_tests');
             break;
         }
         break;
@@ -329,6 +320,12 @@ function customiseButtons() {
     case 'play_movie':
       break;
     case 'short_list':
+      Array.from(document.getElementsByName('mov_prefs_sl')).forEach(   // TODO - can we use fall through for DRY code
+        function (element, index, array) {
+            console.log(element);
+            element.textContent = 'Remove';
+        }
+      );
       Array.from(document.getElementsByClassName('bt-usr2')).forEach(   // TODO - can we use fall through for DRY code
         function (element, index, array) {
             console.log(element);
@@ -337,6 +334,12 @@ function customiseButtons() {
       );
       break;
     case 'combined_short_list':
+      Array.from(document.getElementsByName('mov_prefs_sl')).forEach(   // TODO - can we use fall through for DRY code
+        function (element, index, array) {
+            console.log(element);
+            element.textContent = 'Remove';
+        }
+      );
       Array.from(document.getElementsByClassName('bt-usr2')).forEach(   // TODO - can we use fall through for DRY code
         function (element, index, array) {
             console.log(element);

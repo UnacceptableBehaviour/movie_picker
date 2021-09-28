@@ -440,6 +440,7 @@ def movie_gallery_home():
 
     if show_single_movie:
         print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < S")
+        page='movie_gallery_single'
         movie = media_lib.media_with_id(show_single_movie)
         pprint(movie)
         if movie['hires_image'] == None: movie['hires_image'] = 'movie_image_404.png'
@@ -448,6 +449,7 @@ def movie_gallery_home():
         show_single_movie = None
         print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < E")
     else:
+        page='movie_gallery_home'
         # by year, name, most recent etc
         for count, movie in enumerate(chosen_sort[current_user.sort_by]()):
             #if count >= 10: break
@@ -485,7 +487,7 @@ def movie_gallery_home():
     # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
     global users_nav_bar
 
-    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='movie_gallery_home')
+    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page=page)
 
 #<a href="{{url_for('/', user_id=u['user_uuid'])}}">{{ u['usr'] }}</a>   < - - - - - - #
 #@app.route('/<user_id>', methods=["GET", "POST"])                                      #
@@ -499,28 +501,31 @@ def slider_tests():                                                             
 
     print('> > /slider_tests')
     print(f"media_lib size: {len(media_lib)}")
-    for count, movie in enumerate(media_lib.sorted_by_year()):
-        #pprint(movie)
+
+    # TODO - refactor - filter_list & chosen_sort[current_user.sort_by]()
+    # move them into MMediaLib, pass in a UserPrefs object & return sorted list
+    # memoise the results in MMediaLib invalidate cache on Add movie or other relevant
+    for count, movie in enumerate(chosen_sort[current_user.sort_by]()):
+    #for movie in chosen_sort[current_user.sort_by]():
         genres.update(movie.info['genres'])
         if movie.info['title'] == 'And Then There Were None':
             bad_labels.append(movie)
         else:
             if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
             movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
-            slider_movie = {}
-            slider_movie['id'] = movie.info['id']
-            slider_movie['hires_image'] = movie.info['hires_image']
-            slider_movie['genres'] = movie.info['genres']
-            slider_movie['title'] = movie.info['title']
-            slider_movie['root'] = str(movie.info['file_path'])
-            #slider_movie[''] = movie.info['']
-            #slider_movie = movie.info           # < - - - - - - - - - - < DEBUG OVERWRITE
-            all_slider_movies.append(slider_movie)
+            movies.append(movie.info)
 
-    # choose a small random set of movies - for quick debug
-    # num_of_random_movies = 100
-    # for i in range(num_of_random_movies):
-    #     movies.append(random.choice(all_slider_movies))
+
+    movies = current_user.filter_list(movies)#[10:19]
+
+    for movie in movies:
+        slider_movie = {}
+        slider_movie['id'] = movie['id']
+        slider_movie['hires_image'] = movie['hires_image']
+        slider_movie['genres'] = movie['genres']
+        slider_movie['title'] = movie['title']
+        slider_movie['root'] = str(movie['file_path'])
+        all_slider_movies.append(slider_movie)
 
     print("Bad Labels encountered:")
     pprint(bad_labels)
@@ -536,7 +541,6 @@ def slider_tests():                                                             
     global users_nav_bar
 
     return render_template('slider_tests.html', movies=all_slider_movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
-    #return render_template('slider_tests.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
 
 
 @app.route('/play_movie/<movie_id>', methods=["GET", "POST"])
