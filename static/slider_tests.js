@@ -21,7 +21,7 @@ class Slider {
   }
 
   //buildHTML(container, settings){
-  buildHTML(){
+  buildHTML(visXStart, visXEnd, lazyY=true){
     //console.log(settings);
     let allGlidersContainer = document.getElementById("glider-supercontainer");
 
@@ -45,9 +45,18 @@ class Slider {
     gliderDiv = document.getElementById(this.id);
     //console.log(gliderDiv);
 
-    for (var i in this.items) {
-      gliderDiv.appendChild(this.createSliderElement(this.items[i]));
-    }
+    //for (var i in this.items) {
+    //  // lazy=false if in 'visible' window - visXStart >= here <= visXEnd
+    //  gliderDiv.appendChild(this.createSliderElement(this.items[i]));
+    //}
+    this.items.forEach(
+      function (item, index) {
+        let lazyX=true;
+        let scopelazyY = lazyY;
+        if ((index >= visXStart) && (index <=visXEnd)) { lazyX=false; }
+        gliderDiv.appendChild(this.createSliderElement(item, (lazyX || lazyY)));
+      }, this
+    );
   }
 
   //<div class='poster'>
@@ -55,33 +64,36 @@ class Slider {
   //    src="{{ url_for('static', filename='covers/') }}{{movies[0]['hires_image']}}">
   //  </image>
   //</div>
-  createSliderElement(i){
+  createSliderElement(i, lazy=true){
     // create basic container w/ image for (now
     let sDiv = document.createElement('div');
     sDiv.classList.add('glid-div-box','fit-box','opt-1');
     sDiv.id = i.id;
 
-    if (i.hires_image.includes('movie_image_404.png')) {  // no image put text in
+    if (!lazy) {
+      if (i.hires_image.includes('movie_image_404.png')) {  // no image put text in
 
-      let title = document.createElement('div');
-      //title.textContent = `${i.id}<br>${i.title}<br>${i.root}`;
-      //let volume = (i.root.replace('/Volumes/nfs/','').split('/'))[0];
-      //title.innerHTML = `${i.id}<br>${i.title}<br>${volume}`;
-      title.textContent = i.title;
-      title.classList.add('mv-info');
-      title.value = i.hires_image;
-      sDiv.appendChild(title);
+        let title = document.createElement('div');
+        //title.textContent = `${i.id}<br>${i.title}<br>${i.root}`;
+        //let volume = (i.root.replace('/Volumes/nfs/','').split('/'))[0];
+        //title.innerHTML = `${i.id}<br>${i.title}<br>${volume}`;
+        title.textContent = i.title;
+        title.classList.add('mv-info');
+        title.value = i.hires_image;
+        sDiv.appendChild(title);
 
-    } else { // image is good enough for (athousand words!
+      } else { // image is good enough for (athousand words!
 
-      //let image = document.createElement('picture');
-      let image = document.createElement('img');
-      let src = `/static/covers/${i.hires_image}`;
-      image.src = src; // check for /static/covers/movie_image_404.png
-      image.value = i.id;
-      sDiv.appendChild(image);
+        //let image = document.createElement('picture');
+        let image = document.createElement('img');
+        let src = `/static/covers/${i.hires_image}`;
+        image.src = src; // check for /static/covers/movie_image_404.png
+        image.value = i.id;
+        sDiv.appendChild(image);
 
+      }
     }
+
 
     // button looks naff - don't bother
     //let sl_button = document.createElement('button');
@@ -209,11 +221,23 @@ console.log(sliders);
 //sliders['Drama'].buildHTML();
 //ts.buildHTML();
 
-for (s in sliders) {
-    console.log(`slider: ${s}`);
-    sliders[s].buildHTML();
-}
+//
+var visXStart = 0;
+var visXEnd = 6;
+var visYStart = 0;
+var visYEnd = 3;
 
+//for (s in sliders) {
+//    console.log(`slider: ${s}`);
+//    sliders[s].buildHTML(visXStart, visXEnd);
+//}
+slider_names.forEach(
+  function (slider, index) {
+    let lazyY=true;
+    if ((index >= visYStart) && (index <=visYEnd)) { lazyY=false; }
+    sliders[slider].buildHTML(visXStart, visXEnd, lazyY);
+  }, this
+);
 
 // '#glider-Drama'
 
