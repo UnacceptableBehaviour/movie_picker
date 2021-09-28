@@ -45,18 +45,17 @@ class Slider {
     gliderDiv = document.getElementById(this.id);
     //console.log(gliderDiv);
 
-    //for (var i in this.items) {
-    //  // lazy=false if in 'visible' window - visXStart >= here <= visXEnd
-    //  gliderDiv.appendChild(this.createSliderElement(this.items[i]));
-    //}
-    this.items.forEach(
-      function (item, index) {
-        let lazyX=true;
-        let scopelazyY = lazyY;
-        if ((index >= visXStart) && (index <=visXEnd)) { lazyX=false; }
-        gliderDiv.appendChild(this.createSliderElement(item, (lazyX || lazyY)));
-      }, this
-    );
+    for (var i in this.items) {
+      // lazy=false if in 'visible' window - visXStart >= here <= visXEnd
+      gliderDiv.appendChild(this.createSliderElement(this.items[i], false));
+    }
+    //this.items.forEach(
+    //  function (item, index) {
+    //    let lazyX=true;
+    //    if ((index >= visXStart) && (index <=visXEnd)) { lazyX=false; }
+    //    gliderDiv.appendChild(this.createSliderElement(lazyX || lazyY)));
+    //  }, this
+    //);
   }
 
   //<div class='poster'>
@@ -208,6 +207,26 @@ for (var m of movies) {
 }
 
 console.log(sliders);
+console.log(prefsInfo);
+console.log(prefsInfo.prefs_genre);
+console.log(prefsInfo.prefs_genre.neg);
+console.log(prefsInfo.prefs_genre.pos);
+
+// put prefered genres at the top, rest in middle, negs at bottom . .
+var pref_sliders = [];
+slider_names.forEach(
+  (genre) => {
+    if (!((prefsInfo.prefs_genre.neg.includes(genre) || prefsInfo.prefs_genre.pos.includes(genre)))) {
+      pref_sliders.push(genre);
+    }
+  }
+);
+pref_sliders.unshift(prefsInfo.prefs_genre.pos);
+pref_sliders.push(prefsInfo.prefs_genre.neg);
+slider_names = pref_sliders.flat();
+console.log(pref_sliders);
+console.log(slider_names);
+
 
 //ts = new Slider('test-gen');
 //ts.addItem(movies[0]);
