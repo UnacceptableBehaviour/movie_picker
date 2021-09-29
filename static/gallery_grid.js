@@ -308,6 +308,21 @@ function setButtonColours() {
       }
     }
   );
+
+  // set SORT BY button selection
+  Array.from(document.getElementsByName('sort_type')).forEach(
+    function (element) {
+      console.log(`sort_type ${element.value} - pref.chosen ${prefsInfo.chosen_sort}`);
+      if (prefsInfo.chosen_sort === element.value) {
+        console.log(`sort_type ${element.value} SELECTED`);
+        element.classList.add('btn-success');
+        element.classList.remove('btn-secondary');
+      } else {
+        element.classList.remove('btn-success');
+        element.classList.add('btn-secondary');
+      }
+    }
+  );
 }
 
 function customiseButtons() {
@@ -360,6 +375,8 @@ function customiseButtons() {
       );
       break;
     case 'slider_tests':
+      break;
+    case 'settings':
       break;
     default:
   }
