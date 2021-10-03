@@ -26,6 +26,10 @@ h2 {
   color: #faf7e1;
 }
 
+.title-sl {
+  text-align: center;
+}
+
 .rt-stars {
   display: inline-flex; /*inline-block;*/
   wrap: nowrap;
@@ -303,4 +307,3 @@ h2 {
 /* GRID container - MOVIE CARD OLD LEFT IN FOR CSS EXAMPLE - TODO DELETE ALL ABOVE - - - - - - - - - - - - - - - - - - - - */
 
 /* GENRE buttons scheme - - - - - - - - - - - - - - - - - - - - */
-

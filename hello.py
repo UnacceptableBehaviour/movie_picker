@@ -740,7 +740,7 @@ def short_list():
     prefs_info = current_user.get_prefs()
     pprint(prefs_info)
 
-    title = f"{prefs_info['name']}'s movie shortlist . . ."
+    title = f"{prefs_info['name']}'s movie shortlist"
     return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=[], title=title, page='short_list')
 
 
@@ -791,7 +791,7 @@ def combined_short_list():
 
     print("- - - combo SL - - - E")
 
-    title = "combined movie shortlists . . ."
+    title = "combined movie shortlists"
     return render_template('shortlist.html', movies=movies, prefs_info=[], users_nav_bar=[], title=title, page='combined_short_list')
 
 
