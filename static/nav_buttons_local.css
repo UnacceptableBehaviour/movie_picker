@@ -115,7 +115,13 @@ html, body {
   -ms-flex-align: center;
   -webkit-align-items: center;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
+}
+
+.bt-genre-bar {
+  background-color: #333333;
+
+  justify-content: left;
 }
 
 .bt-sort {
@@ -142,7 +148,19 @@ html, body {
     text-align: center;
 }
 
+.info-settings {
+  /*border: 1px solid pink;*/
+  /*padding: 4px;*/
+  margin: 4px;
+}
 
+.info-settings button {
+  /*border: 1px solid pink;*/
+  -webkit-flex-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
 
 /*
 Extra small (xs) devices (portrait phones, less than 576px)

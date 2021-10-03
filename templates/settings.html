@@ -21,13 +21,77 @@
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='title'>TITLE</button>
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='added'>ADDED</button>
 </form>
+<div>SORT BY will sort results by the selected type:</div>
+<div>YEAR: sort by release year most recent first (Top in list list view. Left in slider view)</div>
+<div>RATING: sort by rating highest rating first (Top in list list view. Left in slider view)</div>
+<div>TITLE: Sort alphabetically.</div>
+<div>ADDED: Sort by when added to library - most recently added first.</div><br>
 
 
-<form action='/settings'>
+<form action='/settings' class='bt-genre-bar'>
     {% for g in genres %}
     <button type='submit' class='btn btn-secondary btn-genre bt-sort-gen' name='change_genre' formmethod='post' value='{{g}}'>{{g}}</button>
     {% endfor %}
 </form>
+<div>GENRE: Click genres to change your preference.</div>
+<div>GREEN: Prefered. These 'genres sliders' will appear first in the slider view.</div>
+<div>GREY: Ambivalent. These slider will appear in the middle</div>
+<div>RED: Don't like! These sliders will appear last in the slider view.</div>
+
+<br>
+<div>In LIST view, green will promote movies of that genre, & red will demote, grey leaves them untouched.</div>
+<div>Note in list view the movies will still be listed by YEAR, the genres will effect the order in each year.</div>
+<div>For RATING all 9.x, 8.x, 7.x etc will list together, genre will effect intra point order.</div>
+<div>For RECENLY ADDED, genre has no effect.</div>
+<br>
+
+<div class='info-settings'>
+  <button id='bt_home_flix' type="button" class="btn btn-success" style='display: inline;'>
+      <a href="{{url_for('slider_tests')}}"><img id='bt_home_flix_img' src='/static/svg-sl/film.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+  </button>
+  <span>Show movies in SLIDER VIEW. A slider per GENRE, plus one for RECENTLY ADDED</span>
+</div>
+
+<div class='info-settings'>
+  <button id='bt_home' type="button" class="btn btn-success" style='display: inline;'>
+      <a href="{{url_for('movie_gallery_home')}}"><img src='/static/svg-sl/film.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+  </button>
+  <span>Show movies in LIST VIEW. Order based on user settings set above.</span>
+</div>
+
+<div class='info-settings'>
+  <button type="button" class="btn btn-secondary" style='display: inline;'>
+      <a href="{{url_for('short_list')}}"><img src='/static/svg-sl/heart-fill.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+  </button>
+  <span>Show user SHORT LIST. Movies added to list using the </span>
+  <button type="button" class='btn btn-secondary control-bt' name='mov_prefs_sl' style='display: inline; height: 34px; width 52px;'>+List</button>
+  <span> add to short list button.</span>
+</div>
+
+<div class='info-settings'>
+  <button type="button" class="btn btn-secondary" style='display: inline;'>
+      <a href="{{url_for('combined_short_list')}}"><img src='/static/svg-sl/clipboard-check.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+  </button>
+  <span>Show COMBO LIST. All SHORT LISTS together, the more lists a movie is on the higher it's ranked.</span>
+</div>
+
+<div class='info-settings'>
+  <button type="button" class="btn btn-secondary" style='display: inline;'>
+      <a href="{{url_for('spare_route')}}"><img src='/static/svg-sl/people-fill.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+  </button>
+  <span>Actors - preference selection [NOT IMPLEMENTED YET]</span>
+</div>
+
+<div class='info-settings'>
+  <button type="button" class="btn btn-secondary" style='display: inline;'>
+      <a href="{{url_for('settings')}}"><img src='/static/svg-sl/gear-fill.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
+  </button>
+  <span>SETTINGS and INFO page (this page).</span>
+</div>
+
+<div></div><br>
+<div></div><br>
+
 
 {% endblock %}
 
