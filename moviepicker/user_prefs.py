@@ -46,15 +46,13 @@ class UserPrefs:
         else:
             raise UserUuidMismatch
 
-    # @property
-    # def prefs_info(self):
-    #     return self.prefs_info
-    #
-    # @prefs_info.setter
-    # def prefs_info(self, ):
-    #     pass
+    @property
+    def info(self):
+        return self.prefs_info
 
-
+    @info.setter
+    def info(self, info):
+        self.prefs_info.update(info)
 
     def uuid(self):
         return self.prefs_info['uuid']

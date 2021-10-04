@@ -123,13 +123,13 @@ if new_uuid not in user_device_DB:
     commit_dict_to_DB(user_device_DB)
 else:
     print(f"FOUND USER: {new_uuid}")
-    pprint(user_device_DB[new_uuid].get_prefs())
+    pprint(user_device_DB[new_uuid].info)
     # user_device_DB[new_uuid].prefs_info['current_user'] = True
     # commit_dict_to_DB(user_device_DB)
 
 for usr_id,usr in user_device_DB.items():
     #print(f"\n===== u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
-    #pprint(usr.get_prefs())
+    #pprint(usr.info)
     if usr.prefs_info['current_user']: current_user = usr
 
 users_nav_bar = []
@@ -290,8 +290,9 @@ def movie_gallery_home():
     genres = set()
 
     if show_single_movie:
-        print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < S")
         page='movie_gallery_single'
+
+        print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < S")
         movie = media_lib.media_with_id(show_single_movie)
         pprint(movie)
         if movie['hires_image'] == None: movie['hires_image'] = 'movie_image_404.png'
@@ -301,6 +302,7 @@ def movie_gallery_home():
         print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < E")
     else:
         page='movie_gallery_home'
+
         # by year, name, most recent etc
         for count, movie in enumerate(chosen_sort[current_user.sort_by]()):
             #if count >= 10: break
@@ -313,22 +315,14 @@ def movie_gallery_home():
                 movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
                 all_movies.append(movie.info)
 
-        # choose a small random set of movies - for quick debug
-        # num_of_random_movies = 10
-        # start_from = random.randint(0, len(all_movies)-11)
-        # for i in range(start_from, start_from + num_of_random_movies):
-        #     movies.append(all_movies[i])
-
-
         movies = current_user.filter_list(all_movies)#[10:19]
-
 
         print("Genres encountered:")
         print(','.join(genres))
         print("= = = \n")
 
     #prefs_info = current_user.prefs_info  # TODO make property
-    prefs_info = current_user.get_prefs()
+    prefs_info = current_user.info
     pprint(prefs_info)
     # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
     global users_nav_bar
@@ -383,7 +377,7 @@ def slider_tests():                                                             
     print("= = = \n")
 
     #prefs_info = current_user.prefs_info  # TODO make property
-    prefs_info = current_user.get_prefs()
+    prefs_info = current_user.info
     pprint(prefs_info)
 
     global users_nav_bar
@@ -524,7 +518,7 @@ def play_movie(movie_id):
 
     print(f"play_movie: movie ID:{movie_id}")
 
-    prefs_info = current_user.get_prefs()
+    prefs_info = current_user.info
     pprint(prefs_info)
 
     global users_nav_bar
@@ -585,7 +579,7 @@ def short_list():
 
 
 
-    prefs_info = current_user.get_prefs()
+    prefs_info = current_user.info
     pprint(prefs_info)
 
     title = f"{prefs_info['name']}'s movie shortlist"
@@ -683,7 +677,7 @@ def settings():
 
         commit_dict_to_DB(user_device_DB)
 
-    prefs_info = current_user.get_prefs()
+    prefs_info = current_user.info
     pprint(prefs_info)
 
     global users_nav_bar
