@@ -35,9 +35,6 @@ class UserPrefs:
         self.prefs_info['uuid'] = uuid
         if name: self.prefs_info['name'] = name
 
-    # deprecated - find uses - change TODO
-    def get_prefs(self):
-        return self.prefs_info
 
     def update_prefs(self, new_prefs):
         if new_prefs['uuid'] == self.prefs_info['uuid']:
@@ -97,6 +94,7 @@ class UserPrefs:
             if m['id'] in self.prefs_info['ni_list']: m['prefScore'] -= 2500
             if m['id'] in self.prefs_info['short_list']: m['prefScore'] -= 2000 # dont't bubble to top if shortlisted
 
+                                    # create new list
         scored_and_sorted_movies  = sorted(movie_list, key=lambda k: k['prefScore'], reverse=True)
 
         # for m in scored_and_sorted_movies :
@@ -143,7 +141,7 @@ def commit_dict_to_DB(commit_db):
     '''
     db = {}
     for i in commit_db.keys():
-        db[i] = commit_db[i].get_prefs()
+        db[i] = commit_db[i].info
 
     with open(USER_DB_FILE, 'w') as f:
         #pprint(db)

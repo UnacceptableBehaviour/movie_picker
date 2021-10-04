@@ -490,6 +490,17 @@ class MMediaLib(Iterable):
 		self.sort_lists()
 		self.build_id_lookup()
 		self.compile_genre_list()
+		self.chosen_sort = {
+								'year':     self.sorted_by_year,
+								'rating':   self.sorted_by_rating,
+								'title':    self.sorted_by_title,
+								'added':    self.sorted_by_title  		# TODO - fix this sort
+								# 'year':     self._sorted_by_year,
+								# 'rating':   self._sorted_by_rating,
+								# 'title':    self._sorted_by_title,
+								# 'added':    self._sorted_by_title
+								#'added':    self._sorted_by_most_recently_added    # TODO - fix this sort
+							}
 		print(" . . . Done")
 
 	def auto_rebase (self):
@@ -652,17 +663,74 @@ class MMediaLib(Iterable):
 			ret_media = self.media_files[media_key].info
 		return ret_media
 
-	def getMovieList(self, user_prefs):
-		pass
+	def getMovieList(self, user):
+		all_movies = []
 
-	def getMovieShortList(self, user_prefs):
-		pass
+		print('getMovieList - - - - - - - - - - - - - - - - - S')
+		print('getMovieList - user')
+		pprint(user.info)
+
+		# by year, name, most recent etc
+		sort_type = user.info['chosen_sort']
+		for count, movie in enumerate(self.chosen_sort[sort_type]()):
+ 			if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'	# TODO replace blanks w/ 404.png at init / lib load
+ 			movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
+ 			all_movies.append(movie.info)
+
+		movies = user.filter_list(all_movies)
+		print('getMovieList - - - - - - - - - - - - - - - - - E')
+		return(movies)
+
+	def getMovieShortList(self, user):
+		# movies = [media_lib.media_with_id(mov_id) for mov_id in current_user.info['short_list'] if media_lib.media_with_id(mov_id)]
+		movies = []
+		for mov_id in user.info['short_list']:
+			if self.media_with_id(mov_id):
+				movies.append(self.media_with_id(mov_id))
+			else:
+				print(f"* * WARNING * * Movie ID {mov_id} not found - removing from user ({current_user.info['name']}) shortlist")
+				user.info['short_list'].remove(mov_id)
+		return(movies)
 
 	def getMovieCombinedList(self, user_prefs_list):
-		pass
+		movie_ids = []
+		for usr in user_prefs_list:
+			pprint(usr.info['short_list'])
+			movie_ids = movie_ids + usr.info['short_list']
 
-	def getSliderMovieList(self, user_prefs):
-		pass
+		movies_ids_ordered_by_frequency = [ mov for mov,count in Counter(movie_ids).most_common() ]
+
+		pprint(movies_ids_ordered_by_frequency)
+
+		movies = [self.media_with_id(mov_id) for mov_id in movies_ids_ordered_by_frequency if self.media_with_id(mov_id)]
+
+		return(movies)
+
+
+	def getSliderMovieList(self, user):
+		movies = []
+		# TODO memoise the results in MMediaLib invalidate cache on Add movie or other relevant
+		sort_type = user.info['chosen_sort']
+		for count, movie in enumerate(self.chosen_sort[sort_type]()):
+			if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
+			movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
+			movies.append(movie.info)
+
+		movies = user.filter_list(movies)#[10:19]
+
+		all_slider_movies = []
+		for movie in movies:
+			slider_movie = {}
+			slider_movie['id'] = movie['id']
+			slider_movie['hires_image'] = movie['hires_image']
+			slider_movie['genres'] = movie['genres']
+			slider_movie['title'] = movie['title']
+			slider_movie['year'] = movie['year']
+			slider_movie['rating'] = movie['rating']
+			slider_movie['root'] = str(movie['file_path'])
+			all_slider_movies.append(slider_movie)
+
+		return(all_slider_movies)
 
 	def rebase_media_DB(self, old_root, new_root):
 		# this needs to be OS independant

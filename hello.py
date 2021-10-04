@@ -124,13 +124,15 @@ if new_uuid not in user_device_DB:
 else:
     print(f"FOUND USER: {new_uuid}")
     pprint(user_device_DB[new_uuid].info)
-    # user_device_DB[new_uuid].prefs_info['current_user'] = True
+    # user_device_DB[new_uuid].info['current_user'] = True
     # commit_dict_to_DB(user_device_DB)
 
 for usr_id,usr in user_device_DB.items():
-    #print(f"\n===== u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
+    #print(f"\n===== u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.info['current_user']}")
     #pprint(usr.info)
-    if usr.prefs_info['current_user']: current_user = usr
+    if usr.info['current_user']: current_user = usr
+
+#commit_dict_to_DB(user_device_DB)
 
 users_nav_bar = []
 def update_users_for_navbar():
@@ -144,23 +146,11 @@ update_users_for_navbar()
 print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - JSON DB - E")
 
 
-#commit_dict_to_DB(user_device_DB)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-# each app.route is an endpoint
-
 #<a href="{{url_for('/', user_id=u['user_uuid'])}}">{{ u['usr'] }}</a>
 show_single_movie = None
-# TODO find better place for this!!
-chosen_sort = {
-    'year':     media_lib.sorted_by_year,
-    'rating':   media_lib.sorted_by_rating,
-    'title':    media_lib.sorted_by_title,
-    'added':    media_lib.sorted_by_rating                   # TODO - return to correct sort
-    #'added':    media_lib.sorted_by_most_recently_added     # TODO - fix this sort
-}
+
 
 #@app.route('/<user_id>', methods=["GET", "POST"])
 @app.route('/', methods=["GET", "POST"])
@@ -219,8 +209,8 @@ def movie_gallery_home():
                 try:
                     last_user = current_user
                     current_user = user_device_DB[settings['new_id']]
-                    current_user.prefs_info['current_user'] = True
-                    if current_user != last_user: last_user.prefs_info['current_user'] = False
+                    current_user.info['current_user'] = True
+                    if current_user != last_user: last_user.info['current_user'] = False
                     commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201 # user changed
                 except KeyError:
@@ -234,21 +224,21 @@ def movie_gallery_home():
                 rating = settings['rating']
                 print(f"mov_prefs clicked: {button}")
                 if button == 'sl':
-                    if mov_id not in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].append(mov_id)
+                    if mov_id not in current_user.info['short_list']: current_user.info['short_list'].append(mov_id)
                     commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201
                 elif button == 'ni':
-                    if mov_id not in current_user.prefs_info['ni_list']: current_user.prefs_info['ni_list'].append(mov_id)
+                    if mov_id not in current_user.info['ni_list']: current_user.info['ni_list'].append(mov_id)
                     commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201
                 elif button == 'rate':
                     if (rating != -1):
-                        current_user.prefs_info['ratings'][mov_id] = rating
+                        current_user.info['ratings'][mov_id] = rating
                         commit_dict_to_DB(user_device_DB)
                         return json.dumps({}), 201
                     return json.dumps({}), 404
                 elif button == 'seen':
-                    if mov_id not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(mov_id)
+                    if mov_id not in current_user.info['seen_list']: current_user.info['seen_list'].append(mov_id)
                     commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201
                 print("'mov_prefs' in settings - - - E")
@@ -283,106 +273,45 @@ def movie_gallery_home():
     #
     test_version = '0.0.0'
     print(f"Vs: {test_version}")
-    headline_py = "movies"
-    movies = [] # load jsonfile
-    all_movies = []
-    bad_labels = []
-    genres = set()
 
     if show_single_movie:
         page='movie_gallery_single'
-
-        print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < S")
-        movie = media_lib.media_with_id(show_single_movie)
-        pprint(movie)
-        if movie['hires_image'] == None: movie['hires_image'] = 'movie_image_404.png'
-        movie['hires_image'] = str(Path(movie['hires_image']).name)   # convert full path to name
-        movies.append(movie)
+        movies = [media_lib.media_with_id(show_single_movie)]
         show_single_movie = None
-        print(f"PROCESSING SINGLE MOVIE REQUEST - - - - - - - - - - - - - - - - - - - - - < E")
+        pprint(movies[0])
+
+        # TODO REMOVE
+        if movies[0]['hires_image'] == None: movies[0]['hires_image'] = 'movie_image_404.png'  # TODO this test is all over the place - FIND ALL fix at MMedia DB Load stage
+        movies[0]['hires_image'] = str(Path(movies[0]['hires_image']).name)   # convert full path to name
+
     else:
         page='movie_gallery_home'
+        movies = media_lib.getMovieList(current_user)
 
-        # by year, name, most recent etc
-        for count, movie in enumerate(chosen_sort[current_user.sort_by]()):
-            #if count >= 10: break
-            #print(movie)
-            genres.update(movie.info['genres'])
-            if movie.info['title'] == 'And Then There Were None':
-                bad_labels.append(movie)
-            else:
-                if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
-                movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
-                all_movies.append(movie.info)
-
-        movies = current_user.filter_list(all_movies)#[10:19]
-
-        print("Genres encountered:")
-        print(','.join(genres))
-        print("= = = \n")
-
-    #prefs_info = current_user.prefs_info  # TODO make property
-    prefs_info = current_user.info
-    pprint(prefs_info)
-    # TODO define at top access w/ global update when new user added save unecessary DB access (on every page load!)
     global users_nav_bar
+    genres = media_lib.genres
+    info = current_user.info
+    pprint(info)
 
-    return render_template('gallery_grid.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page=page)
+    return render_template('gallery_grid.html', movies=movies, prefs_info=info, users_nav_bar=users_nav_bar, genres=genres, page=page)
 
 #<a href="{{url_for('/', user_id=u['user_uuid'])}}">{{ u['usr'] }}</a>   < - - - - - - #
 #@app.route('/<user_id>', methods=["GET", "POST"])                                      #
 @app.route('/slider_tests', methods=["GET", "POST"])                                    #
 def slider_tests():                                                                     #
     global current_user         # TODO - should be a user session / login - passed in  /
-    movies = []
-    all_slider_movies = []
-    bad_labels = []
-    genres = set()
 
     print('> > /slider_tests')
     print(f"media_lib size: {len(media_lib)}")
 
-    # TODO - refactor - filter_list & chosen_sort[current_user.sort_by]()
-    # move them into MMediaLib, pass in a UserPrefs object & return sorted list
-    # memoise the results in MMediaLib invalidate cache on Add movie or other relevant
-    for count, movie in enumerate(chosen_sort[current_user.sort_by]()):
-    #for movie in chosen_sort[current_user.sort_by]():
-        genres.update(movie.info['genres'])
-        if movie.info['title'] == 'And Then There Were None':
-            bad_labels.append(movie)
-        else:
-            if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
-            movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
-            movies.append(movie.info)
-
-
-    movies = current_user.filter_list(movies)#[10:19]
-
-    for movie in movies:
-        slider_movie = {}
-        slider_movie['id'] = movie['id']
-        slider_movie['hires_image'] = movie['hires_image']
-        slider_movie['genres'] = movie['genres']
-        slider_movie['title'] = movie['title']
-        slider_movie['year'] = movie['year']
-        slider_movie['rating'] = movie['rating']
-        slider_movie['root'] = str(movie['file_path'])
-        all_slider_movies.append(slider_movie)
-
-    print("Bad Labels encountered:")
-    pprint(bad_labels)
-    print("= = = \n\n")
-    print("Genres encountered:")
-    print(','.join(genres))
-    print("= = = \n")
-
-    #prefs_info = current_user.prefs_info  # TODO make property
-    prefs_info = current_user.info
-    pprint(prefs_info)
+    all_slider_movies = media_lib.getSliderMovieList(current_user)
+    genres = media_lib.genres
+    info = current_user.info
+    pprint(info)
 
     global users_nav_bar
 
-    return render_template('slider_tests.html', movies=all_slider_movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
+    return render_template('slider_tests.html', movies=all_slider_movies, prefs_info=info, users_nav_bar=users_nav_bar, genres=genres, page='slider_tests')
 
 
 @app.route('/play_movie/<movie_id>', methods=["GET", "POST"])
@@ -518,12 +447,12 @@ def play_movie(movie_id):
 
     print(f"play_movie: movie ID:{movie_id}")
 
-    prefs_info = current_user.info
-    pprint(prefs_info)
+    info = current_user.info
+    pprint(info)
 
     global users_nav_bar
 
-    return render_template('play_movie.html', movies=movies, prefs_info=prefs_info, users_nav_bar=users_nav_bar, page='play_movie')
+    return render_template('play_movie.html', movies=movies, prefs_info=info, users_nav_bar=users_nav_bar, page='play_movie')
 
 
 @app.route('/short_list', methods=["GET", "POST"])
@@ -543,23 +472,23 @@ def short_list():
                 print(f"mov_prefs clicked: {button}")
                 if button == 'sl':      # REMOVE button
                     print(f"short_list: REMOVE - mov_id:{mov_id}")
-                    print(current_user.prefs_info['seen_list'])
-                    print(current_user.prefs_info['short_list'])
-                    if mov_id in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].remove(mov_id)
+                    print(current_user.info['seen_list'])
+                    print(current_user.info['short_list'])
+                    if mov_id in current_user.info['short_list']: current_user.info['short_list'].remove(mov_id)
                     commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201
                 elif button == 'rate':
-                    if (rating != -1) and (mov_id not in current_user.prefs_info['ratings']):
-                        current_user.prefs_info['ratings'][mov_id] = rating
+                    if (rating != -1) and (mov_id not in current_user.info['ratings']):
+                        current_user.info['ratings'][mov_id] = rating
                         commit_dict_to_DB(user_device_DB)
                         return json.dumps({}), 201
                     return json.dumps({}), 404
                 elif button == 'seen':
                     print(f"short_list: seen - mov_id:{mov_id}")
-                    print(current_user.prefs_info['seen_list'])
-                    print(current_user.prefs_info['short_list'])
-                    if mov_id not in current_user.prefs_info['seen_list']: current_user.prefs_info['seen_list'].append(mov_id)
-                    if mov_id in current_user.prefs_info['short_list']: current_user.prefs_info['short_list'].remove(mov_id)
+                    print(current_user.info['seen_list'])
+                    print(current_user.info['short_list'])
+                    if mov_id not in current_user.info['seen_list']: current_user.info['seen_list'].append(mov_id)
+                    if mov_id in current_user.info['short_list']: current_user.info['short_list'].remove(mov_id)
                     commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201
                 print("'mov_prefs' in settings - - - E")
@@ -567,23 +496,13 @@ def short_list():
         print(f"short_list: request.method == {request.method}")
     print(f"\nshort_list: - - - - - - - - debug - - - - - - - - - - - - - - - - E\n")
 
-    # movies = [media_lib.media_with_id(mov_id) for mov_id in current_user.prefs_info['short_list'] if media_lib.media_with_id(mov_id)]
-    movies = []
-    for mov_id in current_user.prefs_info['short_list']:
-        if media_lib.media_with_id(mov_id):
-            movies.append(media_lib.media_with_id(mov_id))
-        else:
-            print(f"* * WARNING * * Movie ID {mov_id} not found - removing from user ({current_user.prefs_info['name']}) shortlist")
-            current_user.prefs_info['short_list'].remove(mov_id)
-            commit_dict_to_DB(user_device_DB)   # keep things tidy if swapping media disk in and out
+    movies = media_lib.getMovieShortList(current_user)
 
+    info = current_user.info
+    pprint(info)
 
-
-    prefs_info = current_user.info
-    pprint(prefs_info)
-
-    title = f"{prefs_info['name']}'s movie shortlist"
-    return render_template('shortlist.html', movies=movies, prefs_info=prefs_info, users_nav_bar=[], title=title, page='short_list')
+    title = f"{info['name']}'s movie shortlist"
+    return render_template('shortlist.html', movies=movies, prefs_info=info, users_nav_bar=[], title=title, page='short_list')
 
 
 
@@ -607,25 +526,16 @@ def combined_short_list():
                     print(f"combined_short_list: REMOVE - mov_id:{mov_id}")
 
                     for usr_id,usr in user_device_DB.items():
-                        print(f"u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.prefs_info['current_user']}")
-                        if mov_id in usr.prefs_info['short_list']: usr.prefs_info['short_list'].remove(mov_id)
+                        print(f"u: {usr_id} n:{usr.name} t:{type(usr)} current:{usr.info['current_user']}")
+                        if mov_id in usr.info['short_list']: usr.info['short_list'].remove(mov_id)
 
                     commit_dict_to_DB(user_device_DB)
                     return json.dumps({}), 201
     else:
         print(f"combined_short_list: request.method == {request.method}")
 
-    pprint(user_device_DB)
-    # combine all users shortlists
-    movies = []
-    for usr_uuid,usr in user_device_DB.items():
-        pprint(usr.prefs_info['short_list'])
-        movies = movies + usr.prefs_info['short_list']
 
-    movies_ids_ordered_by_frequency = [ mov for mov,count in Counter(movies).most_common() ]
-    pprint(movies_ids_ordered_by_frequency)
-
-    movies = [media_lib.media_with_id(mov_id) for mov_id in movies_ids_ordered_by_frequency if media_lib.media_with_id(mov_id)]
+    movies = media_lib.getMovieCombinedList(user_device_DB.values())
 
     for m in movies:
         #pprint(m)
@@ -657,19 +567,19 @@ def settings():
             print(f"{key} - {val}")
             if 'change_genre' == key:       # easier to do this in JS land and post new prefs No? TODO
                 selected_genre = request.form['change_genre']
-                if selected_genre in current_user.prefs_info['prefs_genre']['neg']:
+                if selected_genre in current_user.info['prefs_genre']['neg']:
                     # del from neg move to pos
-                    current_user.prefs_info['prefs_genre']['neg'].remove(selected_genre)
-                    current_user.prefs_info['prefs_genre']['pos'].append(selected_genre)
+                    current_user.info['prefs_genre']['neg'].remove(selected_genre)
+                    current_user.info['prefs_genre']['pos'].append(selected_genre)
 
-                elif selected_genre in current_user.prefs_info['prefs_genre']['pos']:
+                elif selected_genre in current_user.info['prefs_genre']['pos']:
                     # del from pos move to don't care (not in either)
-                    current_user.prefs_info['prefs_genre']['pos'].remove(selected_genre)
+                    current_user.info['prefs_genre']['pos'].remove(selected_genre)
 
-                elif request.form['change_genre'] not in (current_user.prefs_info['prefs_genre']['neg'] +
-                                                        current_user.prefs_info['prefs_genre']['pos']):
+                elif request.form['change_genre'] not in (current_user.info['prefs_genre']['neg'] +
+                                                        current_user.info['prefs_genre']['pos']):
                     # move to neg
-                    current_user.prefs_info['prefs_genre']['neg'].append(selected_genre)
+                    current_user.info['prefs_genre']['neg'].append(selected_genre)
 
             if 'sort_type' == key:
                 if request.form['sort_type'] in chosen_sort:
@@ -677,12 +587,12 @@ def settings():
 
         commit_dict_to_DB(user_device_DB)
 
-    prefs_info = current_user.info
-    pprint(prefs_info)
+    info = current_user.info
+    pprint(info)
 
     global users_nav_bar
 
-    return render_template('settings.html', prefs_info=prefs_info, users_nav_bar=users_nav_bar, genres=media_lib.genres, page='settings')
+    return render_template('settings.html', prefs_info=info, users_nav_bar=users_nav_bar, genres=media_lib.genres, page='settings')
 
 
 @app.route('/spare_route', methods=["GET", "POST"])
