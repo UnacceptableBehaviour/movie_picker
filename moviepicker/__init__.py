@@ -5,6 +5,7 @@
 # print("-----------------------------")
 from .moviepicker import MMediaLib,MMedia,REVERSE,FORWARD,media_cloud
 from .vlc_http import vlc_http, kill_running_vlc
+from .user_prefs import UserPrefs,load_dict_data_from_DB,commit_dict_to_DB
 #from .helpers import creation_date, hr_readable_from_nix
 #from .exceptions import *
 #from .retrieval import get_hires_cover, find_wiki_url_for_movie, get_lead_image_from_wikipedia

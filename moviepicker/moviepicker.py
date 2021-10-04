@@ -356,19 +356,19 @@ class MediaLibIter(Iterator):
 		return return_item
 
 
-# TODO remove if not used - handles/keys may well be useful to refer to DB paths
-class MMediaCloudOD:
-	known_paths = None
-
-	def __init__(self, *args):
-		known_paths = collections.OrderedDict(*args)
-
-	def register_path(self, name, path):
-		known_paths[name] = Path(path)
-
-	def remove_path(self, name):
-		known_paths.move_to_end(name)	# delete name - default last=True
-		popitem(name)
+# # TODO remove if not used - handles/keys may well be useful to refer to DB paths
+# class MMediaCloudOD:
+# 	known_paths = None
+#
+# 	def __init__(self, *args):
+# 		known_paths = collections.OrderedDict(*args)
+#
+# 	def register_path(self, name, path):
+# 		known_paths[name] = Path(path)
+#
+# 	def remove_path(self, name):
+# 		known_paths.move_to_end(name)	# delete name - default last=True
+# 		popitem(name)
 
 
 
@@ -651,6 +651,18 @@ class MMediaLib(Iterable):
 			media_key = self._id_to_movie_keys[media_id]
 			ret_media = self.media_files[media_key].info
 		return ret_media
+
+	def getMovieList(self, user_prefs):
+		pass
+
+	def getMovieShortList(self, user_prefs):
+		pass
+
+	def getMovieCombinedList(self, user_prefs_list):
+		pass
+
+	def getSliderMovieList(self, user_prefs):
+		pass
 
 	def rebase_media_DB(self, old_root, new_root):
 		# this needs to be OS independant
