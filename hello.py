@@ -582,7 +582,7 @@ def settings():
                     current_user.info['prefs_genre']['neg'].append(selected_genre)
 
             if 'sort_type' == key:
-                if request.form['sort_type'] in chosen_sort:
+                if request.form['sort_type'] in media_lib.chosen_sort:
                     current_user.sort_by = request.form['sort_type']
 
         commit_dict_to_DB(user_device_DB)

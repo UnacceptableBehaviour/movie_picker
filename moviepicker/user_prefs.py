@@ -3,6 +3,9 @@ UserPrefs
 State / Filtering functionality
 '''
 
+from pprint import pprint
+from .helpers import hr_readable_from_nix_no_space
+
 import json
 from pathlib import Path
 USER_DB_FILE = Path('./moviepicker/userDB.json')
@@ -79,32 +82,66 @@ class UserPrefs:
     # TODO adapt interface so its update on change - also bake in order based on ratings
     #
     def filter_list(self, movie_list):
+        '''
+        List order
+                Mayor Sort              Minor sort      8 digits should do:
+        Rating  0 <= n < 1 ..2,3,4      genre           XXRRGGGG        G - Genre
+        Year    year                    genre           YYYYGGGG        R - Rating 0-10 no decimal
+        Title   title only              none            NA              Y - Year
+        Added   title only              none            YYYYMMDD        M/D Month / Day
+
+        Push major for up by orders of magnitude
+            for rating you need 2 digits 0-10
+            for year you need 4 - 1981
+            for Added YYYYMMDD so 8 digits - absolute sort genre not relevant
+            for title simple sort by title
+            Remove NI/seen from list before sorting
+            For Genre say up to 100 (currently 25, plus user additions) 10x = 1000,  double for -ve & +ve 2000
+                Start the genre @ 1000 +1 for green, +0 for grey, -1 for red
+                Since we're using 4 digits might as well start in the middle 5000.
+        '''
+        GENRE_BASELINE = 5000
         scored_and_sorted_movies = []
-        #print(f"UserPrefs.filter_list: {len(movie_list)}")
-        #movie_list[20]['prefScore'] = 10000
-        #pprint( movie_list[20] )
+        print(f"UserPrefs.filter_list: {len(movie_list)}")
         for m in movie_list:
-            m['prefScore'] = 10000
-            # add 100 pointe per positive genre match in movie
-            pos = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['pos']) )) * 500
-            neg = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['neg']) )) * 500
-            m['prefScore'] += pos
-            m['prefScore'] -= neg
-            if m['id'] in self.prefs_info['seen_list']: m['prefScore'] -= 2500
-            if m['id'] in self.prefs_info['ni_list']: m['prefScore'] -= 2500
-            if m['id'] in self.prefs_info['short_list']: m['prefScore'] -= 2000 # dont't bubble to top if shortlisted
+            if m['id'] in self.prefs_info['seen_list']: continue        # don't show
+            if m['id'] in self.prefs_info['ni_list']: continue
+            if m['id'] in self.prefs_info['short_list']: continue
 
-                                    # create new list
-        scored_and_sorted_movies  = sorted(movie_list, key=lambda k: k['prefScore'], reverse=True)
+            if self.info['chosen_sort'] != 'title':
+                genre_score = GENRE_BASELINE
+                    # genres         in movie               in prefs pos / neg
+                pos = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['pos']) ))
+                neg = len(list( set(m['genres']) & set(self.prefs_info['prefs_genre']['neg']) ))
+                genre_score += pos
+                genre_score -= neg
 
-        # for m in scored_and_sorted_movies :
-        #     print(f"score:{m['prefScore']} - {m['file_title']}")
+                if self.info['chosen_sort'] == 'year':
+                    year = int(m['year']) * 10000
+                    m['prefScore'] = year + genre_score
+                elif self.info['chosen_sort'] == 'rating':
+                    rating = int(str(m['rating']).split('.')[0]) * 10000        # push to top 4 digits
+                    m['prefScore'] = rating + genre_score
+                if self.info['chosen_sort'] == 'added':
+                    # mv_ctime = m['file_stats'].st_ctime
+                    # hr_mv = hr_readable_from_nix(mv_ctime)
+                    # print(f"file_stats: {mv_ctime} - {hr_mv} - st_a:{hr_readable_from_nix(m['file_stats'].st_atime)} - st_m:{hr_readable_from_nix(m['file_stats'].st_mtime)}\nadded:{m['when_added']}\n")
+                    if m['when_added'] == None:
+                        m['prefScore'] = int(hr_readable_from_nix_no_space(m['file_stats'].st_ctime))
+                    else:
+                        m['prefScore'] = int(m['when_added'])
+                else:
+                    m['prefScore'] = genre_score
 
+                scored_and_sorted_movies.append(m)
+                scored_and_sorted_movies  = sorted(scored_and_sorted_movies, key=lambda k: k['prefScore'], reverse=True)
+            else:
+                scored_and_sorted_movies = movie_list
+
+        pprint( scored_and_sorted_movies[0] )
+        pprint( self.info )
 
         return scored_and_sorted_movies
-        # allocate score of 10K points as baseline
-        # for each genre neg - 100 points
-        # for each genre pos + 100 points
 
 
 

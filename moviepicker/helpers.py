@@ -19,9 +19,12 @@ def creation_date(path_to_file):
             # We're probably on Linux. No easy way to get creation dates here,
             # so we'll settle for when its content was last modified.
             return stat.st_mtime
-        
+
 
 def hr_readable_from_nix(nix_time):
     if nix_time:
         return datetime.utcfromtimestamp(nix_time).strftime("%Y %m %d %H%M")
 
+def hr_readable_from_nix_no_space(nix_time):
+    if nix_time:
+        return datetime.utcfromtimestamp(nix_time).strftime("%Y%m%d%H%M")
