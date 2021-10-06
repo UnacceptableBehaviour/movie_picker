@@ -280,10 +280,6 @@ def movie_gallery_home():
         show_single_movie = None
         pprint(movies[0])
 
-        # TODO REMOVE
-        if movies[0]['hires_image'] == None: movies[0]['hires_image'] = 'movie_image_404.png'  # TODO this test is all over the place - FIND ALL fix at MMedia DB Load stage
-        movies[0]['hires_image'] = str(Path(movies[0]['hires_image']).name)   # convert full path to name
-
     else:
         page='movie_gallery_home'
         movies = media_lib.getMovieList(current_user)

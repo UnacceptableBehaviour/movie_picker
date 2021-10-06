@@ -54,7 +54,7 @@ class MMedia:
 			'seen': False,
 			'fav':False,
 			'image_url':None,
-			'hires_image': None,			# or path to image
+			'hires_image': 'movie_image_404.png',			# or path to image
 			'file_path': Path(file_path),
 			'file_stats':None,
 			'file_name': None,
@@ -458,9 +458,6 @@ class MMediaLib(Iterable):
 			print(f"self.media_root: {self.media_root}")
 			raise NoDBFileFound()
 
-
-		self.read_write_mode = READ_ONLY
-
 		self.media_files_count = Counter() 		# track duplicates
 
 		self.media_files = {}
@@ -469,7 +466,9 @@ class MMediaLib(Iterable):
 
 		self.genres = set()
 
-		# run pickler on exit
+		self.read_write_mode = READ_ONLY
+
+		# run pickler on exit - WRITE mode
 		atexit.register(self.exit_handler)
 
 		if self.lib_file_path.exists():
@@ -479,6 +478,7 @@ class MMediaLib(Iterable):
 			print(f"Loaded:{len(self.media_files)} - {type(self.media_files)}")
 			self.auto_rebase()
 			self.remove_internal_duplicate_versions_w_same_id()
+			self.replace_hires_img_blanks_w_404()
 
 		self._sorted_by_year = list
 		self._sorted_by_title = []
@@ -588,6 +588,12 @@ class MMediaLib(Iterable):
 		except Exception:
 			pass
 
+	def replace_hires_img_blanks_w_404(self, ):
+		for key,mov in self.media_files.items():
+			if mov.info['hires_image'] == None:
+				mov.info['hires_image'] = 'movie_image_404.png'
+				print(f"replaced img None w/ 404: {mov.info['title']}")
+
 
 	def addLib(self, media_lib):
 		if type(media_lib) == MMediaLib:
@@ -673,8 +679,6 @@ class MMediaLib(Iterable):
 		# by year, name, most recent etc
 		sort_type = user.info['chosen_sort']
 		for count, movie in enumerate(self.chosen_sort[sort_type]()):
- 			if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'	# TODO replace blanks w/ 404.png at init / lib load
- 			movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
  			all_movies.append(movie.info)
 
 		movies = user.filter_list(all_movies)
@@ -712,8 +716,6 @@ class MMediaLib(Iterable):
 		# TODO memoise the results in MMediaLib invalidate cache on Add movie or other relevant
 		sort_type = user.info['chosen_sort']
 		for count, movie in enumerate(self.chosen_sort[sort_type]()):
-			if movie.info['hires_image'] == None: movie.info['hires_image'] = 'movie_image_404.png'
-			movie.info['hires_image'] = str(Path(movie.info['hires_image']).name)   # convert full path to name
 			movies.append(movie.info)
 
 		movies = user.filter_list(movies)#[10:19]
