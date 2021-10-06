@@ -14,13 +14,14 @@
 
 
 {% block content %}
-<form action='/settings' class='bt-sort-bar'>
+<!--<form action='/settings' class='bt-sort-bar'>-->
+<div class='bt-sort-bar'>
     <span style="font-size:26px; padding-right:4px;">SORT BY</span>
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='year'>YEAR</button>
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='rating'>RATING</button>
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='title'>TITLE</button>
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='added'>ADDED</button>
-</form>
+</div>
 <div>SORT BY will sort results by the selected type:</div>
 <div>YEAR: sort by release year most recent first (Top in list list view. Left in slider view)</div>
 <div>RATING: sort by rating highest rating first (Top in list list view. Left in slider view)</div>
@@ -28,11 +29,12 @@
 <div>ADDED: Sort by when added to library - most recently added first.</div><br>
 
 
-<form action='/settings' class='bt-genre-bar'>
+<!--<form action='/settings' class='bt-genre-bar'>-->
+<div class='bt-genre-bar'>
     {% for g in genres %}
     <button type='submit' class='btn btn-secondary btn-genre bt-sort-gen' name='change_genre' formmethod='post' value='{{g}}'>{{g}}</button>
     {% endfor %}
-</form>
+</div>
 <div>GENRE: Click genres to change your preference.</div>
 <div>GREEN: Prefered. These 'genres sliders' will appear first in the slider view.</div>
 <div>GREY: Ambivalent. These slider will appear in the middle</div>

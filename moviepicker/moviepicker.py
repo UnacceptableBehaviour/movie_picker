@@ -628,7 +628,7 @@ class MMediaLib(Iterable):
 		keys = list(self.media_files.keys())
 		return MediaLibIter(self.media_files, keys, direction=REVERSE)
 
-	def sorted_by_year(self, direction=FORWARD) -> MediaLibIter:
+	def sorted_by_year(self, direction=REVERSE) -> MediaLibIter:
 		return MediaLibIter(self.media_files, self._sorted_by_year, direction)
 
 	def sorted_by_title(self, direction=FORWARD) -> MediaLibIter:

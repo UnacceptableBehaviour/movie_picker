@@ -43,6 +43,34 @@ function postUpdatedPrefsToServerNOReload(){
   });
 }
 
+function removeValFromArray(val, arr){
+  return arr.filter(function(element){
+    return element != val;
+  });
+}
+
+function updateGenrePrefs(genre){
+  // change pref of button pressed
+  // send update
+  // update button colous on success
+  if (prefsInfo.prefs_genre.neg.includes(genre)) {          // red > green
+    prefsInfo.prefs_genre.neg = removeValFromArray(genre, prefsInfo.prefs_genre.neg);
+    prefsInfo.prefs_genre.pos.push(genre);
+  } else if (prefsInfo.prefs_genre.pos.includes(genre)) {   // green > grey
+    prefsInfo.prefs_genre.pos = removeValFromArray(genre, prefsInfo.prefs_genre.pos);
+  } else {
+    prefsInfo.prefs_genre.neg.push(genre);                  // grey > red
+  }
+  postUpdatedPrefsToServerNOReload();
+  setButtonColours();
+}
+
+function updateSortByPrefs(sortType){
+  prefsInfo.chosen_sort = sortType;
+  postUpdatedPrefsToServerNOReload();
+  setButtonColours();
+}
+
 function updateMoviePrefs(movId, buttonPref, route, reLoad=null, movieRating=-1) {
   console.log( JSON.stringify( { 'mov_id_prefs':movId, 'button':buttonPref, 'rating': movieRating }) );
 
@@ -87,6 +115,7 @@ function changeUser(new_id) {
     window.location.replace(return_route);
   });
 }
+
 
 //<div class="rt-stars" id="rt-stars-7179594">
 //  <img class="solo-star star-gold" srcset="static/SVG/star.svg" src="static/PNG/star.png" alt="rating star">
@@ -158,6 +187,18 @@ function clickHandler(e) {
   if (Array.from(e.target.classList).includes('bt-usr2')) {
     console.log(`${e.target.id}`);
     changeUser(e.target.id);
+    return;
+  }
+
+  if (Array.from(e.target.classList).includes('btn-genre')) {
+    console.log(`btn-genre: ${e.target.value}`);
+    updateGenrePrefs(e.target.value);
+    return;
+  }
+
+  if (Array.from(e.target.classList).includes('bt-sort')) {
+    console.log(`bt-sort: ${e.target.value}`);
+    updateSortByPrefs(e.target.value);
     return;
   }
 
@@ -281,17 +322,21 @@ function clickHandler(e) {
 
 function setButtonColours() {
 
-  //console.log('User buttons -S');
+  //console.log('User buttons - - - S');
   // genre buttons
   Array.from(document.getElementsByClassName("btn-genre")).forEach(   // getElementsByClassName returns HTMLCollection - not array
     function(element, index, array) {
-      //console.log(element.value);
+      console.log(element.value);
       if (prefsInfo.prefs_genre.neg.includes(element.value)) {
         element.classList.remove('btn-success');
         element.classList.add('btn-danger');
       } else if (prefsInfo.prefs_genre.pos.includes(element.value)) {
         element.classList.remove('btn-danger');
         element.classList.add('btn-success');
+      } else {
+        element.classList.remove('btn-danger');
+        element.classList.remove('btn-success');
+        element.classList.add('btn-secondary');
       }
     }
   );
