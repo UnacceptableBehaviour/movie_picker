@@ -61,24 +61,24 @@ IPAddr = socket.gethostbyname(hostname)
 print("Your Computer IP Address is:" + IPAddr)
 print(f"OS: {running_os} - {running_os_release}")
 
-media_lib = MMediaLib(media_cloud.main)
+#media_lib = MMediaLib(media_cloud.main)
 
-# if running_os == 'Darwin' or running_os == 'Linux':
-#
-#     print("Building media_lib from the following sources:")
-#     pprint(media_cloud.known_paths)
-#     if len(media_cloud.known_paths) > 1:
-#
-#         for m in media_cloud.known_paths:
-#             mmdbs = [MMediaLib(db_path) for db_path in media_cloud.known_paths]
-#
-#         media_lib = mmdbs.pop()
-#
-#         while len(mmdbs) > 0:
-#             media_lib.addLibAndRebuild(mmdbs.pop())
-#
-#     elif media_cloud.main:
-#         media_lib = MMediaLib(media_cloud.main)
+if running_os == 'Darwin' or running_os == 'Linux':
+
+    print("Building media_lib from the following sources:")
+    pprint(media_cloud.known_paths)
+    if len(media_cloud.known_paths) > 1:
+
+        for m in media_cloud.known_paths:
+            mmdbs = [MMediaLib(db_path) for db_path in media_cloud.known_paths]
+
+        media_lib = mmdbs.pop()
+
+        while len(mmdbs) > 0:
+            media_lib.addLibAndRebuild(mmdbs.pop())
+
+    elif media_cloud.main:
+        media_lib = MMediaLib(media_cloud.main)
 
 if not media_lib:
     print("EXITIING - NO media libraries were found\nChecked:")
