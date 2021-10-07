@@ -157,7 +157,6 @@ show_single_movie = None
 def movie_gallery_home():
     global show_single_movie
     global current_user
-    global chosen_sort
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - #
     # reset vlc process                                                                             #
     #                                                                                               #
@@ -392,9 +391,9 @@ def play_movie(movie_id):
                 near_end_of_flick = movie_length - 360
                 vlc_http_channel.seek_from_start(near_end_of_flick) # got end - 6m
 
-            if req['cmd'] == 'bak4x':
-                print('--: bak2x - NOT IMPLEMENTED')
-                #vlc_http_channel.set_rate(-4.0)
+            if req['cmd'] == 'bak2x':
+                print('--: bak2x - REWIND 120sec')
+                vlc_http_channel.seek(-120)
 
             if req['cmd'] == 'vol':
                 # 0-100
@@ -547,48 +546,21 @@ def combined_short_list():
 
 @app.route('/settings', methods=["GET", "POST"])
 def settings():
-    #global user_device_DB
-
-    print(f"\nsettings: - - - - - - - - debug - - - - - - - - - - - - - - - - S\n")
-    if request.method == 'POST':
-        print("\nrequest.args - - - - <")
-        pprint(request.args)
-        for key in request.args.keys():
-            print(f"{key} - {request.args[key]}")
-
-        print("\nrequest.form - - - - <")
-        pprint(request.form)
-        # cycle through form items
-        for key, val in request.form.items():
-            print(f"{key} - {val}")
-            if 'change_genre' == key:       # easier to do this in JS land and post new prefs No? TODO
-                selected_genre = request.form['change_genre']
-                if selected_genre in current_user.info['prefs_genre']['neg']:
-                    # del from neg move to pos
-                    current_user.info['prefs_genre']['neg'].remove(selected_genre)
-                    current_user.info['prefs_genre']['pos'].append(selected_genre)
-
-                elif selected_genre in current_user.info['prefs_genre']['pos']:
-                    # del from pos move to don't care (not in either)
-                    current_user.info['prefs_genre']['pos'].remove(selected_genre)
-
-                elif request.form['change_genre'] not in (current_user.info['prefs_genre']['neg'] +
-                                                        current_user.info['prefs_genre']['pos']):
-                    # move to neg
-                    current_user.info['prefs_genre']['neg'].append(selected_genre)
-
-            if 'sort_type' == key:
-                if request.form['sort_type'] in media_lib.chosen_sort:
-                    current_user.sort_by = request.form['sort_type']
-
-        commit_dict_to_DB(user_device_DB)
-
     info = current_user.info
     pprint(info)
+    global users_nav_bar    # TODO - investigate propper use of global
+    genre_edit = media_lib.genres
+    try:
+        genre_edit.remove('Adult')
+    except Exception:
+        pass
+    try:
+        genre_edit.remove('News')
+    except Exception:
+        pass
 
-    global users_nav_bar
-
-    return render_template('settings.html', prefs_info=info, users_nav_bar=users_nav_bar, genres=media_lib.genres, page='settings')
+    pprint(genre_edit)
+    return render_template('settings.html', prefs_info=info, users_nav_bar=users_nav_bar, genres=genre_edit, page='settings')
 
 
 @app.route('/spare_route', methods=["GET", "POST"])

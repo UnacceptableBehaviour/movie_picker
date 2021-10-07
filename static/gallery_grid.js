@@ -25,7 +25,7 @@ console.log(`gallery_grid.js - - - - - - - - S ${prefsInfo.name}`);
 
 
 // update prefs W/O RELOADING
-function postUpdatedPrefsToServerNOReload(){
+function postUpdatedPrefsToServerNOReload( successCallback=null, failureCallBack=null ){
   // TODO - store setting locally - PERSISTENT CACHE - one for each user on device
 
   console.log( JSON.stringify( { 'prefs_info':prefsInfo }) );
@@ -62,7 +62,8 @@ function updateGenrePrefs(genre){
     prefsInfo.prefs_genre.neg.push(genre);                  // grey > red
   }
   postUpdatedPrefsToServerNOReload();
-  setButtonColours();
+  setButtonColours();                       // TODO - call this on successful prefs update!
+                                            // add callback to postUpdatedPrefsToServerNOReload(setButtonColours) ?
 }
 
 function updateSortByPrefs(sortType){

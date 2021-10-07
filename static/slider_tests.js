@@ -192,10 +192,10 @@ for (var m of movies) {
 
   for (var g in m.genres) {
     const genre = m.genres[g];
-    if ((genre === 'Adult') || (genre === 'News')){
-      continue;   // TODO - genre comes from misclassified - 2010 (scifi) evaluate to Adult convention 2010
-                  // empty and no image - messy in glider view
-    }
+    //if ((genre === 'Adult') || (genre === 'News')){
+    //  continue;   // TODO - genre comes from misclassified - 2010 (scifi) evaluate to Adult convention 2010
+    //              // empty and no image - messy in glider view
+    //}
     if (slider_names.includes(genre)) {
       //console.log(`${genre} in slider_names`);
       // add id to slider

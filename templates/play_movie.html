@@ -21,7 +21,7 @@
 
 {% block content %}
 
-    <div class='remote-control'>
+    <div class='remote-control unselectable'>
         <div class='rc-row-1'>
             <div id='rcbt-start' class='rc-item rc-start'>|<</div>
             <div id='rcbt-bak30s' class='rc-item rc-back30s'>-30s</div>
@@ -30,13 +30,13 @@
             <div id='rcbt-end' class='rc-item rc-end'>>|</div>
         </div>
         <div class='rc-row-2'>
-            <div id='rcbt-bak2x' class='rc-item rc-back2x'>RR</div>
+            <div id='rcbt-bak2x' class='rc-item rc-back2x'>Rewind 2mins</div>
             <div id='rcbt-vol' class='rc-item rc-volume'>
                 <div class="slidecontainer">
                     <input type="range" min="0" max="100" value="20" class="slider" id="rcslid-vol">
                 </div>
             </div>
-            <div id='rcbt-fwd2x' class='rc-item rc-forward2x'>FF</div>
+            <div id='rcbt-fwd2x' class='rc-item rc-forward2x'>Fast Forward</div>
         </div>
         <div class='rc-row-3'>
             <div id='rcbt-s1' class='rc-item rc-s1'>S1</div>

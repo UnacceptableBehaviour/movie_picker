@@ -71,7 +71,7 @@ function buttonEnd(){
 // ROW 2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 function buttonBak2x(){
   Remote.state = ST_RR2X;
-  console.log('func: button REWIND 2x');
+  console.log('func: button REWIND -120sec');
   sendCommand('bak2x');
 }
 function buttonVol(){
@@ -163,7 +163,8 @@ function sendCommand (cmd) {
         return;
       }
       response.json().then(function(data) {
-        console.log(`sendCommand RX: ${data}`);
+        console.log(`sendCommand RX:`);
+        console.log(data);
       });
     })
     .catch(function(error) {

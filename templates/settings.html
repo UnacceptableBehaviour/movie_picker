@@ -22,7 +22,8 @@
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='title'>TITLE</button>
     <button type="submit" class='btn btn-secondary bt-sort' name='sort_type' formmethod="post" value='added'>ADDED</button>
 </div>
-<div>SORT BY will sort results by the selected type:</div>
+<div class='settings-title'>SORT BY </div>
+<div>Will sort results by the selected type:</div>
 <div>YEAR: sort by release year most recent first (Top in list list view. Left in slider view)</div>
 <div>RATING: sort by rating highest rating first (Top in list list view. Left in slider view)</div>
 <div>TITLE: Sort alphabetically.</div>
@@ -35,7 +36,8 @@
     <button type='submit' class='btn btn-secondary btn-genre bt-sort-gen' name='change_genre' formmethod='post' value='{{g}}'>{{g}}</button>
     {% endfor %}
 </div>
-<div>GENRE: Click genres to change your preference.</div>
+<div class='settings-title'>GENRE:</div>
+<div>Click genres to change your preference.</div>
 <div>GREEN: Prefered. These 'genres sliders' will appear first in the slider view.</div>
 <div>GREY: Ambivalent. These slider will appear in the middle</div>
 <div>RED: Don't like! These sliders will appear last in the slider view.</div>
@@ -46,7 +48,7 @@
 <div>For RATING all 9.x, 8.x, 7.x etc will list together, genre will effect intra point order.</div>
 <div>For RECENLY ADDED and TITLE genre has no effect.</div>
 <br>
-
+<div class='settings-title'>MENU BAR (top left)</div>
 <div class='info-settings'>
   <button id='bt_home_flix' type="button" class="btn btn-success" style='display: inline;'>
       <a href="{{url_for('slider_tests')}}"><img id='bt_home_flix_img' src='/static/svg-sl/film.svg' alt="" class='svg-sz-26 img-svg-f-white'></img></a>
@@ -91,10 +93,39 @@
   <span>SETTINGS and INFO page (this page).</span>
 </div>
 
+<br>
+<div class='settings-title'>MOVIE INFO TILE</div>
+<img class='movie-tile-eg' src='/static/png/movie_tile.png' style='max-width: 95%'></img>
+
+<div class='control settings'>
+    <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_rate' >RATE</button>
+    <span>Click the rate button to reveal rating stars. Tap on relevant star to store rating.</span>
+</div>
+<div class='control settings'>
+    <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_ni'   >NI</button>
+    <span>NOT INTERESTED. Tapping on this button will remove the the movie from the listings.</span>
+</div>
+<div class='control settings'>
+    <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_seen' >SEEN</button>
+    <span>SEEN. Tapping on this button will remove the the movie from the listings.</span>
+</div>
+<div class='control settings'>
+    <button type='submit' class='btn btn-secondary control-bt' name='mov_prefs_sl'   >+List</button>
+    <span>ADD to SHORTLIST. Will move the movie from the listing to your SHORTLIST.</span>
+</div>
+<div class='control settings'>
+    <button type='submit' class='btn btn-info control-bt'      name='mov_prefs_play' ><a href="#">PLAY</a></button>
+    <span>STARTS the movie and brings up the REMOTE CONTROL w/ a movie synopsis.</span>
+</div>
+
+<br>
+<div class='settings-title'>USER / MOOD buttons - top right</div>
+<div>These allow you to switch between user settings.</div>
+<div>AMBER highlights the currently selected user.</div>
+<div>Each user retains their settings when switching to another user.</div>
+<div>The settings effect how the movies are listed as described above.</div><br>
 <div></div><br>
 <div></div><br>
-
-
 {% endblock %}
 
 <!--

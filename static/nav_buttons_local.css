@@ -162,6 +162,24 @@ html, body {
   align-items: center;
 }
 
+.settings {
+  /*border: 1px solid pink;*/
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+.settings-title {
+  font-size: 1.2em;
+}
+
+.movie-tile-eg {
+  border: 1px solid darkgrey;
+  border-radius: 6px;
+}
+img.movie-tile-eg {
+  border-radius: 6px;
+}
+
 /*
 Extra small (xs) devices (portrait phones, less than 576px)
 No media query since this is the default in Bootstrap
