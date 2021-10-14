@@ -17,7 +17,7 @@ from collections import OrderedDict # popitem(last=True) pairs are returned in L
 import re
 import imdb
 import urllib.request
-import pickle
+import pickle5 as pickle
 import sys		# sys.exit()
 import atexit
 import math
