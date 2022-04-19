@@ -100,7 +100,7 @@ def flatten_stable(nested_arrays, d=0):
             ret_list.append(i)
     return ret_list
 
-def get_playlist(pl_url, quiet_mode=True):
+def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
     play_list = pl_url
     print(f"Getting PL from: {pl_url}")
 
@@ -132,9 +132,13 @@ def get_playlist(pl_url, quiet_mode=True):
                 video = result['entries'][i]
                 play_list.append(item['webpage_url'])
 
-            # print('get_playlist - - dbg S')
-            # pprint(play_list)
-            # print('get_playlist - - dbg E')
+            print('get_playlist - - dbg S')
+            print(f"reverseMode: {reverseMode}")
+            pprint(play_list)
+            play_list.reverse()
+            print('-')
+            pprint(play_list)
+            print('get_playlist - - dbg E')
 
     return play_list
 
@@ -153,7 +157,7 @@ def get_urls_from_file(filename):
 
 
 def append_commented_urls_to_file(filepath, file_list):
-    text_content = ''
+    text_content = "\n\n"
     for line in file_list:
         text_content = text_content + f"# {line}\n"
 
@@ -177,8 +181,9 @@ if __name__ == '__main__':
 
         replace_targets = {}
         for possible_play_list in file_urls:
-
-            expanded_into_urls = get_playlist(possible_play_list, False)
+            # https://www.youtube.com/c/MindYourDecisions/videos
+            reverseMode = 'videos' in possible_play_list.lower()    # when checking for new video in a channels videos section            
+            expanded_into_urls = get_playlist(possible_play_list, False, reverseMode)
 
             if possible_play_list != expanded_into_urls:
                 replace_targets[possible_play_list] = expanded_into_urls
@@ -201,7 +206,7 @@ if __name__ == '__main__':
     else:
         print(Path(__file__).name)
         print(f"\n*** Usage:\n\t> {Path(__file__).name} url_plalists.txt \n\tTarget filename required")
-        sys.exti(0)
+        sys.exit(0)
 
     append_commented_urls_to_file(downloads_filename, file_urls)
 
