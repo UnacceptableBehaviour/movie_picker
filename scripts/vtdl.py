@@ -28,6 +28,48 @@ import re
 from pprint import pprint
 import youtube_dl
 
+# - - - simplest persistence code possible - - - -
+import json
+from pathlib import Path
+CHANNEL_DB_FILE = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/channel_downloads.json')
+
+def load_dict_data_from_DB(uDB):
+    '''
+    load user & device data from text file - json format
+    '''
+
+    if CHANNEL_DB_FILE.exists():
+        with open(CHANNEL_DB_FILE, 'r') as f:
+            json_db = f.read()
+            db = json.loads(json_db)
+            print(f"USER database LOADED ({len(db)})")
+
+        for i in db.keys():
+            uDB[i] = UserPrefs(i,info=db[i])
+
+        print(f"USER database json > objects COMPLETE ({len(uDB)})")
+        return 0
+
+    else:
+        db = {}  # create a blank file
+        commit_dict_to_DB(db)
+        return -1
+
+def commit_dict_to_DB(commit_db):
+    '''
+    commit user & device data to text file - json format
+    '''
+    db = {}
+    for i in commit_db.keys():
+        db[i] = commit_db[i].info
+
+    with open(CHANNEL_DB_FILE, 'w') as f:
+        #pprint(db)
+        db_as_json = json.dumps(db)
+        f.write(db_as_json)
+
+
+
 
 def get_urls_from_file(filename):
     with open(filename, 'r') as f:
@@ -42,7 +84,7 @@ def get_urls_from_file(filename):
     return url_list
 
 def get_video_list_from_channel(videos_url):
-    get_playlist(videos_url, True, True)
+    return get_playlist(videos_url, True, True)
 
 
 def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
@@ -71,7 +113,7 @@ def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
                 # #pprint(item)
                 # print(f"item['webpage_url']: {item['webpage_url']}")
                 # print(f"index - item['title']: {(i+1):03} - {item['title']}")   # {i:03} left pad n with 0's 3 digits
-                print(f"{item['webpage_url']} - {(i+1):03} - {item['title']}")   # {i:03} left pad n with 0's 3 digits
+                print(f"{i}: {item['webpage_url']} - {(i+1):03} - {item['title']}")   # {i:03} left pad n with 0's 3 digits
                 # print(f"item['uploader']: {item['uploader']}")
                 # print(f"item['playlist']: {item['playlist']}")
                 # print(f"item['playlist_index']: {item['playlist_index']}")
@@ -99,10 +141,15 @@ video_channel_urls = get_urls_from_file(CHANNEL_VIDEOS_FILE)
 video_channel_keys = []
 video_list = []
 
+print('>> video_channel_urls - - - - S')
+pprint(video_channel_urls)
+print('>> video_channel_urls - - - - E')
+
 for url in video_channel_urls:
-    #print(f"{url}")
+    print(f"URL: {url}")
     #print(url.replace('https://www.youtube.com/c/','').replace('/videos',''))
     channel_key = url.replace('https://www.youtube.com/c/','').replace('/videos','')
+    print(f"channel_key: {channel_key}")
     video_channel_keys.append(channel_key)
     video_list = get_video_list_from_channel(url)
     channel_video_downloads[channel_key] = {}
