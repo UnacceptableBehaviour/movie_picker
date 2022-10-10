@@ -22,6 +22,7 @@
 # Get number of videos / per channel and delta on currently downloaded
 # Download delta for each channel, create a copy in channel directory & new videos
 
+import sys
 
 from pathlib import Path
 import re
@@ -31,23 +32,26 @@ import youtube_dl
 # - - - simplest persistence code possible - - - -
 import json
 from pathlib import Path
+TEST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/test_load.json')
 CHANNEL_DB_FILE = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/channel_downloads.json')
+#CHANNEL_DB_FILE = TEST
+channel_DB = {}
 
-def load_dict_data_from_DB(uDB):
+def load_dict_data_from_DB(cDB):
     '''
-    load user & device data from text file - json format
+    load stored channel info from text file - json format
     '''
 
     if CHANNEL_DB_FILE.exists():
         with open(CHANNEL_DB_FILE, 'r') as f:
             json_db = f.read()
             db = json.loads(json_db)
-            print(f"USER database LOADED ({len(db)})")
+            print(f"Channel database LOADED ({len(db)})")
 
         for i in db.keys():
-            uDB[i] = UserPrefs(i,info=db[i])
+            cDB[i] = db[i]
 
-        print(f"USER database json > objects COMPLETE ({len(uDB)})")
+        print(f"Channel database json > objects COMPLETE ({len(cDB)})")
         return 0
 
     else:
@@ -57,19 +61,17 @@ def load_dict_data_from_DB(uDB):
 
 def commit_dict_to_DB(commit_db):
     '''
-    commit user & device data to text file - json format
+    commit channel info to text file - json format
     '''
-    db = {}
-    for i in commit_db.keys():
-        db[i] = commit_db[i].info
 
     with open(CHANNEL_DB_FILE, 'w') as f:
-        #pprint(db)
-        db_as_json = json.dumps(db)
+        #pprint(commit_db)
+        db_as_json = json.dumps(commit_db)
         f.write(db_as_json)
 
 
-
+# load_dict_data_from_DB(channel_DB)
+# pprint(channel_DB)
 
 def get_urls_from_file(filename):
     with open(filename, 'r') as f:
@@ -83,55 +85,40 @@ def get_urls_from_file(filename):
 
     return url_list
 
-def get_video_list_from_channel(videos_url):
+def get_video_dict_from_channel(videos_url):
     return get_playlist(videos_url, True, True)
 
 
 def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
-    play_list = pl_url
     print(f"Getting PL from: {pl_url}")
+    play_list = {}
 
     ydl = youtube_dl.YoutubeDL({'quiet':quiet_mode})
 
     with ydl:
         result = ydl.extract_info(pl_url, download=False) #We just want to extract the info
 
-        #pprint(result)
-        #if result['_type'] == 'playlist':
-
         if 'entries' in result:
             if reverseMode:
                 result['entries'].reverse()
             # Can be a playlist or a list of videos
-            video = result['entries']           # list of dict
-            play_list = []
+            videos = result['entries']           # list of dict            
 
             #loops entries to grab each video_url
-            for i, item in enumerate(video):
-                # print(f"= = = i: {i}")
-                # print(f"= = = = item = = =S \ ")
-                # #pprint(item)
-                # print(f"item['webpage_url']: {item['webpage_url']}")
-                # print(f"index - item['title']: {(i+1):03} - {item['title']}")   # {i:03} left pad n with 0's 3 digits
-                print(f"{i}: {item['webpage_url']} - {(i+1):03} - {item['title']}")   # {i:03} left pad n with 0's 3 digits
-                # print(f"item['uploader']: {item['uploader']}")
-                # print(f"item['playlist']: {item['playlist']}")
-                # print(f"item['playlist_index']: {item['playlist_index']}")
-                # #print(f"item['']: {item['']}")
-                # print(f"= = = = item = = =E / ")
-                video = result['entries'][i]
-                play_list.append(item['webpage_url'])
-
-            # print('get_playlist - - dbg S')
-            # print(f"reverseMode: {reverseMode}")
-            # pprint(play_list)
-            # if reverseMode:
-            #     play_list.reverse()
-            # print('-')
-            # pprint(play_list)
-            # print('get_playlist - - dbg E')
+            for i, video in enumerate(videos):
+                # see Osx4T/05_download_tools_open_source/yt_dl/vtdl/video.json
+                # for object info
+                print(f"{(i+1):03}: K:{video['webpage_url_basename']} {video['webpage_url']} - {video['title']}")   # {i:03} left pad n with 0's 3 digits
+                play_list[video['webpage_url_basename']] = { 'src_url': video['webpage_url'],
+                                                             'pos': i,
+                                                             'title': video['title'],
+                                                             'downloaded': False 
+                                                             }
 
     return play_list
+
+
+#sys.exit(0)
 
 CHANNEL_VIDEOS_FILE = Path('./vtdl/vtdl_video_channel_list.txt')
 channel_video_downloads = {}
@@ -145,22 +132,40 @@ print('>> video_channel_urls - - - - S')
 pprint(video_channel_urls)
 print('>> video_channel_urls - - - - E')
 
-for url in video_channel_urls:
-    print(f"URL: {url}")
-    #print(url.replace('https://www.youtube.com/c/','').replace('/videos',''))
-    channel_key = url.replace('https://www.youtube.com/c/','').replace('/videos','')
-    print(f"channel_key: {channel_key}")
-    video_channel_keys.append(channel_key)
-    video_list = get_video_list_from_channel(url)
-    channel_video_downloads[channel_key] = {}
-    for video in video_list:
-        print(url.replace('https://www.youtube.com/watch?v=',''))
-    break
-    
+sep_length = 100
+print("\n" + "*" * sep_length + "\n")
+print(' - - CURRENT STORED PLAYLISTS - - ')
+print("\n" + "*" * sep_length + "\n")
+load_dict_data_from_DB(channel_DB)
+pprint(channel_DB)
+print("\n" + "*" * sep_length + "\n")
 
+if '-u' in sys.argv:
+    for url in video_channel_urls:
+        print(f"URL: {url}")
+        #print(url.replace('https://www.youtube.com/c/','').replace('/videos',''))
+        channel_key = url.replace('https://www.youtube.com/c/','').replace('/videos','')
+        print(f"channel_key: {channel_key}")
+        video_channel_keys.append(channel_key)
+        video_dict = get_video_dict_from_channel(url)    
+        channel_video_downloads[channel_key] = video_dict
+        print(f"Downloaded video info for {channel_key}")
+        pprint(video_dict)
+        # for k, video in video_dict.items():
+        #     print(f"\n{k}")
+        #     pprint(video)
+        
+        print("> - - - - - - - Channel END")
+
+    
+print("video_channel_keys:")
 pprint(video_channel_keys)
 print(' - - - - - - - ')
-pprint(video_list)
+pprint(channel_video_downloads)
+
+# comparison update - yield missing items from updates playlists & download them
+# if '-u' in sys.argv:
+#     commit_dict_to_DB(channel_video_downloads)
 
 
 # youtube_dl info
