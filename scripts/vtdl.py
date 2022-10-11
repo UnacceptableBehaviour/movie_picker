@@ -85,19 +85,42 @@ def get_urls_from_file(filename):
 
     return url_list
 
-def get_video_dict_from_channel(videos_url):
-    return get_playlist(videos_url, True, True)
+def get_video_dict_from_channel(videos_url, quiet_mode=True, reverseMode=True):
+    return get_playlist(videos_url, quiet_mode, reverseMode)
 
 
 def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
     print(f"Getting PL from: {pl_url}")
     play_list = {}
+    play_list_entries = []
+    channel_name = ''
 
     ydl = youtube_dl.YoutubeDL({'quiet':quiet_mode})
 
     with ydl:
         result = ydl.extract_info(pl_url, download=False) #We just want to extract the info
-
+        # 'n_entries': 10,
+        # 'playlist_index': 8,
+        # 'playlist': 'David Sinclair - Videos',
+        # 'playlist_id': 'UCwD5YYkbYmN2iFHON9FyDXg',
+        # 'channel': 'David Sinclair',
+        # 'channel_id': 'UCwD5YYkbYmN2iFHON9FyDXg',
+        # 'channel_url': 'https://www.youtube.com/channel/UCwD5YYkbYmN2iFHON9FyDXg',
+        # 'tags': 'Lifespan','aging','what is aging','how do we age'
+        # 'webpage_url': 'https://www.youtube.com/watch?v=wD8reCw3Kls',
+        # 'webpage_url_basename': 'wD8reCw3Kls',
+        # 'id': 'wD8reCw3Kls',
+        # 'subtitles': {'en': [{'ext': 'srv1',
+        #                       'url': 'https://www.youtube.com/api/timedtext?v=wD8reCw3Kls&caps=asr&xoaf=5&hl=en&ip=0.0.0.0&ipbits=0&expire=1665365119&sparams=ip%2Cipbits%2Cexpire%2Cv%2Ccaps%2Cxoaf&signature=6499802713B9F79238D8BC253603B93BD8BB251E.944F5FCFA5CAD67518061EF0C50636C305BEE844&key=yt8&lang=en&fmt=srv1'},
+        # 'thumbnails': [{'height': 94,
+        #                  'id': '0',
+        #                  'resolution': '168x94',
+        #                  'url': 'https://i.ytimg.com/vi/wD8reCw3Kls/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLD1pYNbOiTSzXope4ecIB8SyHM3pA',
+        #                  'width': 168},    
+        #
+        # extracting partial PL
+        # https://askubuntu.com/questions/1074697/how-can-i-download-part-of-a-playlist-from-youtube-with-youtube-dl
+    
         if 'entries' in result:
             if reverseMode:
                 result['entries'].reverse()
@@ -111,18 +134,22 @@ def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
                 print(f"{(i+1):03}: K:{video['webpage_url_basename']} {video['webpage_url']} - {video['title']}")   # {i:03} left pad n with 0's 3 digits
                 play_list[video['webpage_url_basename']] = { 'src_url': video['webpage_url'],
                                                              'pos': i,
+                                                             'idx': video['playlist_index'],
                                                              'title': video['title'],
                                                              'downloaded': False 
                                                              }
-
+                play_list_entries.append(video['n_entries']) # debug this should all be the same
+                channel_name = video['webpage_url_basename']
+                
+            print(f"Channel: {channel_name} . . entries:")
+            pprint(play_list_entries)
+            
     return play_list
 
 
 #sys.exit(0)
 
 CHANNEL_VIDEOS_FILE = Path('./vtdl/vtdl_video_channel_list.txt')
-channel_video_downloads = {}
-
 
 video_channel_urls = get_urls_from_file(CHANNEL_VIDEOS_FILE)
 video_channel_keys = []
@@ -137,18 +164,27 @@ print("\n" + "*" * sep_length + "\n")
 print(' - - CURRENT STORED PLAYLISTS - - ')
 print("\n" + "*" * sep_length + "\n")
 load_dict_data_from_DB(channel_DB)
-pprint(channel_DB)
+pprint(channel_DB['DavidSinclairPodcast'])
+
 print("\n" + "*" * sep_length + "\n")
 
-if '-u' in sys.argv:
+# r - reload
+# u - update DB
+if '-r' in sys.argv:
     for url in video_channel_urls:
         print(f"URL: {url}")
         #print(url.replace('https://www.youtube.com/c/','').replace('/videos',''))
         channel_key = url.replace('https://www.youtube.com/c/','').replace('/videos','')
         print(f"channel_key: {channel_key}")
         video_channel_keys.append(channel_key)
-        video_dict = get_video_dict_from_channel(url)    
-        channel_video_downloads[channel_key] = video_dict
+        video_dict = get_video_dict_from_channel(url, quiet_mode=False, reverseMode=True)
+        
+        if '-u' in sys.argv:
+            if channel_key in channel_DB:
+                channel_DB[channel_key].update(video_dict)
+            else:
+                channel_DB[channel_key] = video_dict
+                
         print(f"Downloaded video info for {channel_key}")
         pprint(video_dict)
         # for k, video in video_dict.items():
@@ -158,14 +194,16 @@ if '-u' in sys.argv:
         print("> - - - - - - - Channel END")
 
     
+pprint(channel_DB)
 print("video_channel_keys:")
-pprint(video_channel_keys)
+pprint(channel_DB.keys())
+print("video_channel_urls:")
+pprint(video_channel_urls)
 print(' - - - - - - - ')
-pprint(channel_video_downloads)
 
 # comparison update - yield missing items from updates playlists & download them
-# if '-u' in sys.argv:
-#     commit_dict_to_DB(channel_video_downloads)
+if '-u' in sys.argv:
+    commit_dict_to_DB(channel_DB)
 
 
 # youtube_dl info
