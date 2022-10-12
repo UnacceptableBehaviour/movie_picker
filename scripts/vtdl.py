@@ -98,7 +98,17 @@ def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
     ydl = youtube_dl.YoutubeDL({'quiet':quiet_mode})
 
     with ydl:
-        result = ydl.extract_info(pl_url, download=False) #We just want to extract the info
+        #result = ydl.extract_info(pl_url, download=False, { #We just want to extract the info
+        result = ydl.extract_info(pl_url, download=True, extra_info={
+                #'playliststart': 2,
+                #'playlistend':   4,
+                'playlist_items': '2,4,7-9,11'
+            }) 
+            # playliststart:     Playlist item to start at.
+            # playlistend:       Playlist item to end at.
+            # playlist_items:    Specific indices of playlist to download.
+            # playlistreverse:   Download playlist items in reverse order.
+            # playlistrandom:    Download playlist items in random order.
         # 'n_entries': 10,
         # 'playlist_index': 8,
         # 'playlist': 'David Sinclair - Videos',
