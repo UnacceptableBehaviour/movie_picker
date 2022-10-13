@@ -34,8 +34,10 @@ import json
 from pathlib import Path
 TEST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/test_load.json')
 CHANNEL_DB_FILE = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/channel_downloads.json')
+DLOAD_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/chan')
 #CHANNEL_DB_FILE = TEST
 channel_DB = {}
+download_targets_by_channel = {}
 
 def load_dict_data_from_DB(cDB):
     '''
@@ -166,17 +168,30 @@ video_channel_keys = []
 video_list = []
 
 print('>> video_channel_urls - - - - S')
-pprint(video_channel_urls)
+for c in video_channel_urls:
+    print(c)
 print('>> video_channel_urls - - - - E')
 
 sep_length = 100
-print("\n" + "*" * sep_length + "\n")
-print(' - - CURRENT STORED PLAYLISTS - - ')
-print("\n" + "*" * sep_length + "\n")
-load_dict_data_from_DB(channel_DB)
-pprint(channel_DB['DavidSinclairPodcast'])
+print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - - - - - - - - - - - - 
+print(' - - CURRENT STORED PLAYLISTS - - ') 
+print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - - - - - - - - - - - - 
 
-print("\n" + "*" * sep_length + "\n")
+load_dict_data_from_DB(channel_DB)
+NO_OF_ITEMS_PER_CHAN = 5
+for channel, content in channel_DB.items():
+    chan_url = f"https://www.youtube.com/c/{channel}/videos"
+    print(f"> {channel} {chan_url} - - - - - - - <")
+    item_count = 0
+    rev_content = dict(reversed(list(content.items())))
+    for v_id, vid_data in rev_content.items():
+        print(f"{v_id}: {(vid_data['pos']):04} {vid_data['title']}")        
+        item_count += 1
+        if item_count > NO_OF_ITEMS_PER_CHAN:
+            pprint(vid_data)
+            break
+
+print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # r - reload
 # u - update DB
@@ -192,8 +207,10 @@ if '-r' in sys.argv:
         if '-u' in sys.argv:
             if channel_key in channel_DB:
                 channel_DB[channel_key].update(video_dict)
+                # TODO - add difference to download list
             else:
                 channel_DB[channel_key] = video_dict
+                # TODO - add to download list
                 
         print(f"Downloaded video info for {channel_key}")
         pprint(video_dict)
@@ -203,13 +220,6 @@ if '-r' in sys.argv:
         
         print("> - - - - - - - Channel END")
 
-    
-pprint(channel_DB)
-print("video_channel_keys:")
-pprint(channel_DB.keys())
-print("video_channel_urls:")
-pprint(video_channel_urls)
-print(' - - - - - - - ')
 
 # comparison update - yield missing items from updates playlists & download them
 if '-u' in sys.argv:
