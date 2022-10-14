@@ -40,35 +40,30 @@ class MyLogger(object):
         print(msg)
 
 
-def my_hook(d):
-    print('> HOOK - - - - - - - - - - - - - - - - - - - - - - - - S')
-    
-    pprint(d)
-    if d['status'] == 'finished':
-        print('Done downloading, now converting ...')
-    print('> HOOK - - - - - - - - - - - - - - - - - - - - - - - - E')
 
 class Dload(Thread):
     tick = 0
     status = {}
 
     @staticmethod
-    def my_hook(d):
-        print('> D.HOOK - - - - - - - - - - - - - - - - - - - - - - - - S')
-        pc = int(float(d['_percent_str'].strip().replace('%','')))
-        title = (d['filename'][:30] + '..') if len(d['filename']) > 32 else d['filename']
-        progress = '#'*pc + '-'*(100-pc)
-        Dload.status[d['filename']] = f"|{progress}|{d['_percent_str']} {title}"
+    def prog_hook(d):        
+        print("\x1B\x5B1J") # clear screen above the cursor ESC [ 1 J - https://en.wikipedia.org/wiki/ANSI_escape_code
+                            # https://ss64.com/ascii.html
+        pc = int(float(d['_percent_str'].strip().replace('%','')) / 2)
+        title = (d['filename'][:80] + '..') if len(d['filename']) > 82 else d['filename']
+        progress = '#'*pc + '-'*(50-pc)
+        eta = f"{int(d['eta'] / 60)}m{int(d['eta'] % 60)}".rjust(6, ' ')
+        Dload.status[d['filename']] = [f"|{progress}|{d['_percent_str']} {d['_total_bytes_str'].rjust(10, ' ')} {eta} {title}", d]
         Dload.tick +=1
         if Dload.tick > 102: Dload.tick =0
         print('+'*Dload.tick)
         for f,line in Dload.status.items():
-            print(line)
+            print(line[0])
         
-        #pprint(d)
+        pprint(d)
         if d['status'] == 'finished':
             print('Done downloading ...')
-        print('> D.HOOK - - - - - - - - - - - - - - - - - - - - - - - - E')
+        #print('> D.HOOK - - - - - - - - - - - - - - - - - - - - - - - - E')
 
     def __init__(self, url_to_fetch, target_dir, ydl_opts=None):
         super().__init__()
@@ -84,7 +79,7 @@ class Dload(Thread):
             #     'preferredquality': '192',
             # }],
             'logger': MyLogger(),
-            'progress_hooks': [Dload.my_hook],
+            'progress_hooks': [Dload.prog_hook],
         }
         if ydl_opts is None:
             ydl_opts = {}
@@ -93,12 +88,9 @@ class Dload(Thread):
     
     def run(self):
         self.ydl.download([self.url_to_fetch])
-    
 
 
-
-
-VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221013_test.txt')
+VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221014_test.txt')
 vids = []
 with open(VID_LIST, 'r') as f:
     file_content = f.read()    
@@ -114,23 +106,7 @@ except Exception:
     # if yn.strip().lower() == 'n': sys.exit(0)
         
 pprint(vids)
-# print(VID_LIST.name)
-# print(VID_LIST.stem)
-# print(VID_LIST.suffix)
 
-#sys.exit(0)
-            
-ydl_opts = {
-    'format': 'bestaudio/best',
-    'outtmpl': f"./{VID_LIST.stem}/%(title)s-%(id)s.%(ext)s",
-    # 'postprocessors': [{
-    #     'key': 'FFmpegExtractAudio',
-    #     'preferredcodec': 'mp3',
-    #     'preferredquality': '192',
-    # }],
-    'logger': MyLogger(),
-    'progress_hooks': [my_hook],
-}
 
 thread_list = []
 for v in vids:
