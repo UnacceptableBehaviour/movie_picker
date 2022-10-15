@@ -27,9 +27,12 @@ import youtube_dl
 import sys
 from pathlib import Path
 from pprint import pprint
-from threading import *
+#from threading import * # causes enumerate() takes 0 positional arguments but 1 was given
+import threading
 
 class MyLogger(object):
+    logged_errors = []
+    
     def debug(self, msg):
         pass
 
@@ -37,33 +40,106 @@ class MyLogger(object):
         pass
 
     def error(self, msg):
-        print(msg)
+        # SB atomic
+        # semTake(logBuffer)
+        MyLogger.logged_errors.append(msg)
+        # semRelease(logBuffer)
+        #print(msg)
+    
+    @staticmethod
+    def dump_logs():        
+        for cnt, e in enumerate(MyLogger.logged_errors):
+            print('eLOG: {cnt} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
+            print(e)
+        return MyLogger.logged_errors
+        
+    
 
 
 
-class Dload(Thread):
+class Dload(threading.Thread):
     tick = 0
     status = {}
+    all_done = False
 
     @staticmethod
-    def prog_hook(d):        
-        print("\x1B\x5B1J") # clear screen above the cursor ESC [ 1 J - https://en.wikipedia.org/wiki/ANSI_escape_code
+    def prog_hook(dl_data):        
+        #print("\x1B\x5B1J") # clear screen above the cursor ESC [ 1 J - https://en.wikipedia.org/wiki/ANSI_escape_code
                             # https://ss64.com/ascii.html
-        pc = int(float(d['_percent_str'].strip().replace('%','')) / 2)
-        title = (d['filename'][:80] + '..') if len(d['filename']) > 82 else d['filename']
+        if '_percent_str' in dl_data:
+            pc = int(float(dl_data['_percent_str'].strip().replace('%','')) / 2)
+            pc_str = dl_data['_percent_str']
+        else:
+            pc = 0
+            pc_str = '  0.0%'
+            
+            
+        title = (dl_data['filename'][:80] + '..') if len(dl_data['filename']) > 82 else dl_data['filename']
         progress = '#'*pc + '-'*(50-pc)
-        eta = f"{int(d['eta'] / 60)}m{int(d['eta'] % 60)}".rjust(6, ' ')
-        Dload.status[d['filename']] = [f"|{progress}|{d['_percent_str']} {d['_total_bytes_str'].rjust(10, ' ')} {eta} {title}", d]
+        try:
+            eta = f"{int(dl_data['eta'] / 60)}m{int(dl_data['eta'] % 60)}".rjust(6, ' ')
+        except Exception:
+            print('> prog_hook - - - - - - - - - - - - - - - S')
+            pprint(dl_data)                
+            print('> prog_hook - - - - - - - - - - - - - - - E')
+            if dl_data['status'] == 'finished':
+                if dl_data['filename'] in Dload.status:
+                    del Dload.status[dl_data['filename']]                
+                print(f"FINISHED: {dl_data['filename']}")
+                return
+            
+        
+        
+        # semTake
+        Dload.status[dl_data['filename']] = { 'p_bar': f"|{progress}|{pc_str} {dl_data['_total_bytes_str'].rjust(10, ' ')} {eta} {title} {dl_data['status']}",
+                                              'stats': dl_data }
+        # semRelease
+        
         Dload.tick +=1
         if Dload.tick > 102: Dload.tick =0
         print('+'*Dload.tick)
-        for f,line in Dload.status.items():
-            print(line[0])
+        for f, info in Dload.status.items():
+            print(info['p_bar'])
         
-        pprint(d)
-        if d['status'] == 'finished':
-            print('Done downloading ...')
-        #print('> D.HOOK - - - - - - - - - - - - - - - - - - - - - - - - E')
+        #pprint(dl_data)
+        print(Dload.combine_stats(dl_data)['formatted'])
+
+    @staticmethod
+    def combine_stats(caller_data):
+        report = ''
+        all_done = True
+        total_bandwidth_use = 0
+        download_count = 0
+        
+        for f, info in Dload.status.items():
+            dl_data = info['stats']
+            if (dl_data['status'] == 'finished') or (dl_data['_percent_str'] == '100.0%'):
+                pass
+            else:
+                all_done = False
+                total_bandwidth_use += dl_data['speed']
+                download_count += 1
+        
+        Dload.all_done = all_done
+        
+        if total_bandwidth_use < 1024:
+            bandwidth_str = f"Total download rate: {int(total_bandwidth_use):.2f} B/s"
+        elif total_bandwidth_use/1024 < 1024:
+            bandwidth_str = f"Total download rate: {int(total_bandwidth_use/1024):.2f} KiB/s"
+        elif total_bandwidth_use/(1024*1024) < 1024:
+            bandwidth_str = f"Total download rate: {int(total_bandwidth_use/(1024*1024)):.2f} MiB/s"
+        else:
+            bandwidth_str = f"Total download rate: {int(total_bandwidth_use/(1024*1024*1024)):.2f} GiB/s"
+        
+        # hack - TODO
+        if all_done:
+            MyLogger.dump_logs()
+        
+        report = f"\n{bandwidth_str}\nDownloads: {download_count}\nThreads: {threading.active_count()}"
+        
+        return {'formatted' : report, 'status': all_done}
+
+
 
     def __init__(self, url_to_fetch, target_dir, ydl_opts=None):
         super().__init__()
@@ -90,7 +166,7 @@ class Dload(Thread):
         self.ydl.download([self.url_to_fetch])
 
 
-VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221014_test.txt')
+VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221014_test2.txt')
 vids = []
 with open(VID_LIST, 'r') as f:
     file_content = f.read()    
@@ -110,14 +186,9 @@ pprint(vids)
 
 thread_list = []
 for v in vids:
-    print(f"Downloading: {v} - - - - - \ ")
-    pprint(ydl_opts)
-    print(f"Downloading: - - - - - / ")
-    # with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-    #     ydl.download([v])
+    print(f"Queueing: {v} for download.")
     thread_list.append(Dload(v, VID_LIST.stem))
     
 for t in thread_list:
     t.start()
-    
     
