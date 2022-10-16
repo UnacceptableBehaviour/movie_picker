@@ -58,14 +58,17 @@ class MyLogger(object):
 
 
 class Dload(threading.Thread):
-    tick = 0
-    prog_dict = {}
-    prog_lock = threading.Lock()
-    all_done = False
+    tick = 0                      # # #
+    prog_dict = {}                    #
+    all_done = False                  #
+    total_bandwidth_use = 0           #
+    prog_lock = threading.Lock()  # # #
+    
+    
     
     @staticmethod
     def prog_hook(dl_data):        
-        print("\x1B\x5B1J") # clear screen above the cursor ESC [ 1 J - https://en.wikipedia.org/wiki/ANSI_escape_code
+        #print("\x1B\x5B1J") # clear screen above the cursor ESC [ 1 J - https://en.wikipedia.org/wiki/ANSI_escape_code
                             # https://ss64.com/ascii.html
         if '_percent_str' in dl_data:
             pc = int(float(dl_data['_percent_str'].strip().replace('%','')) / 2)
@@ -81,9 +84,9 @@ class Dload(threading.Thread):
         try:
             eta = f"{int(dl_data['eta'] / 60)}m{int(dl_data['eta'] % 60)}".rjust(6, ' ')
         except Exception:
-            print('> prog_hook - - - - - - - - - - - - - - - S')
-            pprint(dl_data)                
-            print('> prog_hook - - - - - - - - - - - - - - - E')
+            # print('> prog_hook - - - - - - - - - - - - - - - S')
+            # pprint(dl_data)                
+            # print('> prog_hook - - - - - - - - - - - - - - - E')
             if dl_data['status'] == 'finished':
                 with Dload.prog_lock:
                     if dl_data['filename'] in Dload.prog_dict:
@@ -110,21 +113,20 @@ class Dload(threading.Thread):
     def combine_stats(caller_data):
         report = ''
         all_done = True
-        total_bandwidth_use = 0
         download_count = 0
+        total_bandwidth_use = 0
         
         with Dload.prog_lock:  
             for f, info in Dload.prog_dict.items():
                 dl_data = info['stats']
-                if (dl_data['status'] == 'finished') or (dl_data['_percent_str'] == '100.0%'):
-                    pass
-                else:
+                if not ((dl_data['status'] == 'finished') or (dl_data['_percent_str'] == '100.0%')):
                     all_done = False
-                    total_bandwidth_use += dl_data['speed']
+                    if dl_data['speed']: total_bandwidth_use += dl_data['speed']
                     download_count += 1
         
-        Dload.all_done = all_done
-        
+            Dload.total_bandwidth_use = total_bandwidth_use
+            Dload.all_done = all_done
+            
         if total_bandwidth_use < 1024:
             bandwidth_str = f"Total download rate: {int(total_bandwidth_use):.2f} B/s"
         elif total_bandwidth_use/1024 < 1024:
@@ -133,10 +135,6 @@ class Dload(threading.Thread):
             bandwidth_str = f"Total download rate: {int(total_bandwidth_use/(1024*1024)):.2f} MiB/s"
         else:
             bandwidth_str = f"Total download rate: {int(total_bandwidth_use/(1024*1024*1024)):.2f} GiB/s"
-        
-        # hack - TODO
-        if all_done:
-            MyLogger.dump_logs()
         
         report = f"\n{bandwidth_str}\nDownloads: {download_count}\nThreads: {threading.active_count()}\n"
         
@@ -166,10 +164,12 @@ class Dload(threading.Thread):
         self.ydl = youtube_dl.YoutubeDL(self.ydl_opts)
     
     def run(self):
+        # TODO wait on bandwidth available
         self.ydl.download([self.url_to_fetch])
+        # TODO check bandwidth & notify on exit
 
 
-VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221015_test.txt')
+VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221016_test.txt')
 vids = []
 with open(VID_LIST, 'r') as f:
     file_content = f.read()    
@@ -194,4 +194,9 @@ for v in vids:
     
 for t in thread_list:
     t.start()
-    
+
+# TODO
+# pass file to process as argv
+# remove commented files from list of files to dload
+# pause thread when tot_dload_band > 2MiB / sec
+#   add notify to end of download
