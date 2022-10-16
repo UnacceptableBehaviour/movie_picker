@@ -32,6 +32,7 @@ import threading
 
 class MyLogger(object):
     logged_errors = []
+    log_lock = threading.Lock()
     
     def debug(self, msg):
         pass
@@ -40,10 +41,9 @@ class MyLogger(object):
         pass
 
     def error(self, msg):
-        # SB atomic
-        # semTake(logBuffer)
-        MyLogger.logged_errors.append(msg)
-        # semRelease(logBuffer)
+        with MyLogger.log_lock:
+            MyLogger.logged_errors.append(msg)
+        print("> - - - - - - ERROR LOGGED")
         #print(msg)
     
     @staticmethod
@@ -59,13 +59,14 @@ class MyLogger(object):
 
 class Dload(threading.Thread):
     tick = 0
-    status = {}
+    prog_dict = {}
+    prog_lock = threading.Lock()
     all_done = False
-    # some_lock.acquire()
+    # Dload.prog_lock.acquire()
     # try:
     #     # do something...
     # finally:
-    #     some_lock.release()
+    #     Dload.prog_lock.release()
     
     @staticmethod
     def prog_hook(dl_data):        
@@ -81,6 +82,7 @@ class Dload(threading.Thread):
             
         title = (dl_data['filename'][:80] + '..') if len(dl_data['filename']) > 82 else dl_data['filename']
         progress = '#'*pc + '-'*(50-pc)
+        eta = 9999
         try:
             eta = f"{int(dl_data['eta'] / 60)}m{int(dl_data['eta'] % 60)}".rjust(6, ' ')
         except Exception:
@@ -88,23 +90,32 @@ class Dload(threading.Thread):
             pprint(dl_data)                
             print('> prog_hook - - - - - - - - - - - - - - - E')
             if dl_data['status'] == 'finished':
-                if dl_data['filename'] in Dload.status:
-                    del Dload.status[dl_data['filename']]                
+                Dload.prog_lock.acquire()
+                try:
+                    if dl_data['filename'] in Dload.prog_dict:
+                        del Dload.prog_dict[dl_data['filename']]                
+                finally:
+                    Dload.prog_lock.release()                
                 print(f"FINISHED: {dl_data['filename']}")
                 return
             
-        
-        
-        # semTake
-        Dload.status[dl_data['filename']] = { 'p_bar': f"|{progress}|{pc_str} {dl_data['_total_bytes_str'].rjust(10, ' ')} {eta} {title} {dl_data['status']}",
-                                              'stats': dl_data }
-        # semRelease
+        Dload.prog_lock.acquire()
+        try:
+            Dload.prog_dict[dl_data['filename']] = { 'p_bar': f"|{progress}|{pc_str} {dl_data['_total_bytes_str'].rjust(10, ' ')} {eta} {title} {dl_data['status']}",
+                                                     'stats': dl_data }
+        finally:
+            Dload.prog_lock.release()        
         
         Dload.tick +=1
         if Dload.tick > 102: Dload.tick =0
         print('+'*Dload.tick)
-        for f, info in Dload.status.items():
-            print(info['p_bar'])
+
+        Dload.prog_lock.acquire()
+        try:        
+            for f, info in Dload.prog_dict.items():
+                print(info['p_bar'])
+        finally:
+            Dload.prog_lock.release()        
         
         #pprint(dl_data)
         print(Dload.combine_stats(dl_data)['formatted'])
@@ -116,14 +127,18 @@ class Dload(threading.Thread):
         total_bandwidth_use = 0
         download_count = 0
         
-        for f, info in Dload.status.items():
-            dl_data = info['stats']
-            if (dl_data['status'] == 'finished') or (dl_data['_percent_str'] == '100.0%'):
-                pass
-            else:
-                all_done = False
-                total_bandwidth_use += dl_data['speed']
-                download_count += 1
+        Dload.prog_lock.acquire()
+        try:  
+            for f, info in Dload.prog_dict.items():
+                dl_data = info['stats']
+                if (dl_data['status'] == 'finished') or (dl_data['_percent_str'] == '100.0%'):
+                    pass
+                else:
+                    all_done = False
+                    total_bandwidth_use += dl_data['speed']
+                    download_count += 1
+        finally:
+            Dload.prog_lock.release()        
         
         Dload.all_done = all_done
         
@@ -140,7 +155,7 @@ class Dload(threading.Thread):
         if all_done:
             MyLogger.dump_logs()
         
-        report = f"\n{bandwidth_str}\nDownloads: {download_count}\nThreads: {threading.active_count()}"
+        report = f"\n{bandwidth_str}\nDownloads: {download_count}\nThreads: {threading.active_count()}\n"
         
         return {'formatted' : report, 'status': all_done}
 
