@@ -62,15 +62,10 @@ class Dload(threading.Thread):
     prog_dict = {}
     prog_lock = threading.Lock()
     all_done = False
-    # Dload.prog_lock.acquire()
-    # try:
-    #     # do something...
-    # finally:
-    #     Dload.prog_lock.release()
     
     @staticmethod
     def prog_hook(dl_data):        
-        #print("\x1B\x5B1J") # clear screen above the cursor ESC [ 1 J - https://en.wikipedia.org/wiki/ANSI_escape_code
+        print("\x1B\x5B1J") # clear screen above the cursor ESC [ 1 J - https://en.wikipedia.org/wiki/ANSI_escape_code
                             # https://ss64.com/ascii.html
         if '_percent_str' in dl_data:
             pc = int(float(dl_data['_percent_str'].strip().replace('%','')) / 2)
@@ -90,32 +85,23 @@ class Dload(threading.Thread):
             pprint(dl_data)                
             print('> prog_hook - - - - - - - - - - - - - - - E')
             if dl_data['status'] == 'finished':
-                Dload.prog_lock.acquire()
-                try:
+                with Dload.prog_lock:
                     if dl_data['filename'] in Dload.prog_dict:
                         del Dload.prog_dict[dl_data['filename']]                
-                finally:
-                    Dload.prog_lock.release()                
                 print(f"FINISHED: {dl_data['filename']}")
                 return
-            
-        Dload.prog_lock.acquire()
-        try:
+
+        with Dload.prog_lock:            
             Dload.prog_dict[dl_data['filename']] = { 'p_bar': f"|{progress}|{pc_str} {dl_data['_total_bytes_str'].rjust(10, ' ')} {eta} {title} {dl_data['status']}",
                                                      'stats': dl_data }
-        finally:
-            Dload.prog_lock.release()        
         
         Dload.tick +=1
         if Dload.tick > 102: Dload.tick =0
         print('+'*Dload.tick)
 
-        Dload.prog_lock.acquire()
-        try:        
+        with Dload.prog_lock:
             for f, info in Dload.prog_dict.items():
-                print(info['p_bar'])
-        finally:
-            Dload.prog_lock.release()        
+                print(info['p_bar'])     
         
         #pprint(dl_data)
         print(Dload.combine_stats(dl_data)['formatted'])
@@ -127,8 +113,7 @@ class Dload(threading.Thread):
         total_bandwidth_use = 0
         download_count = 0
         
-        Dload.prog_lock.acquire()
-        try:  
+        with Dload.prog_lock:  
             for f, info in Dload.prog_dict.items():
                 dl_data = info['stats']
                 if (dl_data['status'] == 'finished') or (dl_data['_percent_str'] == '100.0%'):
@@ -137,8 +122,6 @@ class Dload(threading.Thread):
                     all_done = False
                     total_bandwidth_use += dl_data['speed']
                     download_count += 1
-        finally:
-            Dload.prog_lock.release()        
         
         Dload.all_done = all_done
         
