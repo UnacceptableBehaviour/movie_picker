@@ -166,7 +166,7 @@ class Dload(threading.Thread):
         self.ydl.download([self.url_to_fetch])
 
 
-VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221014_test2.txt')
+VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221015_test.txt')
 vids = []
 with open(VID_LIST, 'r') as f:
     file_content = f.read()    
