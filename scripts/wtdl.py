@@ -61,7 +61,12 @@ class Dload(threading.Thread):
     tick = 0
     status = {}
     all_done = False
-
+    # some_lock.acquire()
+    # try:
+    #     # do something...
+    # finally:
+    #     some_lock.release()
+    
     @staticmethod
     def prog_hook(dl_data):        
         #print("\x1B\x5B1J") # clear screen above the cursor ESC [ 1 J - https://en.wikipedia.org/wiki/ANSI_escape_code
