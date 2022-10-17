@@ -101,7 +101,7 @@ def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
 
     with ydl:
         #result = ydl.extract_info(pl_url, download=False, { #We just want to extract the info
-        result = ydl.extract_info(pl_url, download=True, extra_info={
+        result = ydl.extract_info(pl_url, download=False, extra_info={
                 #'playliststart': 2,
                 #'playlistend':   4,
                 'playlist_items': '2,4,7-9,11'
@@ -199,18 +199,26 @@ if '-r' in sys.argv:
     for url in video_channel_urls:
         print(f"URL: {url}")
         #print(url.replace('https://www.youtube.com/c/','').replace('/videos',''))
-        channel_key = url.replace('https://www.youtube.com/c/','').replace('/videos','')
+        channel_key = url.replace('https://www.youtube.com/c/','').replace('https://www.youtube.com/user/','').replace('/videos','')
         print(f"channel_key: {channel_key}")
         video_channel_keys.append(channel_key)
-        video_dict = get_video_dict_from_channel(url, quiet_mode=False, reverseMode=True)
-        
-        if '-u' in sys.argv:
-            if channel_key in channel_DB:
-                channel_DB[channel_key].update(video_dict)
-                # TODO - add difference to download list
-            else:
-                channel_DB[channel_key] = video_dict
-                # TODO - add to download list
+        video_dict = None
+        try:
+            if channel_key not in channel_DB:
+                video_dict = get_video_dict_from_channel(url, quiet_mode=False, reverseMode=True)
+        except BaseException as e:
+            print('> - - - - - BALLS')
+            pprint(e)
+        finally:
+            print('> - - - - - SAVING DATA')
+            if ('-u' in sys.argv) and video_dict:
+                if channel_key in channel_DB:
+                    channel_DB[channel_key].update(video_dict)
+                    # TODO - add difference to download list
+                else:
+                    channel_DB[channel_key] = video_dict
+                    # TODO - add to download list
+                commit_dict_to_DB(channel_DB)
                 
         print(f"Downloaded video info for {channel_key}")
         pprint(video_dict)
@@ -222,8 +230,8 @@ if '-r' in sys.argv:
 
 
 # comparison update - yield missing items from updates playlists & download them
-if '-u' in sys.argv:
-    commit_dict_to_DB(channel_DB)
+# if '-u' in sys.argv:
+#     commit_dict_to_DB(channel_DB)
 
 
 # youtube_dl info
