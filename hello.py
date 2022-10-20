@@ -63,30 +63,31 @@ print(f"OS: {running_os} - {running_os_release}")
 
 #media_lib = MMediaLib(media_cloud.main)
 
-if running_os == 'Darwin' or running_os == 'Linux':
-
-    print("Building media_lib from the following sources:")
-    pprint(media_cloud.known_paths)
-    if len(media_cloud.known_paths) > 1:
-
-        for m in media_cloud.known_paths:
-            mmdbs = [MMediaLib(db_path) for db_path in media_cloud.known_paths]
-
-        media_lib = mmdbs.pop()
-
-        while len(mmdbs) > 0:
-            media_lib.addLibAndRebuild(mmdbs.pop())
-
-    elif media_cloud.main:
-        media_lib = MMediaLib(media_cloud.main)
-
-if not media_lib:
-    print("EXITIING - NO media libraries were found\nChecked:")
-    print(f"IP: {IPAddr} OS:{running_os} ver:{running_os_release}")
-    for p in media_cloud.known_paths:
-        print(p)
-
-    sys.exit(0)
+# if running_os == 'Darwin' or running_os == 'Linux':
+# 
+#     print("Building media_lib from the following sources:")
+#     pprint(media_cloud.known_paths)
+#     if len(media_cloud.known_paths) > 1:
+# 
+#         for m in media_cloud.known_paths:
+#             mmdbs = [MMediaLib(db_path) for db_path in media_cloud.known_paths]
+# 
+#         media_lib = mmdbs.pop()
+# 
+#         while len(mmdbs) > 0:
+#             media_lib.addLibAndRebuild(mmdbs.pop())
+# 
+#     elif media_cloud.main:
+#         media_lib = MMediaLib(media_cloud.main)
+# 
+# if not media_lib:
+#     print("EXITIING - NO media libraries were found\nChecked:")
+#     print(f"IP: {IPAddr} OS:{running_os} ver:{running_os_release}")
+#     for p in media_cloud.known_paths:
+#         print(p)
+# 
+#     sys.exit(0)
+media_lib = MMediaLib(Path('/Volumes/Osx4T/tor/__media_data2/medialib2.pickle'))
 
 LOCAL_IMAGE_CACHE = Path('./static/covers')
 LOCAL_IMAGE_CACHE.mkdir(parents=True, exist_ok=True)

@@ -1183,6 +1183,21 @@ option
 
 		new_media_lib.add_directory_to_library()	# will look for new files in specified directory
 
+	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	# -c dir_name = create new DB in specified directory (build from contents)
+	# christmas eve HACK - TODO REMOVE and redo LOGIC -d option should be after path
+	if '-c' in sys.argv:
+		# check for a path in the args
+		media_path = get_valid_path(sys.argv[1:len(sys.argv)])
+
+		print(f"BUILDING new DB based on content of: {media_path}")
+		new_media_lib = MMediaLib(None, media_root=media_path)
+
+		if '-d' not in sys.argv:	# -d = dont save results		as in WRITE mode unless blocked
+			new_media_lib.set_write_mode(READ_WRITE)
+
+		new_media_lib.add_directory_to_library()	# will look for new files in specified directory
+
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	# list entries in a pickleDB

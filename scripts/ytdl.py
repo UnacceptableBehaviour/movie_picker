@@ -122,8 +122,9 @@ def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
                 # print(f"= = = i: {i}")
                 # print(f"= = = = item = = =S \ ")
                 # #pprint(item)
-                print(f"item['webpage_url']: {item['webpage_url']}")
-                print(f"item['title']: {item['title']}")
+                # print(f"item['webpage_url']: {item['webpage_url']}")
+                # print(f"index - item['title']: {(i+1):03} - {item['title']}")   # {i:03} left pad n with 0's 3 digits
+                print(f"{item['webpage_url']} - {(i+1):03} - {item['title']}")   # {i:03} left pad n with 0's 3 digits
                 # print(f"item['uploader']: {item['uploader']}")
                 # print(f"item['playlist']: {item['playlist']}")
                 # print(f"item['playlist_index']: {item['playlist_index']}")
@@ -135,7 +136,8 @@ def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
             print('get_playlist - - dbg S')
             print(f"reverseMode: {reverseMode}")
             pprint(play_list)
-            play_list.reverse()
+            if reverseMode:
+                play_list.reverse()
             print('-')
             pprint(play_list)
             print('get_playlist - - dbg E')
@@ -181,7 +183,6 @@ if __name__ == '__main__':
 
         replace_targets = {}
         for possible_play_list in file_urls:
-            # https://www.youtube.com/c/MindYourDecisions/videos
             reverseMode = 'videos' in possible_play_list.lower()    # when checking for new video in a channels videos section            
             expanded_into_urls = get_playlist(possible_play_list, False, reverseMode)
 
