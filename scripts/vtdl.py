@@ -83,6 +83,8 @@ def get_urls_from_file(filename):
     for line in content.split('\n'):
         if len(line.strip()) == 0: continue
         if re.findall('^#', line): continue
+        if '#' in line:
+            line = line.split('#')[0]
         url_list.append(line)   # maybe add regex to check valid url
 
     return url_list
