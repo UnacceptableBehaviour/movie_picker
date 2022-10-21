@@ -163,11 +163,10 @@ def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
 #
 #
 # # # # #
-def get_playlist_update(pl_url, ydl_opts_pass={}):
+def get_playlist_update(cDB, chan_key, pl_url, ydl_opts_pass={}):
     print(f"Getting PL from: {pl_url}")
     play_list = {}
-    play_list_entries = []
-    channel_name = ''
+    new_vid_entries = {}
     
     ydl_opts = {'quiet':True }
     # ydl_opts = {'quiet':True,
@@ -181,30 +180,35 @@ def get_playlist_update(pl_url, ydl_opts_pass={}):
         result = ydl.extract_info(pl_url, download=False) 
     
         if 'entries' in result:
-            # if reverseMode:
-            #     result['entries'].reverse()
-                
-            # Can be a playlist or a list of videos
             videos = result['entries']           # list of dict            
 
-            #loops entries to grab each video_url
             for i, video in enumerate(videos):
-                # see Osx4T/05_download_tools_open_source/yt_dl/vtdl/video.json
-                # for object info
+                # see Osx4T/05_download_tools_open_source/yt_dl/vtdl/video.json for object info
                 print(f"{(i+1):03}: K:{video['webpage_url_basename']} {video['webpage_url']} - {video['title']}")   # {i:03} left pad n with 0's 3 digits
+                
                 play_list[video['webpage_url_basename']] = { 'src_url': video['webpage_url'],
                                                              'pos': i,
                                                              'idx': video['playlist_index'],
                                                              'title': video['title'],
                                                              'downloaded': False 
                                                              }
-                play_list_entries.append(video['n_entries']) # debug this should all be the same
-                channel_name = video['webpage_url_basename']
-                
-            print(f"Channel: {channel_name} . . entries:")
-            pprint(play_list_entries)
-            
-    return play_list
+
+    reverse_play_list = dict(reversed(list(play_list.items())))
+    
+    vid_pos = None
+    for k, video in reverse_play_list.items():
+        if k in cDB[chan_key].keys():
+            vid_pos = cDB[chan_key][k]['pos']
+            print(f"P:{(video['pos']):04} K:{k} {video['src_url']} - {video['title']}")
+                  # P-resent video
+        if k not in cDB[chan_key].keys():
+            new_vid_entries[k] = video
+            vid_pos += 1
+            new_vid_entries[k]['pos'] = vid_pos
+            print(f"N:{(video['pos']):04} K:{k} {video['src_url']} - {video['title']}")
+                  # N-ot present video
+    
+    return new_vid_entries
 
 #sys.exit(0)
 
@@ -228,7 +232,6 @@ load_dict_data_from_DB(channel_DB)
 NO_OF_ITEMS_PER_CHAN = 5
 for channel, content in channel_DB.items():
     chan_url = f"https://www.youtube.com/c/{channel}/videos"
-    if channel != 'DryBarComedy': continue              # < < - TODO REMOVE = = = = = = = < < < <
     print(f"> {channel} {chan_url} - - - - - - - <")
     item_count = 0
     rev_content = dict(reversed(list(content.items())))
@@ -281,13 +284,15 @@ if '-r' in sys.argv:
 
 
 VID_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/')
-TEST_CHAN = 'https://www.youtube.com/c/DryBarComedy/videos'
-CHAN_KEY = TEST_CHAN.replace('https://www.youtube.com/c/','').replace('https://www.youtube.com/user/','').replace('/videos','')
+TEST_CHAN_URL = 'https://www.youtube.com/c/DryBarComedy/videos'
+CHAN_KEY = TEST_CHAN_URL.replace('https://www.youtube.com/c/','').replace('https://www.youtube.com/user/','').replace('/videos','')
         
-#recent_chan_vid_info = get_playlist_update(TEST_CHAN, {'playlist_items': '1-20', 'verbose':True}) # nor very verbosE!
-recent_chan_vid_info = get_playlist_update(TEST_CHAN, {'playlist_items': '1-20'})
+#recent_chan_vid_info = get_playlist_update(TEST_CHAN_URL, {'playlist_items': '1-20', 'verbose':True}) # nor very verbosE!
+recent_chan_vid_info = get_playlist_update(channel_DB, CHAN_KEY, TEST_CHAN_URL, {'playlist_items': '1-20'})
+print('THESE videos are new addition to the channel')
 
-
+for k, video in recent_chan_vid_info.items():
+    print(f"P:{(video['pos']):04} K:{k} {video['src_url']} - {video['title']}")
 
 # comparison update - yield missing items from updates playlists & download them
 # if '-u' in sys.argv:
