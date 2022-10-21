@@ -26,9 +26,11 @@ from __future__ import unicode_literals
 import youtube_dl
 import sys
 from pathlib import Path
+import re
 from pprint import pprint
-#from threading import * # causes enumerate() takes 0 positional arguments but 1 was given
 import threading
+import time
+from datetime import datetime       # datetime.now().timestamp() = 1666356102.098952
 
 class MyLogger(object):
     logged_errors = []
@@ -47,6 +49,10 @@ class MyLogger(object):
         #print(msg)
     
     @staticmethod
+    def num_of_errors():
+        return( len(MyLogger.logged_errors) )
+    
+    @staticmethod
     def dump_logs():        
         for cnt, e in enumerate(MyLogger.logged_errors):
             print('eLOG: {cnt} - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
@@ -55,16 +61,48 @@ class MyLogger(object):
         
     
 
+class DloadProgressDisplay(threading.Thread):    
+    def __init__(self):
+        super().__init__()
+        
+    def updateProgress(self):
+        with Dload.prog_lock:            
+            Dload.tick +=1
+            if Dload.tick > 102: Dload.tick =0
+            print('+'*Dload.tick)
+            
+            dump = None
+            for f, info in Dload.prog_dict.items():
+                dump = info
+                print(info['p_bar'])     
+        
+        print(Dload.combine_stats())
+        #print(f"{datetime.now().timestamp()} - {len(Dload.prog_dict)}")
+        #pprint(dump)     
+        
+    def run(self):
+        print("STARTED . . . DloadProgressDisplay . . waiting for downloads to start")
+                
+        while (Dload.registrations == 0):   # WAITING_FOR_DOWLOANDS_TO_START
+            time.sleep(1)
+        
+        time.sleep(1) # (Allow Dload.all_done to change to False)
+        
+        while (Dload.all_done == False):
+            self.updateProgress()
+            time.sleep(1)            
 
+        print("ALL DONE . . .")
+        sys.exit(0)
+    
 
 class Dload(threading.Thread):
     tick = 0                      # # #
     prog_dict = {}                    #
+    registrations = 0                 #
     all_done = False                  #
     total_bandwidth_use = 0           #
     prog_lock = threading.Lock()  # # #
-    
-    
     
     @staticmethod
     def prog_hook(dl_data):        
@@ -75,8 +113,7 @@ class Dload(threading.Thread):
             pc_str = dl_data['_percent_str']
         else:
             pc = 0
-            pc_str = '  0.0%'
-            
+            pc_str = '  0.0%'            
             
         title = (dl_data['filename'][:80] + '..') if len(dl_data['filename']) > 82 else dl_data['filename']
         progress = '#'*pc + '-'*(50-pc)
@@ -84,9 +121,6 @@ class Dload(threading.Thread):
         try:
             eta = f"{int(dl_data['eta'] / 60)}m{int(dl_data['eta'] % 60)}".rjust(6, ' ')
         except Exception:
-            # print('> prog_hook - - - - - - - - - - - - - - - S')
-            # pprint(dl_data)                
-            # print('> prog_hook - - - - - - - - - - - - - - - E')
             if dl_data['status'] == 'finished':
                 with Dload.prog_lock:
                     if dl_data['filename'] in Dload.prog_dict:
@@ -97,20 +131,11 @@ class Dload(threading.Thread):
         with Dload.prog_lock:            
             Dload.prog_dict[dl_data['filename']] = { 'p_bar': f"|{progress}|{pc_str} {dl_data['_total_bytes_str'].rjust(10, ' ')} {eta} {title} {dl_data['status']}",
                                                      'stats': dl_data }
+            if Dload.registrations < len(Dload.prog_dict): Dload.registrations = len(Dload.prog_dict)
         
-        Dload.tick +=1
-        if Dload.tick > 102: Dload.tick =0
-        print('+'*Dload.tick)
-
-        with Dload.prog_lock:
-            for f, info in Dload.prog_dict.items():
-                print(info['p_bar'])     
-        
-        #pprint(dl_data)
-        print(Dload.combine_stats(dl_data)['formatted'])
 
     @staticmethod
-    def combine_stats(caller_data):
+    def combine_stats():
         report = ''
         all_done = True
         download_count = 0
@@ -136,9 +161,9 @@ class Dload(threading.Thread):
         else:
             bandwidth_str = f"Total download rate: {int(total_bandwidth_use/(1024*1024*1024)):.2f} GiB/s"
         
-        report = f"\n{bandwidth_str}\nDownloads: {download_count}\nThreads: {threading.active_count()}\n"
+        report = f"\n{bandwidth_str}\nDownloads: {download_count}\nThreads: {threading.active_count()}\nErrors: {MyLogger.num_of_errors()}"
         
-        return {'formatted' : report, 'status': all_done}
+        return report
 
 
 
@@ -183,12 +208,14 @@ def get_urls_from_file(filename):
 
     return url_list
 
-VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221016_test.txt')
+VID_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/')
+VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221021_5mins_long.txt')
 vids = get_urls_from_file(VID_LIST)
 
 # create directory for downloads
-target_dir = Path(f"./{VID_LIST.stem}")
+target_dir = Path(VID_ROOT, f"./{VID_LIST.stem}")
 try:
+    print(f"Creating: {target_dir}")
     Path.mkdir(target_dir, parents=True)
 except Exception:
     print(f"** WARNING ** target_dir already created\n{target_dir}")
@@ -204,7 +231,10 @@ for v in vids:
     thread_list.append(Dload(v, VID_LIST.stem))
     
 for t in thread_list:
+    print(f"{t.native_id} start:{t.target_dir} - {t.url_to_fetch})")
     t.start()
+
+DloadProgressDisplay().start()
 
 # TODO
 # pass file to process as argv
