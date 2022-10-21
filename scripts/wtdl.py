@@ -169,11 +169,22 @@ class Dload(threading.Thread):
         # TODO check bandwidth & notify on exit
 
 
+def get_urls_from_file(filename):
+    with open(filename, 'r') as f:
+        content = f.read()
+
+    url_list = []
+    for line in content.split('\n'):
+        if len(line.strip()) == 0: continue
+        if re.findall('^#', line): continue
+        if '#' in line:
+            line = line.split('#')[0]
+        url_list.append(line)   # maybe add regex to check valid url
+
+    return url_list
+
 VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221016_test.txt')
-vids = []
-with open(VID_LIST, 'r') as f:
-    file_content = f.read()    
-    vids = [ url.strip() for url in file_content.split('\n') ]
+vids = get_urls_from_file(VID_LIST)
 
 # create directory for downloads
 target_dir = Path(f"./{VID_LIST.stem}")
