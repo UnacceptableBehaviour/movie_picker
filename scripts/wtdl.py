@@ -3,7 +3,7 @@
 # youtub
 # ./vtdl.py 
 
-# install: setup - TODO add to git
+# install: setup - TODO add to git, EDIT THESE INSTRUCTIONS
 # > curl https://raw.githubusercontent.com/UnacceptableBehaviour/movie_picker/master/scripts/vtdl.py > vtdl.py
 # > chmod +x vtdl.py
 # > python3 -m venv venv
@@ -26,6 +26,7 @@ from __future__ import unicode_literals
 import youtube_dl
 import sys
 from pathlib import Path
+import json
 import re
 from pprint import pprint
 import threading
@@ -167,14 +168,22 @@ class Dload(threading.Thread):
 
 
 
-    def __init__(self, url_to_fetch, target_dir, ydl_opts=None):
+    def __init__(self, url_to_fetch, base_dir, group_dir, target_dir, ydl_opts=None):
         super().__init__()
         """Create a FileDownloader object with the given options."""
-        self.target_dir = target_dir
+        print(f"output_template: {base_dir}, {group_dir}, {target_dir}")
         self.url_to_fetch = url_to_fetch
+        self.base_dir = base_dir.strip('/')
+        self.group_dir = group_dir.strip('/')
+        self.target_dir = target_dir.strip('/')
+        output_template =  f"{self.base_dir}/"   if self.base_dir else ''
+        output_template += f"{self.group_dir}/"  if self.group_dir else ''
+        output_template += f"{self.target_dir}/" if self.target_dir else ''
+        output_template += "%(title)s-%(id)s.%(ext)s"
+        print(f"output_template: {output_template}")
         self.ydl_opts = {
             #'format': 'bestaudio/best',
-            'outtmpl': f"{self.target_dir}/%(title)s-%(id)s.%(ext)s",
+            'outtmpl': output_template,
             # 'postprocessors': [{
             #     'key': 'FFmpegExtractAudio',
             #     'preferredcodec': 'mp3',
@@ -208,27 +217,119 @@ def get_urls_from_file(filename):
 
     return url_list
 
-VID_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/')
-VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221021_5mins_long.txt')
-vids = get_urls_from_file(VID_LIST)
 
-# create directory for downloads
-target_dir = Path(VID_ROOT, f"./{VID_LIST.stem}")
-try:
-    print(f"Creating: {target_dir}")
-    Path.mkdir(target_dir, parents=True)
-except Exception:
-    print(f"** WARNING ** target_dir already created\n{target_dir}")
-    # yn = input('Continue (y)/n\n')
-    # if yn.strip().lower() == 'n': sys.exit(0)
+# ytdl will create any directories necessary
+# TODO - REMOVE
+# VID_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/')
+# # create directory for downloads
+# target_dir = Path(VID_ROOT, f"./{VID_LIST.stem}")
+# try:
+#     print(f"Creating: {target_dir}")
+#     Path.mkdir(target_dir, parents=True)
+# except Exception:
+#     print(f"** WARNING ** target_dir already created\n{target_dir}")
+#     # yn = input('Continue (y)/n\n')
+#     # if yn.strip().lower() == 'n': sys.exit(0)
+
+
+def load_dict_data_from_DB(cDB, db_path):
+    '''
+    load dict info from text file - json format
+    '''
+
+    if db_path.exists():
+        with open(db_path, 'r') as f:
+            json_db = f.read()
+            db = json.loads(json_db)
+            print(f"Database dict LOADED ({len(db)})")
+
+        for i in db.keys():
+            cDB[i] = db[i]
+
+        print(f"Dict to json > objects COMPLETE ({len(cDB)})")
+        return 0
+
+    else:
+        db = {}  # create a blank file
+        commit_dict_to_DB(db)
+        return -1
+
+def commit_dict_to_DB(commit_db, db_path):
+    '''
+    commit dict info to text file - json format
+    '''
+
+    with open(db_path, 'w') as f:
+        #pprint(commit_db)
+        db_as_json = json.dumps(commit_db)
+        f.write(db_as_json)
         
-pprint(vids)
+
+def create_dld_thread_info( details={} ):
+    thread_info =  { 'downloaded': False,
+                    'base_dir': 'vtdl',
+                    'group_dir': '',
+                    'target_dir': '',
+                    'idx': None,
+                    'pos': None,
+                    'src_url': '',
+                    'title': '' }
+    thread_info.update(details)
+    #pprint(thread_info)
+    return thread_info
+
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+# ENTRY POINT __main__
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+# ALL files to be downloaded in this session
+DLOAD_SESSION_DB = Path('vtdl/dl_session.json')
+download_thread_info_dict = {}
+
+if DLOAD_SESSION_DB.exists():
+    load_dict_data_from_DB(download_thread_info_dict, DLOAD_SESSION_DB)
+    print("* * * * Previous download session exists CONTINUE downloads? * * * *")
+    # TODO implement persistence flow
+    
+
+if '-f' in sys.argv:
+    option_f_index = sys.argv.index('-f')
+    dload_file = sys.argv[option_f_index+1] # VID_LIST
+    if Path(dload_file).exists():
+        dload_file = Path(dload_file)
+        vid_url_list = get_urls_from_file(dload_file)
+        
+        download_thread_info_dict[dload_file.stem] = []
+        
+        for v_url in vid_url_list:
+             download_thread_info_dict[dload_file.stem].append(create_dld_thread_info({
+                'downloaded': False,
+                'base_dir': 'vtdl',
+                'group_dir': 'url_file',
+                'target_dir': dload_file.stem,
+                'idx': None,
+                'pos': None,
+                'src_url': v_url,
+                'title': '' }))
+        
+        del(sys.argv[option_f_index+1])
+        del(sys.argv[option_f_index])
+    else:
+        print(f"* * * WARNING * * *\nFile spcified by option -f\nNOT FOUND:{dload_file} <")
+
+# AFTER ALL OPTIONS PROCESSED SAVE DLOAD SESSION INFO as JSON        
+# commit_dict_to_DB(download_thread_info_dict, DLOAD_SESSION_DB)
+# sys.exit(0)
 
 
 thread_list = []
-for v in vids:
-    print(f"Queueing: {v} for download.")
-    thread_list.append(Dload(v, VID_LIST.stem))
+for target_dir, vid_list in download_thread_info_dict.items():
+    for thread_info in vid_list:
+        print(f"Queueing: {thread_info['src_url']} for download.")
+        #def __init__(self, url_to_fetch, base_dir, group_dir, target_dir, ydl_opts=None):
+        thread_list.append(Dload(thread_info['src_url'], thread_info['base_dir'], thread_info['group_dir'], thread_info['target_dir']))
     
 for t in thread_list:
     print(f"{t.native_id} start:{t.target_dir} - {t.url_to_fetch})")
@@ -236,6 +337,29 @@ for t in thread_list:
 
 DloadProgressDisplay().start()
 
+
+
+sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221021_5mins_long.txt')
+# vids = get_urls_from_file(VID_LIST)
+# 
+# pprint(vids)
+# 
+# thread_list = []
+# for v in vids:
+#     print(f"Queueing: {v} for download.")
+#     #def __init__(self, url_to_fetch, base_dir, group_dir, target_dir, ydl_opts=None):
+#     thread_list.append(Dload(v, 'vtdl', 'url_file', VID_LIST.stem))
+#     
+# for t in thread_list:
+#     print(f"{t.native_id} start:{t.target_dir} - {t.url_to_fetch})")
+#     t.start()
+# 
+# DloadProgressDisplay().start()
+
 # TODO
-# pass file to process as argv
 # pause thread when tot_dload_band > 2MiB / sec
+# update DLOAD_SESSION_DB at end - or DELETE!
