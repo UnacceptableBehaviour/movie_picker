@@ -238,6 +238,4 @@ DloadProgressDisplay().start()
 
 # TODO
 # pass file to process as argv
-# remove commented files from list of files to dload
 # pause thread when tot_dload_band > 2MiB / sec
-#   add notify to end of download
