@@ -31,7 +31,6 @@ import youtube_dl
 
 # - - - simplest persistence code possible - - - -
 import json
-from pathlib import Path
 TEST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/test_load.json')
 CHANNEL_DB_FILE = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/channel_downloads.json')
 DLOAD_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/chan')
@@ -60,6 +59,7 @@ def load_dict_data_from_DB(cDB):
         db = {}  # create a blank file
         commit_dict_to_DB(db)
         return -1
+
 
 def commit_dict_to_DB(commit_db):
     '''
@@ -168,9 +168,8 @@ def get_playlist_update(cDB, chan_key, pl_url, ydl_opts_pass={}):
     play_list = {}
     new_vid_entries = {}
     
-    ydl_opts = {'quiet':True }
-    # ydl_opts = {'quiet':True,
-    #             'playlistreverse':False }    
+    ydl_opts = {'quiet':True,
+                'playlistreverse':True }    
     ydl_opts.update(ydl_opts_pass)    
     pprint(ydl_opts)
 
@@ -193,10 +192,8 @@ def get_playlist_update(cDB, chan_key, pl_url, ydl_opts_pass={}):
                                                              'downloaded': False 
                                                              }
 
-    reverse_play_list = dict(reversed(list(play_list.items())))
-    
     vid_pos = None
-    for k, video in reverse_play_list.items():
+    for k, video in play_list.items():
         if k in cDB[chan_key].keys():
             vid_pos = cDB[chan_key][k]['pos']
             print(f"P:{(video['pos']):04} K:{k} {video['src_url']} - {video['title']}")
