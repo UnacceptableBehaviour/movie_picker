@@ -83,6 +83,78 @@ def get_urls_from_file(filename):
 #
 # file IO helpers - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - /
 
+#
+# subscriptions - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \
+channel_DB = {}
+CHANNEL_DB_FILE = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/channel_downloads.json')
+load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
+NO_OF_ITEMS_PER_CHAN = 40
+playlist_items = f"1-{NO_OF_ITEMS_PER_CHAN}"
+
+def get_playlist_update(cDB, chan_key, group_dir, pl_url, ydl_opts_pass={}):
+    print(f"Getting PL from: {pl_url}")
+    play_list = {}
+    new_vid_entries = {}
+    
+    ydl_opts = {'quiet':True,
+                'playlistreverse':True,
+                'ignoreerrors':True}
+    
+    ydl_opts.update(ydl_opts_pass)
+    
+    if chan_key not in cDB.keys(): ydl_opts['playlist_items'] = None   # download everything
+    pprint(ydl_opts)
+
+    ydl = youtube_dl.YoutubeDL(ydl_opts)
+
+    with ydl:
+        result = ydl.extract_info(pl_url, download=False) 
+    
+        if 'entries' in result:
+            videos = result['entries']           # list of dict            
+
+            for i, video in enumerate(videos):
+                # see Osx4T/05_download_tools_open_source/yt_dl/vtdl/video.json for object info
+                try:
+                    if video == None:
+                        print(f"{(i):03}: K: -- -- - * * * * Download not available * * * *")
+                        continue
+                    else:
+                        print(f"{(i):03}: K:{video['webpage_url_basename']} {video['webpage_url']} - {video['title']}")   # {i:03} left pad n with 0's 3 digits
+                        play_list[video['webpage_url_basename']] = { 'src_url': video['webpage_url'],
+                                                                     'group_dir': None,
+                                                                     'target_dir': chan_key,                                                                     
+                                                                     'pos': i,
+                                                                     'idx': video['playlist_index'],
+                                                                     'title': video['title'],
+                                                                     'downloaded': False,
+                                                                     'url_basename': video['webpage_url_basename']}            
+                except Exception as e:
+                    print(f"> get_playlist - Error <{i}>")
+                    pprint(e)
+
+    if chan_key in cDB.keys():
+        vid_pos = None
+        for k, video in play_list.items():
+            if k in cDB[chan_key].keys():
+                vid_pos = cDB[chan_key][k]['pos']
+                print(f"P:{(video['pos']):04} K:{k} {video['src_url']} - {video['title']}")
+                      # P-resent video
+            if k not in cDB[chan_key].keys():
+                new_vid_entries[k] = video
+                vid_pos += 1
+                new_vid_entries[k]['pos'] = vid_pos
+                print(f"N:{(video['pos']):04} K:{k} {video['src_url']} - {video['title']}")
+                      # N-ot present video
+        
+        return new_vid_entries
+    
+    return play_list
+
+# subscriptions - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - /
+#
+
+
 class MyLogger(object):
     logged_errors = []
     log_lock = threading.Lock()
@@ -322,8 +394,71 @@ if '-f' in sys.argv:
     else:
         print(f"* * * WARNING * * *\nFile spcified by option -f\nNOT FOUND:{dload_file} <")
 
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# update subscriptions
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CHANNEL_VIDEOS_FILE = Path('./vtdl/vtdl_video_channel_list.txt')
+video_channel_urls = get_urls_from_file(CHANNEL_VIDEOS_FILE)
+
+# r - reload - load all video info if channel doesn't exist, build list of new entries if it does
+# u - update DB - LIVE!
+download_targets_all = {}
+if '-r' in sys.argv:        # - - - - - - - - - - - - - - - - - - - - - - - - RELOAD (-r) & RECORD NEW (-u)
+    for channel_url in video_channel_urls:
+        print(f"URL: {channel_url}")
+        channel_key = channel_url.replace('https://www.youtube.com/c/','').replace('https://www.youtube.com/user/','').replace('https://www.youtube.com/channel/','').replace('/videos','') 
+        print(f"channel_key: {channel_key}")
+        video_dict = None
+        recent_chan_vid_info = None
+        group_dir = None
+        try:
+            if channel_key not in channel_DB:
+                video_dict = get_playlist_update(channel_DB, channel_key, group_dir, channel_url, {'quiet':False, 'verbose':True, 'forceurl':True})
+            else:
+                recent_chan_vid_info = get_playlist_update(channel_DB, channel_key, group_dir, channel_url, {'playlist_items': playlist_items, 'verbose':True, 'forceurl':True})
+        except BaseException as e:
+            print('> - Error getting PLay List Info')
+            pprint(e)            
+        finally:            
+            if ('-u' in sys.argv) and (video_dict or recent_chan_vid_info):
+                print('> - SAVING DATA')
+                if channel_key in channel_DB:
+                    channel_DB[channel_key].update(recent_chan_vid_info)
+                else:
+                    channel_DB[channel_key] = video_dict
+                commit_dict_to_DB(channel_DB, CHANNEL_DB_FILE)
+        
+        vid_info = video_dict if video_dict else recent_chan_vid_info
+        
+        print(f"> - - - - - - - - Downloaded video info for {channel_key} - - - - - - - - <")
+        pprint(vid_info)
+        download_targets_all[channel_key] = []
+        
+        if vid_info:
+            for k, video in vid_info.items():
+                download_targets_all[channel_key].append(video)        
+        print("     > - - - - - - - - - - - - Channel END - - - - - - - - - - - - <\n\n\n\n")
+
+
+print(f"> - - - - - - - - Downloaded video info for ALL channels - - - - - - - - <")
+pprint(download_targets_all)
+print("     > - - - - - - - - - - - - PASS to threads - - - - - - - - - - - <\n\n\n\n")
+
+
+# create thread info dict for downloads
+for target_dir, vid_list in download_targets_all.items():
+    if len(vid_list) == 0: continue
+    if target_dir not in download_thread_info_dict: download_thread_info_dict[target_dir] = []
+    for dload_target_info in vid_list:
+        thread_info = create_dld_thread_info(dload_target_info)   # fill in gaps in thread dict
+        download_thread_info_dict[target_dir].append(thread_info)
+
+pprint(download_thread_info_dict)
+#sys.exit(0)
+
 # AFTER ALL OPTIONS PROCESSED SAVE DLOAD SESSION INFO as JSON        
-# commit_dict_to_DB(download_thread_info_dict, DLOAD_SESSION_DB)
+commit_dict_to_DB(download_thread_info_dict, DLOAD_SESSION_DB)
 # sys.exit(0)
 
 
