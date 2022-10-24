@@ -38,7 +38,8 @@ DLOAD_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/chan'
 channel_DB = {}
 download_targets_by_channel = {}
 
-
+# file IO helpers - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \
+#
 def load_dict_data_from_DB(cDB, db_path):
     '''
     load dict info from text file - json format
@@ -71,10 +72,6 @@ def commit_dict_to_DB(commit_db, db_path):
         db_as_json = json.dumps(commit_db)
         f.write(db_as_json)
 
-
-# load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
-# pprint(channel_DB)
-
 def get_urls_from_file(filename):
     with open(filename, 'r') as f:
         content = f.read()
@@ -88,6 +85,10 @@ def get_urls_from_file(filename):
         url_list.append(line)   # maybe add regex to check valid url
 
     return url_list
+#
+# file IO helpers - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - /
+
+
 
 def get_video_dict_from_channel(videos_url, quiet_mode=True, reverseMode=True):
     return get_playlist(videos_url, quiet_mode, reverseMode)
@@ -99,41 +100,11 @@ def get_playlist(pl_url, quiet_mode=True, reverseMode=False):
     play_list_entries = []
     channel_name = ''
 
-    ydl = youtube_dl.YoutubeDL({'quiet':quiet_mode})
+    ydl = youtube_dl.YoutubeDL({'quiet':quiet_mode, 'ignoreerrors':True})
 
     with ydl:
-        #result = ydl.extract_info(pl_url, download=False, { #We just want to extract the info
-        result = ydl.extract_info(pl_url, download=False, extra_info={
-                #'playliststart': 2,
-                #'playlistend':   4,
-                'playlist_items': '2,4,7-9,11'
-            }) 
-            # playliststart:     Playlist item to start at.
-            # playlistend:       Playlist item to end at.
-            # playlist_items:    Specific indices of playlist to download.
-            # playlistreverse:   Download playlist items in reverse order.
-            # playlistrandom:    Download playlist items in random order.
-        # 'n_entries': 10,
-        # 'playlist_index': 8,
-        # 'playlist': 'David Sinclair - Videos',
-        # 'playlist_id': 'UCwD5YYkbYmN2iFHON9FyDXg',
-        # 'channel': 'David Sinclair',
-        # 'channel_id': 'UCwD5YYkbYmN2iFHON9FyDXg',
-        # 'channel_url': 'https://www.youtube.com/channel/UCwD5YYkbYmN2iFHON9FyDXg',
-        # 'tags': 'Lifespan','aging','what is aging','how do we age'
-        # 'webpage_url': 'https://www.youtube.com/watch?v=wD8reCw3Kls',
-        # 'webpage_url_basename': 'wD8reCw3Kls',
-        # 'id': 'wD8reCw3Kls',
-        # 'subtitles': {'en': [{'ext': 'srv1',
-        #                       'url': 'https://www.youtube.com/api/timedtext?v=wD8reCw3Kls&caps=asr&xoaf=5&hl=en&ip=0.0.0.0&ipbits=0&expire=1665365119&sparams=ip%2Cipbits%2Cexpire%2Cv%2Ccaps%2Cxoaf&signature=6499802713B9F79238D8BC253603B93BD8BB251E.944F5FCFA5CAD67518061EF0C50636C305BEE844&key=yt8&lang=en&fmt=srv1'},
-        # 'thumbnails': [{'height': 94,
-        #                  'id': '0',
-        #                  'resolution': '168x94',
-        #                  'url': 'https://i.ytimg.com/vi/wD8reCw3Kls/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLD1pYNbOiTSzXope4ecIB8SyHM3pA',
-        #                  'width': 168},    
-        #
-        # extracting partial PL
-        # https://askubuntu.com/questions/1074697/how-can-i-download-part-of-a-playlist-from-youtube-with-youtube-dl
+        result = ydl.extract_info(pl_url, download=False, extra_info={}) 
+
     
         if 'entries' in result:
             if reverseMode:
@@ -225,25 +196,25 @@ print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - 
 print(' - - CURRENT STORED PLAYLISTS - - ') 
 print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - - - - - - - - - - - - 
 
-load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
-NO_OF_ITEMS_PER_CHAN = 5
-for channel, content in channel_DB.items():
-    chan_url = f"https://www.youtube.com/c/{channel}/videos"
-    print(f"> {channel} {chan_url} - - - - - - - <")
-    item_count = 0
-    rev_content = dict(reversed(list(content.items())))
-    for v_id, vid_data in rev_content.items():
-        print(f"{v_id}: {(vid_data['pos']):04} {vid_data['title']}")        
-        item_count += 1
-        if item_count > NO_OF_ITEMS_PER_CHAN:
-            pprint(vid_data)
-            break
-
-print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - - - - - - - - - - - - 
+load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE) # - - - - - - - - - - - - - - - - -# - - - - - - - 
+NO_OF_ITEMS_PER_CHAN = 5                                                               #
+for channel, content in channel_DB.items():                                            #
+    chan_url = f"https://www.youtube.com/c/{channel}/videos"                           #
+    print(f"> {channel} {chan_url} - - - - - - - <")                                   #
+    item_count = 0                                                                     #
+    rev_content = dict(reversed(list(content.items())))                                # DUMP channel info
+    for v_id, vid_data in rev_content.items():                                         #
+        print(f"{v_id}: {(vid_data['pos']):04} {vid_data['title']}")                   #
+        item_count += 1                                                                #
+        if item_count > NO_OF_ITEMS_PER_CHAN:                                          #
+            pprint(vid_data)                                                           #
+            break                                                                      #
+                                                                                       #
+print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - - - - -# - - - - - - - 
 
 # r - reload
 # u - update DB
-if '-r' in sys.argv:
+if '-r' in sys.argv:        # - - - - - - - - - - - - - - - - - - - - - - - - 
     for url in video_channel_urls:
         print(f"URL: {url}")
         #print(url.replace('https://www.youtube.com/c/','').replace('/videos',''))
