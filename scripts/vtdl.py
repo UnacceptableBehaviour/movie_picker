@@ -152,10 +152,7 @@ def get_playlist_update(cDB, chan_key, group_dir, pl_url, ydl_opts_pass={}):
 #sys.exit(0)
 
 CHANNEL_VIDEOS_FILE = Path('./vtdl/vtdl_video_channel_list.txt')
-
 video_channel_urls = get_urls_from_file(CHANNEL_VIDEOS_FILE)
-video_channel_keys = []
-video_list = []
 
 print('>> video_channel_urls - - - - S')
 for c in video_channel_urls:
@@ -196,7 +193,6 @@ if '-r' in sys.argv:        # - - - - - - - - - - - - - - - - - - - - - - - - RE
         print(f"URL: {channel_url}")
         channel_key = channel_url.replace('https://www.youtube.com/c/','').replace('https://www.youtube.com/user/','').replace('https://www.youtube.com/channel/','').replace('/videos','') 
         print(f"channel_key: {channel_key}")
-        video_channel_keys.append(channel_key)
         video_dict = None
         recent_chan_vid_info = None
         group_dir = None
