@@ -33,6 +33,56 @@ import threading
 import time
 from datetime import datetime       # datetime.now().timestamp() = 1666356102.098952
 
+# file IO helpers - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \
+#
+def load_dict_data_from_DB(cDB, db_path):
+    '''
+    load dict info from text file - json format
+    '''
+
+    if db_path.exists():
+        with open(db_path, 'r') as f:
+            json_db = f.read()
+            db = json.loads(json_db)
+            print(f"Database dict LOADED ({len(db)})")
+
+        for i in db.keys():
+            cDB[i] = db[i]
+
+        print(f"Dict to json > objects COMPLETE ({len(cDB)})")
+        return 0
+
+    else:
+        db = {}  # create a blank file
+        commit_dict_to_DB(db, db_path)
+        return -1
+
+def commit_dict_to_DB(commit_db, db_path):
+    '''
+    commit dict info to text file - json format
+    '''
+
+    with open(db_path, 'w') as f:
+        #pprint(commit_db)
+        db_as_json = json.dumps(commit_db)
+        f.write(db_as_json)
+        
+def get_urls_from_file(filename):
+    with open(filename, 'r') as f:
+        content = f.read()
+
+    url_list = []
+    for line in content.split('\n'):
+        if len(line.strip()) == 0: continue
+        if re.findall('^#', line): continue
+        if '#' in line:
+            line = line.split('#')[0]
+        url_list.append(line)   # maybe add regex to check valid url
+
+    return url_list
+#
+# file IO helpers - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - /
+
 class MyLogger(object):
     logged_errors = []
     log_lock = threading.Lock()
@@ -203,20 +253,6 @@ class Dload(threading.Thread):
         # TODO check bandwidth & notify on exit
 
 
-def get_urls_from_file(filename):
-    with open(filename, 'r') as f:
-        content = f.read()
-
-    url_list = []
-    for line in content.split('\n'):
-        if len(line.strip()) == 0: continue
-        if re.findall('^#', line): continue
-        if '#' in line:
-            line = line.split('#')[0]
-        url_list.append(line)   # maybe add regex to check valid url
-
-    return url_list
-
 
 # ytdl will create any directories necessary
 # TODO - REMOVE
@@ -231,39 +267,6 @@ def get_urls_from_file(filename):
 #     # yn = input('Continue (y)/n\n')
 #     # if yn.strip().lower() == 'n': sys.exit(0)
 
-
-def load_dict_data_from_DB(cDB, db_path):
-    '''
-    load dict info from text file - json format
-    '''
-
-    if db_path.exists():
-        with open(db_path, 'r') as f:
-            json_db = f.read()
-            db = json.loads(json_db)
-            print(f"Database dict LOADED ({len(db)})")
-
-        for i in db.keys():
-            cDB[i] = db[i]
-
-        print(f"Dict to json > objects COMPLETE ({len(cDB)})")
-        return 0
-
-    else:
-        db = {}  # create a blank file
-        commit_dict_to_DB(db, db_path)
-        return -1
-
-def commit_dict_to_DB(commit_db, db_path):
-    '''
-    commit dict info to text file - json format
-    '''
-
-    with open(db_path, 'w') as f:
-        #pprint(commit_db)
-        db_as_json = json.dumps(commit_db)
-        f.write(db_as_json)
-        
 
 def create_dld_thread_info( details={} ):
     thread_info =  { 'downloaded': False,
