@@ -38,41 +38,41 @@ DLOAD_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/chan'
 channel_DB = {}
 download_targets_by_channel = {}
 
-def load_dict_data_from_DB(cDB):
+
+def load_dict_data_from_DB(cDB, db_path):
     '''
-    load stored channel info from text file - json format
+    load dict info from text file - json format
     '''
 
-    if CHANNEL_DB_FILE.exists():
-        with open(CHANNEL_DB_FILE, 'r') as f:
+    if db_path.exists():
+        with open(db_path, 'r') as f:
             json_db = f.read()
             db = json.loads(json_db)
-            print(f"Channel database LOADED ({len(db)})")
+            print(f"Database dict LOADED ({len(db)})")
 
         for i in db.keys():
             cDB[i] = db[i]
 
-        print(f"Channel database json > objects COMPLETE ({len(cDB)})")
+        print(f"Dict to json > objects COMPLETE ({len(cDB)})")
         return 0
 
     else:
         db = {}  # create a blank file
-        commit_dict_to_DB(db)
+        commit_dict_to_DB(db, db_path)
         return -1
-
-
-def commit_dict_to_DB(commit_db):
+    
+def commit_dict_to_DB(commit_db, db_path):
     '''
-    commit channel info to text file - json format
+    commit dict info to text file - json format
     '''
 
-    with open(CHANNEL_DB_FILE, 'w') as f:
+    with open(db_path, 'w') as f:
         #pprint(commit_db)
         db_as_json = json.dumps(commit_db)
         f.write(db_as_json)
 
 
-# load_dict_data_from_DB(channel_DB)
+# load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
 # pprint(channel_DB)
 
 def get_urls_from_file(filename):
@@ -225,7 +225,7 @@ print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - 
 print(' - - CURRENT STORED PLAYLISTS - - ') 
 print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - - - - - - - - - - - - 
 
-load_dict_data_from_DB(channel_DB)
+load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
 NO_OF_ITEMS_PER_CHAN = 5
 for channel, content in channel_DB.items():
     chan_url = f"https://www.youtube.com/c/{channel}/videos"
@@ -266,7 +266,7 @@ if '-r' in sys.argv:
                 else:
                     channel_DB[channel_key] = video_dict
                     # TODO - add to download list
-                commit_dict_to_DB(channel_DB)
+                commit_dict_to_DB(channel_DB, CHANNEL_DB_FILE)
                 
         print(f"Downloaded video info for {channel_key}")
         pprint(video_dict)
@@ -293,7 +293,7 @@ for k, video in recent_chan_vid_info.items():
 
 # comparison update - yield missing items from updates playlists & download them
 # if '-u' in sys.argv:
-#     commit_dict_to_DB(channel_DB)
+#     commit_dict_to_DB(channel_DB, CHANNEL_DB_FILE)
 
 
 # youtube_dl info
