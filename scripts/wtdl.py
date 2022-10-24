@@ -251,7 +251,7 @@ def load_dict_data_from_DB(cDB, db_path):
 
     else:
         db = {}  # create a blank file
-        commit_dict_to_DB(db)
+        commit_dict_to_DB(db, db_path)
         return -1
 
 def commit_dict_to_DB(commit_db, db_path):
