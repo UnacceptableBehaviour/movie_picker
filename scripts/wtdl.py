@@ -44,7 +44,7 @@ def load_dict_data_from_DB(cDB, db_path):
         with open(db_path, 'r') as f:
             json_db = f.read()
             db = json.loads(json_db)
-            print(f"Database dict LOADED ({len(db)})")
+            print(f"Database dict [{db_path.stem}] LOADED ({len(db)})")
 
         for i in db.keys():
             cDB[i] = db[i]
@@ -88,7 +88,7 @@ def get_urls_from_file(filename):
 channel_DB = {}
 CHANNEL_DB_FILE = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/channel_downloads.json')
 load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
-NO_OF_ITEMS_PER_CHAN = 40
+NO_OF_ITEMS_PER_CHAN = 10
 playlist_items = f"1-{NO_OF_ITEMS_PER_CHAN}"
 
 def get_playlist_update(cDB, chan_key, group_dir, pl_url, ydl_opts_pass={}):
@@ -122,7 +122,7 @@ def get_playlist_update(cDB, chan_key, group_dir, pl_url, ydl_opts_pass={}):
                     else:
                         print(f"{(i):03}: K:{video['webpage_url_basename']} {video['webpage_url']} - {video['title']}")   # {i:03} left pad n with 0's 3 digits
                         play_list[video['webpage_url_basename']] = { 'src_url': video['webpage_url'],
-                                                                     'group_dir': None,
+                                                                     'group_dir': '',
                                                                      'target_dir': chan_key,                                                                     
                                                                      'pos': i,
                                                                      'idx': video['playlist_index'],
@@ -295,9 +295,9 @@ class Dload(threading.Thread):
         """Create a FileDownloader object with the given options."""
         print(f"output_template: {base_dir}, {group_dir}, {target_dir}")
         self.url_to_fetch = url_to_fetch
-        self.base_dir = base_dir.strip('/')
-        self.group_dir = group_dir.strip('/')
-        self.target_dir = target_dir.strip('/')
+        self.base_dir = base_dir.strip('/') if base_dir else ''
+        self.group_dir = group_dir.strip('/') if group_dir else ''
+        self.target_dir = target_dir.strip('/') if target_dir else ''
         output_template =  f"{self.base_dir}/"   if self.base_dir else ''
         output_template += f"{self.group_dir}/"  if self.group_dir else ''
         output_template += f"{self.target_dir}/" if self.target_dir else ''
@@ -353,6 +353,14 @@ def create_dld_thread_info( details={} ):
     #pprint(thread_info)
     return thread_info
 
+def print_download_intent(download_thread_info_dict):
+    #pprint(download_thread_info_dict)
+    for chan, info in download_thread_info_dict.items():
+        print(f"\n# # # # #   Chan: {chan} ({len(info)})  - Dir: base/group/chan")
+        pprint(info[0])
+    
+
+
 
 # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 # ENTRY POINT __main__
@@ -376,13 +384,13 @@ if '-f' in sys.argv:
         dload_file = Path(dload_file)
         vid_url_list = get_urls_from_file(dload_file)
         
-        download_thread_info_dict[dload_file.stem] = []
+        if dload_file.stem not in download_thread_info_dict: download_thread_info_dict[dload_file.stem] = []
         
         for v_url in vid_url_list:
              download_thread_info_dict[dload_file.stem].append(create_dld_thread_info({
                 'downloaded': False,
                 'base_dir': 'vtdl',
-                'group_dir': 'url_file',
+                'group_dir': 'nonSub',
                 'target_dir': dload_file.stem,
                 'idx': None,
                 'pos': None,
@@ -411,7 +419,7 @@ if '-r' in sys.argv:        # - - - - - - - - - - - - - - - - - - - - - - - - RE
         print(f"channel_key: {channel_key}")
         video_dict = None
         recent_chan_vid_info = None
-        group_dir = None
+        group_dir = ''
         try:
             if channel_key not in channel_DB:
                 video_dict = get_playlist_update(channel_DB, channel_key, group_dir, channel_url, {'quiet':False, 'verbose':True, 'forceurl':True})
@@ -454,13 +462,18 @@ for target_dir, vid_list in download_targets_all.items():
         thread_info = create_dld_thread_info(dload_target_info)   # fill in gaps in thread dict
         download_thread_info_dict[target_dir].append(thread_info)
 
-pprint(download_thread_info_dict)
-#sys.exit(0)
 
+print_download_intent(download_thread_info_dict)
+
+yn = input('Continue (y)/n\n')
+if yn.strip().lower() == 'n': sys.exit(0)
+
+# TODO add before exit hook to ensure persistence across exec runs
 # AFTER ALL OPTIONS PROCESSED SAVE DLOAD SESSION INFO as JSON        
 commit_dict_to_DB(download_thread_info_dict, DLOAD_SESSION_DB)
 # sys.exit(0)
 
+sys.exit(0)
 
 thread_list = []
 for target_dir, vid_list in download_thread_info_dict.items():
@@ -481,22 +494,6 @@ sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# VID_LIST = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20221021_5mins_long.txt')
-# vids = get_urls_from_file(VID_LIST)
-# 
-# pprint(vids)
-# 
-# thread_list = []
-# for v in vids:
-#     print(f"Queueing: {v} for download.")
-#     #def __init__(self, url_to_fetch, base_dir, group_dir, target_dir, ydl_opts=None):
-#     thread_list.append(Dload(v, 'vtdl', 'url_file', VID_LIST.stem))
-#     
-# for t in thread_list:
-#     print(f"{t.native_id} start:{t.target_dir} - {t.url_to_fetch})")
-#     t.start()
-# 
-# DloadProgressDisplay().start()
 
 # TODO
 # pause thread when tot_dload_band > 2MiB / sec
