@@ -166,7 +166,12 @@ print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - 
 
 load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE) # - - - - - - - - - - - - - - - - -#
 pprint(channel_DB.keys())                                                              #
+# pprint(channel_DB)
+# sys.exit(0)
 NO_OF_ITEMS_PER_CHAN = 40                                                              #
+delete = []
+no_to_del = 2
+delete_active = False       # TO DELETE THE LAST no_to_del ENTRIES set to True
 playlist_items = f"1-{NO_OF_ITEMS_PER_CHAN}"                                           #
 for channel, content in channel_DB.items():                                            #
     chan_url = f"https://www.youtube.com/c/{channel}/videos"                           #
@@ -176,13 +181,22 @@ for channel, content in channel_DB.items():                                     
     print('-' * len(chan_title))                                                       #
     item_count = 0                                                                     #
     rev_content = dict(reversed(list(content.items())))                                # DUMP channel info
+    delete = []
     for v_id, vid_data in rev_content.items():                                         #
         print(f"{v_id}: {(vid_data['pos']):04} {vid_data['title']}")                   #
-        item_count += 1                                                                #
+        if item_count < no_to_del: delete.append(v_id)
+        item_count += 1                                                                #        
         if item_count > NO_OF_ITEMS_PER_CHAN:                                          #
+            print(v_id)
             pprint(vid_data)                                                           #
+            for v in delete:
+                if delete_active:
+                    print(f"D - - -> c:{channel}-o-{v}<")
+                    print(channel_DB[channel][v])
+                    channel_DB[channel].pop(v)            
+                    print('-')                    
             break                                                                      #
-                                                                                       #
+if delete_active: commit_dict_to_DB(channel_DB, CHANNEL_DB_FILE)
 print("\n" + "*" * sep_length + "\n")               # - - - - - - - - - - - - - - - - -#
 
 # r - reload - load all video info if channel doesn't exist, build list of new entries if it does
