@@ -88,7 +88,7 @@ def get_urls_from_file(filename):
 channel_DB = {}
 CHANNEL_DB_FILE = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/channel_downloads.json')
 load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
-NO_OF_ITEMS_PER_CHAN = 10
+NO_OF_ITEMS_PER_CHAN = 20
 playlist_items = f"1-{NO_OF_ITEMS_PER_CHAN}"
 
 def get_playlist_update(cDB, chan_key, group_dir, pl_url, ydl_opts_pass={}):
@@ -326,20 +326,6 @@ class Dload(threading.Thread):
 
 
 
-# ytdl will create any directories necessary
-# TODO - REMOVE
-# VID_ROOT = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/')
-# # create directory for downloads
-# target_dir = Path(VID_ROOT, f"./{VID_LIST.stem}")
-# try:
-#     print(f"Creating: {target_dir}")
-#     Path.mkdir(target_dir, parents=True)
-# except Exception:
-#     print(f"** WARNING ** target_dir already created\n{target_dir}")
-#     # yn = input('Continue (y)/n\n')
-#     # if yn.strip().lower() == 'n': sys.exit(0)
-
-
 def create_dld_thread_info( details={} ):
     thread_info =  { 'downloaded': False,
                     'base_dir': 'vtdl',
@@ -419,7 +405,7 @@ if '-r' in sys.argv:        # - - - - - - - - - - - - - - - - - - - - - - - - RE
         print(f"channel_key: {channel_key}")
         video_dict = None
         recent_chan_vid_info = None
-        group_dir = ''
+        group_dir = 'chan'
         try:
             if channel_key not in channel_DB:
                 video_dict = get_playlist_update(channel_DB, channel_key, group_dir, channel_url, {'quiet':False, 'verbose':True, 'forceurl':True})
@@ -473,12 +459,13 @@ if yn.strip().lower() == 'n': sys.exit(0)
 commit_dict_to_DB(download_thread_info_dict, DLOAD_SESSION_DB)
 # sys.exit(0)
 
-sys.exit(0)
+#sys.exit(0)
 
 thread_list = []
 for target_dir, vid_list in download_thread_info_dict.items():
     for thread_info in vid_list:
         print(f"Queueing: {thread_info['src_url']} for download.")
+        if thread_info['group_dir'] == '': thread_info['group_dir'] = 'chan' # TODO - REMOVE
         #def __init__(self, url_to_fetch, base_dir, group_dir, target_dir, ydl_opts=None):
         thread_list.append(Dload(thread_info['src_url'], thread_info['base_dir'], thread_info['group_dir'], thread_info['target_dir']))
     
@@ -496,5 +483,11 @@ sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
 # TODO
+# when checking playlists for new content check 10,20,40,80,160,320 until caught up 
 # pause thread when tot_dload_band > 2MiB / sec
-# update DLOAD_SESSION_DB at end - or DELETE!
+# update DLOAD_SESSION_DB at end - or DELETE or rename for history / end of week compiliation
+# dont start DloadProgressDisplay().start() if there are no downloads queued
+# add commit_dict_to_DB to exit hook to ensure persistence across exec runs
+# store this weeks new content in one folder for transfer to other devices
+# get X back cataloque downloads per week - add setting
+
