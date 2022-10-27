@@ -483,6 +483,7 @@ sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
 # TODO
+# add debug thread info to DloadProgressDisplay - find uncaught finished downloads
 # when checking playlists for new content check 10,20,40,80,160,320 until caught up 
 # pause thread when tot_dload_band > 2MiB / sec
 # update DLOAD_SESSION_DB at end - or DELETE or rename for history / end of week compiliation
