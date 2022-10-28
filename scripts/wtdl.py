@@ -362,15 +362,21 @@ if DLOAD_SESSION_DB.exists():
     print("* * * * Previous download session exists CONTINUE downloads? * * * *")
     # TODO implement persistence flow
     
-
-if '-f' in sys.argv:
-    option_f_index = sys.argv.index('-f')
+file_dload_only = False
+file_channel = None
+if ('-f' in sys.argv) or ('-fo' in sys.argv):    
+    if ('-f' in sys.argv): option_f_index = sys.argv.index('-f')
+    if ('-fo' in sys.argv):
+        option_f_index = sys.argv.index('-fo')
+        file_dload_only = True
     dload_file = sys.argv[option_f_index+1] # VID_LIST
     if Path(dload_file).exists():
+        print(f"PROCESSING File:{dload_file} <")
         dload_file = Path(dload_file)
         vid_url_list = get_urls_from_file(dload_file)
         
         if dload_file.stem not in download_thread_info_dict: download_thread_info_dict[dload_file.stem] = []
+        file_channel = dload_file.stem
         
         for v_url in vid_url_list:
              download_thread_info_dict[dload_file.stem].append(create_dld_thread_info({
@@ -382,6 +388,8 @@ if '-f' in sys.argv:
                 'pos': None,
                 'src_url': v_url,
                 'title': '' }))
+             pprint(len(download_thread_info_dict[dload_file.stem])-1)
+             pprint(download_thread_info_dict[dload_file.stem][len(download_thread_info_dict[dload_file.stem])-1])
         
         del(sys.argv[option_f_index+1])
         del(sys.argv[option_f_index])
@@ -450,7 +458,10 @@ for target_dir, vid_list in download_targets_all.items():
 
 
 print_download_intent(download_thread_info_dict)
-
+print('')
+pprint(sys.argv)
+print('')
+if file_dload_only: print(f"File download ONLY:{file_dload_only}") 
 yn = input('Continue (y)/n\n')
 if yn.strip().lower() == 'n': sys.exit(0)
 
@@ -463,6 +474,7 @@ commit_dict_to_DB(download_thread_info_dict, DLOAD_SESSION_DB)
 
 thread_list = []
 for target_dir, vid_list in download_thread_info_dict.items():
+    if (file_dload_only) and (file_channel != target_dir): continue 
     for thread_info in vid_list:
         print(f"Queueing: {thread_info['src_url']} for download.")
         if thread_info['group_dir'] == '': thread_info['group_dir'] = 'chan' # TODO - REMOVE
@@ -483,12 +495,13 @@ sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
 # TODO
-# add debug thread info to DloadProgressDisplay - find uncaught finished downloads
+# dont start DloadProgressDisplay().start() if there are no downloads queued - EASY QUICK - DONE? - CHECK
+# pause thread when tot_dload_band > 2MiB / sec - EASY QUICK 
+# add debug thread info to DloadProgressDisplay - find uncaught finished downloads (Logger needs work!) - HIGH
+# add commit_dict_to_DB to EXIT HOOK to ensure persistence across exec runs (Logger needs work!) - HIGH
+
 # when checking playlists for new content check 10,20,40,80,160,320 until caught up 
-# pause thread when tot_dload_band > 2MiB / sec
 # update DLOAD_SESSION_DB at end - or DELETE or rename for history / end of week compiliation
-# dont start DloadProgressDisplay().start() if there are no downloads queued
-# add commit_dict_to_DB to exit hook to ensure persistence across exec runs
 # store this weeks new content in one folder for transfer to other devices
 # get X back cataloque downloads per week - add setting
 
