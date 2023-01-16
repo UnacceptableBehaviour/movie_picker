@@ -292,6 +292,7 @@ class MMedia:
 
 		# this retreives better quality cover art
 		local_file_name = Path(self.info['file_path'].parent, f"{self.info['file_path'].parent}")
+		local_file_name = Path(self.info['file_path'].parent) #, f"{self.info['file_path'].parent}")
 		print(f"STORING hires IMAGE TO:\n{local_file_name}")
 
 		result = get_hires_cover(self.info['file_title'], search_year, local_file_name)
@@ -373,7 +374,7 @@ class MediaLibIter(Iterator):
 
 
 class MMediaCloud:
-	db_paths_file = Path('./scratch/db_paths.txt')
+	db_paths_file = Path('./db_paths.txt')
 	known_paths = []
 	paths_to_check = []
 	main = None
@@ -807,6 +808,7 @@ class MMediaLib(Iterable):
 
 	def add_media(self, media_path):
 		media_path = Path(media_path)
+		print(f"media_path: {media_path}")
 
 		if re.search(r'([sS]\d+?[eE]\d+?)|(\dx\d\d)', str(media_path)):
 			print("MEDIA LOOK LIKE SERIES - SKIPPING\n{media_path}\n - - - - - ")
@@ -820,6 +822,8 @@ class MMediaLib(Iterable):
 				return # raise & log TODO
 
 			media = MMedia(media_path, {}, True)
+			print(f"add_media: {media_path}")
+			pprint(media)
 
 			if media.info['movie_data_loaded'] == True:
 				self.media_files_count[media.file_path().name.lower()] += 1
@@ -851,7 +855,8 @@ class MMediaLib(Iterable):
 
 		file_size = round(video_path.stat().st_size / (1024 * 1024),1)
 
-		if file_size < 200: valid = False
+		if (file_size > 5) and (file_size < 200): valid = False
+		# demo movie reels less than 5mb
 
 		return valid
 

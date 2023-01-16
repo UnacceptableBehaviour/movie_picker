@@ -61,7 +61,7 @@ IPAddr = socket.gethostbyname(hostname)
 print("Your Computer IP Address is:" + IPAddr)
 print(f"OS: {running_os} - {running_os_release}")
 
-#media_lib = MMediaLib(media_cloud.main)
+media_lib = MMediaLib(media_cloud.main)
 
 # if running_os == 'Darwin' or running_os == 'Linux':
 # 
@@ -87,7 +87,6 @@ print(f"OS: {running_os} - {running_os_release}")
 #         print(p)
 # 
 #     sys.exit(0)
-media_lib = MMediaLib(Path('/Volumes/Osx4T/tor/__media_data2/medialib2.pickle'))
 
 LOCAL_IMAGE_CACHE = Path('./static/covers')
 LOCAL_IMAGE_CACHE.mkdir(parents=True, exist_ok=True)
