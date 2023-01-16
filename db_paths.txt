@@ -9,5 +9,4 @@
 
 #/Volumes/Osx4T/05_download_tools_open_source/yt_dl/20230115_mp_countdown_reels
 
-#./demoVidLib/__media_data2/medialib2.pickle
-./demoVidLib/movies/__media_data2/medialib2.pickle
+./demoVidLib/__media_data2/medialib2.pickle
