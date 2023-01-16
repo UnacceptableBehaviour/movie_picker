@@ -6,14 +6,6 @@ from pathlib import Path
 
 from urllib.parse import unquote  # comvert Annihilation_%28film%29.png to Annihilation_(film).png
 
-#TODO remove DEBUG
-print(" - - - - - - - - import exceptions into retrieval.py - - - - < < S")
-print(dir())
-print("__name__",__name__)
-from exceptions import IncorrectURLForImageRetrieval
-print(" - - - - - - - - import exceptions into retrieval.py - - - - < < E")
-#TODO remove DEBUG
-
 import urllib.request
 import shutil
 from bs4 import BeautifulSoup        # https://www.crummy.com/software/BeautifulSoup/bs4/doc/
