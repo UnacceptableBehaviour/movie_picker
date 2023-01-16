@@ -222,6 +222,8 @@ for f in reel_files:
 for mv in movie_names.split('\n'):
     rf = random.choice(reel_files)
     if '.DS_Store' in rf.name : continue
-    print(f"\n\nFROM {rf}")
+    print(f"\nFROM {rf}")
     print(f"TO {target.joinpath(mv)}")
     shutil.copyfile(rf,target.joinpath(mv))
+
+print(f"\nCreated demo video library with {len(movie_names)} entried in {target.name}.\n\n")
