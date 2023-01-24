@@ -13,8 +13,10 @@ RUN python --version
 WORKDIR /movie_picker
 COPY . .
 
-RUN python -m venv venv
+WORKDIR /
+RUN python3 -m venv venv
 
+WORKDIR /movie_picker
 RUN . venv/bin/activate
 
 RUN pip install -r requirements.txt
@@ -35,4 +37,11 @@ ENTRYPOINT ["./hello.py"]
 # --network=host \
 # -p52001:52001 \
 # --mount type=bind,source="demoVidLib",target=demoVidLib \
+# moviepicker
+
+# docker run \
+# -e FLASK_ENV=development -e FLASK_APP=hello.py \
+# --name mvpicker \
+# --network=host \
+# -p52001:52001 \
 # moviepicker
