@@ -5,6 +5,7 @@ WORKDIR /
 RUN apk update
 RUN apk add nano git
 RUN apk add postgresql-dev gcc python3-dev musl-dev
+RUN apk add build-base linux-headers
 RUN apk add --no-cache py3-pip
 
 RUN python --version
@@ -32,6 +33,6 @@ ENTRYPOINT ["./hello.py"]
 # -e FLASK_ENV=development -e FLASK_APP=hello.py \
 # --name mvpicker \
 # --network=host \
-# -52001:52001 \
+# -p52001:52001 \
 # --mount type=bind,source="demoVidLib",target=demoVidLib \
 # moviepicker
