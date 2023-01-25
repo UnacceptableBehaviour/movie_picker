@@ -6,6 +6,7 @@
 # these don't wok???
 ./moviepicker/userDB.json
 moviepicker/userDB.json
+userDB.json
 
 # ignore directory and contents
 /movie_picker/__pycache__
@@ -15,3 +16,6 @@ moviepicker/userDB.json
 /static/uploads
 /static/covers
 /scripts/vlc
+
+# VSCode
+.vscode
