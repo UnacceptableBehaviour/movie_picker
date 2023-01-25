@@ -4,8 +4,8 @@
 .AppleDouble
 
 # these don't wok???
-./moviepicker/userDB.json
-moviepicker/userDB.json
+#./moviepicker/userDB.json
+#moviepicker/userDB.json
 userDB.json
 
 # ignore directory and contents
