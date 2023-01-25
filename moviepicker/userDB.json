@@ -1,1 +1,172 @@
-{"938c2c7f-15ee-441d-bc5d-e98e42e540a3": {"uuid": "938c2c7f-15ee-441d-bc5d-e98e42e540a3", "name": "mum", "fingerprints": ["0684b12aea9427f6f47bd7d9c3626340"], "short_list": [], "seen_list": [], "ni_list": [], "ratings": {}, "chosen_sort": "title", "prefs_genre": {"neg": [], "pos": []}, "prefs_actors": {"neg": [], "pos": []}, "current_user": false}, "1d016209-52d9-4539-ac45-f82acfb841be": {"uuid": "1d016209-52d9-4539-ac45-f82acfb841be", "name": "M2", "fingerprints": ["0684b12aea9427f6f47bd7d9c3626340"], "short_list": [], "seen_list": ["0110475", "1753367"], "ni_list": [], "ratings": {"3674140": 8}, "chosen_sort": "rating", "prefs_genre": {"neg": [], "pos": ["News"]}, "prefs_actors": {"neg": [], "pos": []}, "current_user": false}, "5961e5d4-e4f7-4296-8049-b1a68d273926": {"uuid": "5961e5d4-e4f7-4296-8049-b1a68d273926", "name": "M3", "fingerprints": ["0684b12aea9427f6f47bd7d9c3626340"], "short_list": [], "seen_list": [], "ni_list": ["1753367"], "ratings": {}, "chosen_sort": "year", "prefs_genre": {"neg": ["Action", "Adventure", "Sport", "Music", "Documentary", "Western", "Mystery", "Crime", "History", "War", "Sci-Fi", "Horror", "Comedy", "Talk-Show", "Drama", "Thriller", "Biography", "Romance", "Family", "Animation"], "pos": []}, "prefs_actors": {"neg": [], "pos": []}, "current_user": false}, "e75da0f6-551b-4c69-93ca-00ef31f5e701": {"uuid": "e75da0f6-551b-4c69-93ca-00ef31f5e701", "name": "simon", "fingerprints": ["827b7cbe5a51f73b78f8051875cd3fb5", "30e0b463fdf02ab4053c45f2083d6777"], "short_list": ["0861689", "0070723", "1971325", "0113568", "0070707", "9639470", "8633462"], "seen_list": ["0096061", "0091419", "2414766", "0331632", "2756032", "0086856", "1306980", "0110475", "0053291", "0454876"], "ni_list": ["3152592", "0076929", "9624766", "0359950", "3464902", "3197532", "0052357", "0069293"], "ratings": {"2194499": 8, "6139732": 8, "0074486": 7, "0242653": 8, "0861689": 7}, "chosen_sort": "added", "prefs_genre": {"neg": ["Horror", "War", "Biography", "Animation", "Talk-Show"], "pos": ["Sci-Fi", "Romance", "Fantasy", "Mystery", "Comedy", "Documentary", "Thriller"]}, "prefs_actors": {"neg": [], "pos": []}, "current_user": false}, "e75da0f6-551b-4c69-93ca-00ef31f55555": {"uuid": "e75da0f6-551b-4c69-93ca-00ef31f55555", "name": "scifi", "fingerprints": ["0684b12aea9427f6f47bd7d9c3626340"], "short_list": [], "seen_list": ["0079944", "0067065", "0069293", "0070544", "0076929", "4547056", "0099180", "3659388", "1663202"], "ni_list": [], "ratings": {"1392190": 6, "4547056": 7, "0076929": 1}, "chosen_sort": "title", "prefs_genre": {"neg": ["Romance", "Mystery", "Biography"], "pos": ["Sci-Fi", "History"]}, "prefs_actors": {"neg": [], "pos": []}, "current_user": true}, "e75da0f6-551b-4c69-93ca-00ef31f55566": {"uuid": "e75da0f6-551b-4c69-93ca-00ef31f55566", "name": "chris", "fingerprints": [], "short_list": ["2096673", "0092067", "2582802", "4731136"], "seen_list": ["0054698", "0089092", "0086856", "0066434", "0110475", "0052357"], "ni_list": ["1386703", "1877832", "7587984", "2268016", "0347149"], "ratings": {}, "chosen_sort": "rating", "prefs_genre": {"neg": ["Crime"], "pos": ["Family", "Music", "Romance"]}, "prefs_actors": {"neg": [], "pos": []}, "current_user": false}}
+{
+  "938c2c7f-15ee-441d-bc5d-e98e42e540a3": {
+    "uuid": "938c2c7f-15ee-441d-bc5d-e98e42e540a3",
+    "name": "mum",
+    "fingerprints": ["0684b12aea9427f6f47bd7d9c3626340"],
+    "short_list": [],
+    "seen_list": [],
+    "ni_list": [],
+    "ratings": {},
+    "chosen_sort": "title",
+    "prefs_genre": { "neg": [], "pos": [] },
+    "prefs_actors": { "neg": [], "pos": [] },
+    "current_user": false
+  },
+  "1d016209-52d9-4539-ac45-f82acfb841be": {
+    "uuid": "1d016209-52d9-4539-ac45-f82acfb841be",
+    "name": "M2",
+    "fingerprints": ["0684b12aea9427f6f47bd7d9c3626340"],
+    "short_list": [],
+    "seen_list": ["0110475", "1753367"],
+    "ni_list": [],
+    "ratings": { "3674140": 8 },
+    "chosen_sort": "rating",
+    "prefs_genre": { "neg": [], "pos": ["News"] },
+    "prefs_actors": { "neg": [], "pos": [] },
+    "current_user": false
+  },
+  "5961e5d4-e4f7-4296-8049-b1a68d273926": {
+    "uuid": "5961e5d4-e4f7-4296-8049-b1a68d273926",
+    "name": "M3",
+    "fingerprints": ["0684b12aea9427f6f47bd7d9c3626340"],
+    "short_list": [],
+    "seen_list": [],
+    "ni_list": ["1753367"],
+    "ratings": {},
+    "chosen_sort": "year",
+    "prefs_genre": {
+      "neg": [
+        "Action",
+        "Adventure",
+        "Sport",
+        "Music",
+        "Documentary",
+        "Western",
+        "Mystery",
+        "Crime",
+        "History",
+        "War",
+        "Sci-Fi",
+        "Horror",
+        "Comedy",
+        "Talk-Show",
+        "Drama",
+        "Thriller",
+        "Biography",
+        "Romance",
+        "Family",
+        "Animation"
+      ],
+      "pos": []
+    },
+    "prefs_actors": { "neg": [], "pos": [] },
+    "current_user": false
+  },
+  "e75da0f6-551b-4c69-93ca-00ef31f5e701": {
+    "uuid": "e75da0f6-551b-4c69-93ca-00ef31f5e701",
+    "name": "simon",
+    "fingerprints": [
+      "827b7cbe5a51f73b78f8051875cd3fb5",
+      "30e0b463fdf02ab4053c45f2083d6777"
+    ],
+    "short_list": [
+      "0861689",
+      "0070723",
+      "1971325",
+      "0113568",
+      "0070707",
+      "9639470",
+      "8633462"
+    ],
+    "seen_list": [
+      "0096061",
+      "0091419",
+      "2414766",
+      "0331632",
+      "2756032",
+      "0086856",
+      "1306980",
+      "0110475",
+      "0053291",
+      "0454876"
+    ],
+    "ni_list": [
+      "3152592",
+      "0076929",
+      "9624766",
+      "0359950",
+      "3464902",
+      "3197532",
+      "0052357",
+      "0069293"
+    ],
+    "ratings": {
+      "2194499": 8,
+      "6139732": 8,
+      "0074486": 7,
+      "0242653": 8,
+      "0861689": 7
+    },
+    "chosen_sort": "added",
+    "prefs_genre": {
+      "neg": ["Horror", "War", "Biography", "Animation", "Talk-Show"],
+      "pos": [
+        "Sci-Fi",
+        "Romance",
+        "Fantasy",
+        "Mystery",
+        "Comedy",
+        "Documentary",
+        "Thriller"
+      ]
+    },
+    "prefs_actors": { "neg": [], "pos": [] },
+    "current_user": false
+  },
+  "e75da0f6-551b-4c69-93ca-00ef31f55555": {
+    "uuid": "e75da0f6-551b-4c69-93ca-00ef31f55555",
+    "name": "scifi",
+    "fingerprints": ["0684b12aea9427f6f47bd7d9c3626340"],
+    "short_list": [],
+    "seen_list": [
+      "0079944",
+      "0067065",
+      "0069293",
+      "0070544",
+      "0076929",
+      "4547056",
+      "0099180",
+      "3659388",
+      "1663202"
+    ],
+    "ni_list": [],
+    "ratings": { "1392190": 6, "4547056": 7, "0076929": 1 },
+    "chosen_sort": "title",
+    "prefs_genre": {
+      "neg": ["Romance", "Mystery", "Biography"],
+      "pos": ["Sci-Fi", "History"]
+    },
+    "prefs_actors": { "neg": [], "pos": [] },
+    "current_user": true
+  },
+  "e75da0f6-551b-4c69-93ca-00ef31f55566": {
+    "uuid": "e75da0f6-551b-4c69-93ca-00ef31f55566",
+    "name": "chris",
+    "fingerprints": [],
+    "short_list": ["2096673", "0092067", "2582802", "4731136"],
+    "seen_list": [
+      "0054698",
+      "0089092",
+      "0086856",
+      "0066434",
+      "0110475",
+      "0052357"
+    ],
+    "ni_list": ["1386703", "1877832", "7587984", "2268016", "0347149"],
+    "ratings": {},
+    "chosen_sort": "rating",
+    "prefs_genre": { "neg": ["Crime"], "pos": ["Family", "Music", "Romance"] },
+    "prefs_actors": { "neg": [], "pos": [] },
+    "current_user": false
+  }
+}
