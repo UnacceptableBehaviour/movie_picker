@@ -24,24 +24,35 @@ RUN pip install -r requirements.txt
 EXPOSE 52001
 ENTRYPOINT ["./hello.py"]
 
-# build
+# - - TO build
 # cd repos
 # git clone https://github.com/UnacceptableBehaviour/movie_picker
 # cd movie_picker
 # docker build . -t moviepicker
 
-# run with (network not quite right yet)
+# - - 1st run container with 
 # docker run \
 # -e FLASK_ENV=development -e FLASK_APP=hello.py \
-# --name mvpicker \
-# --network=host \
-# -p52001:52001 \
-# --mount type=bind,source="demoVidLib",target=demoVidLib \
+# --name mvpicker --rm \
+# -p 52001:52001 \
 # moviepicker
 
+# stop / start container (after first run)
+# docker start mvpicker
+# docker stop mvpicker
+
+# view site @ http://127.0.0.1:52001/ or http://127.0.0.1:52001/slider_tests
+
+
+
+
+# TODO - issur with --mount ?? 
 # docker run \
 # -e FLASK_ENV=development -e FLASK_APP=hello.py \
 # --name mvpicker \
-# --network=host \
-# -p52001:52001 \
+# -p 52001:52001 \
+# --mount type=bind,source="demoVidLib",target="demoVidLib" \
 # moviepicker
+#
+# docker: Error response from daemon: invalid mount config for type "bind": invalid mount path: 'demoVidLib' mount path must be absolute.
+
