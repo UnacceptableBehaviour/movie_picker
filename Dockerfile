@@ -8,6 +8,11 @@ RUN apk add postgresql-dev gcc python3-dev musl-dev
 RUN apk add build-base linux-headers
 RUN apk add --no-cache py3-pip
 
+# Create a group and user
+RUN addgroup -S cine && adduser -D -S mvpk -G cine
+# use the new user
+USER mvpk
+
 RUN apk add vlc
 
 RUN python --version
