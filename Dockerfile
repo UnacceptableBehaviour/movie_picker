@@ -8,6 +8,8 @@ RUN apk add postgresql-dev gcc python3-dev musl-dev
 RUN apk add build-base linux-headers
 RUN apk add --no-cache py3-pip
 
+RUN apk add vlc
+
 RUN python --version
 
 WORKDIR /movie_picker
@@ -31,11 +33,11 @@ ENTRYPOINT ["./hello.py"]
 # docker build . -t moviepicker
 
 # - - 1st run container with 
-# docker run \
-# -e FLASK_DEBUG=1 -e TEMPLATES_AUTO_RELOAD=1 -e FLASK_APP=hello.py \
-# --name mvpicker --rm \
-# -p 52001:52001 \
-# moviepicker
+docker run \
+-e FLASK_DEBUG=1 -e TEMPLATES_AUTO_RELOAD=1 -e FLASK_APP=hello.py \
+--name mvpicker --rm \
+-p 52001:52001 \
+moviepicker
 
 # stop / start container (after first run)
 # docker start mvpicker
