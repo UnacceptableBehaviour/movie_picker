@@ -33,11 +33,11 @@ ENTRYPOINT ["./hello.py"]
 # docker build . -t moviepicker
 
 # - - 1st run container with 
-docker run \
--e FLASK_DEBUG=1 -e TEMPLATES_AUTO_RELOAD=1 -e FLASK_APP=hello.py \
---name mvpicker --rm \
--p 52001:52001 \
-moviepicker
+# docker run \
+# -e FLASK_DEBUG=1 -e TEMPLATES_AUTO_RELOAD=1 -e FLASK_APP=hello.py \
+# --name mvpicker --rm \
+# -p 52001:52001 \
+# moviepicker
 
 # stop / start container (after first run)
 # docker start mvpicker
