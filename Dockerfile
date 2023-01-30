@@ -20,7 +20,6 @@ RUN python --version
 WORKDIR /movie_picker
 COPY . .
 
-#WORKDIR /
 RUN python3 -m venv venv
 
 WORKDIR /movie_picker
