@@ -13,7 +13,7 @@ RUN python --version
 WORKDIR /movie_picker
 COPY . .
 
-WORKDIR /
+#WORKDIR /
 RUN python3 -m venv venv
 
 WORKDIR /movie_picker
@@ -32,7 +32,7 @@ ENTRYPOINT ["./hello.py"]
 
 # - - 1st run container with 
 # docker run \
-# -e FLASK_ENV=development -e FLASK_APP=hello.py \
+# -e FLASK_DEBUG=1 -e TEMPLATES_AUTO_RELOAD=1 -e FLASK_APP=hello.py \
 # --name mvpicker --rm \
 # -p 52001:52001 \
 # moviepicker
@@ -42,7 +42,6 @@ ENTRYPOINT ["./hello.py"]
 # docker stop mvpicker
 
 # view site @ http://127.0.0.1:52001/ or http://127.0.0.1:52001/slider_tests
-
 
 
 
