@@ -13,7 +13,7 @@ RUN apk add vlc
 RUN addgroup -S cine && adduser -D -S mvpk -G cine
 # use the new user
 USER mvpk
-
+#RUN mkdr /movie_picker
 
 RUN python --version
 
