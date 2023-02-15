@@ -1,15 +1,15 @@
 #! /usr/bin/env python
 
-# youtub
-# ./vtdl.py 
+# youtube
+# ./wtdl.py 
 
 # install: setup - TODO add to git, EDIT THESE INSTRUCTIONS
-# > curl https://raw.githubusercontent.com/UnacceptableBehaviour/movie_picker/master/scripts/vtdl.py > vtdl.py
-# > chmod +x vtdl.py
+# > curl https://raw.githubusercontent.com/UnacceptableBehaviour/movie_picker/master/scripts/wtdl.py > wtdl.py
+# > chmod +x wtdl.py
 # > python3 -m venv venv
 # > . venv/bin/activate           # or source venv/bin/activate
 # > pip install youtube_dl
-# > ./vtdl.py                     # update channel downloads
+# > ./wtdl.py                     # update channel downloads
 #
 '''
 # EG text file
@@ -86,7 +86,7 @@ def get_urls_from_file(filename):
 #
 # subscriptions - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \
 channel_DB = {}
-CHANNEL_DB_FILE = Path('/Volumes/Osx4T/05_download_tools_open_source/yt_dl/vtdl/channel_downloads.json')
+CHANNEL_DB_FILE = Path('./vtdl/channel_downloads.json')
 load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
 NO_OF_ITEMS_PER_CHAN = 20
 playlist_items = f"1-{NO_OF_ITEMS_PER_CHAN}"
@@ -284,13 +284,13 @@ class Dload(threading.Thread):
         else:
             bandwidth_str = f"Total download rate: {int(total_bandwidth_use/(1024*1024*1024)):.2f} GiB/s"
         
-        report = f"\n{bandwidth_str}\nDownloads: {download_count}\nThreads: {threading.active_count()}\nErrors: {MyLogger.num_of_errors()}"
+        report = f"\n{bandwidth_str}\nDownloads: {download_count}\nThreads: {threading.active_count()}\nErrors: {MyLogger.num_of_errors()}\nAll done flag: {all_done}"
         
         return report
 
 
 
-    def __init__(self, url_to_fetch, base_dir, group_dir, target_dir, ydl_opts=None):
+    def __init__(self, pos, url_to_fetch, base_dir, group_dir, target_dir, ydl_opts=None):
         super().__init__()
         """Create a FileDownloader object with the given options."""
         print(f"output_template: {base_dir}, {group_dir}, {target_dir}")
@@ -301,7 +301,7 @@ class Dload(threading.Thread):
         output_template =  f"{self.base_dir}/"   if self.base_dir else ''
         output_template += f"{self.group_dir}/"  if self.group_dir else ''
         output_template += f"{self.target_dir}/" if self.target_dir else ''
-        output_template += "%(title)s-%(id)s.%(ext)s"
+        output_template += f"{pos:02}-%(title)s-%(id)s.%(ext)s"
         print(f"output_template: {output_template}")
         self.ydl_opts = {
             #'format': 'bestaudio/best',
@@ -354,7 +354,7 @@ def print_download_intent(download_thread_info_dict):
 
 
 # ALL files to be downloaded in this session
-DLOAD_SESSION_DB = Path('vtdl/dl_session.json')
+DLOAD_SESSION_DB = Path('./vtdl/dl_session.json')
 download_thread_info_dict = {}
 
 if DLOAD_SESSION_DB.exists():
@@ -378,18 +378,20 @@ if ('-f' in sys.argv) or ('-fo' in sys.argv):
         if dload_file.stem not in download_thread_info_dict: download_thread_info_dict[dload_file.stem] = []
         file_channel = dload_file.stem
         
+        vid_pos_in_list = 1
         for v_url in vid_url_list:
-             download_thread_info_dict[dload_file.stem].append(create_dld_thread_info({
+            download_thread_info_dict[dload_file.stem].append(create_dld_thread_info({
                 'downloaded': False,
                 'base_dir': 'vtdl',
                 'group_dir': 'nonSub',
                 'target_dir': dload_file.stem,
                 'idx': None,
-                'pos': None,
+                'pos': vid_pos_in_list,
                 'src_url': v_url,
                 'title': '' }))
-             pprint(len(download_thread_info_dict[dload_file.stem])-1)
-             pprint(download_thread_info_dict[dload_file.stem][len(download_thread_info_dict[dload_file.stem])-1])
+            pprint(len(download_thread_info_dict[dload_file.stem])-1)
+            pprint(download_thread_info_dict[dload_file.stem][len(download_thread_info_dict[dload_file.stem])-1])
+            vid_pos_in_list += 1
         
         del(sys.argv[option_f_index+1])
         del(sys.argv[option_f_index])
@@ -479,10 +481,10 @@ for target_dir, vid_list in download_thread_info_dict.items():
         print(f"Queueing: {thread_info['src_url']} for download.")
         if thread_info['group_dir'] == '': thread_info['group_dir'] = 'chan' # TODO - REMOVE
         #def __init__(self, url_to_fetch, base_dir, group_dir, target_dir, ydl_opts=None):
-        thread_list.append(Dload(thread_info['src_url'], thread_info['base_dir'], thread_info['group_dir'], thread_info['target_dir']))
+        thread_list.append(Dload(thread_info['pos'], thread_info['src_url'], thread_info['base_dir'], thread_info['group_dir'], thread_info['target_dir']))
     
 for t in thread_list:
-    print(f"{t.native_id} start:{t.target_dir} - {t.url_to_fetch})")
+    print(f"{t.native_id} start:{t.target_dir} - {t.url_to_fetch}")
     t.start()
 
 DloadProgressDisplay().start()
