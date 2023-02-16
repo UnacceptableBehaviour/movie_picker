@@ -396,7 +396,7 @@ if ('-f' in sys.argv) or ('-fo' in sys.argv):
         del(sys.argv[option_f_index+1])
         del(sys.argv[option_f_index])
     else:
-        print(f"* * * WARNING * * *\nFile spcified by option -f\nNOT FOUND:{dload_file} <")
+        print(f"* * * WARNING * * *\nFile spcified by option -f/fo\nNOT FOUND:{dload_file} <")
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -458,14 +458,15 @@ for target_dir, vid_list in download_targets_all.items():
         thread_info = create_dld_thread_info(dload_target_info)   # fill in gaps in thread dict
         download_thread_info_dict[target_dir].append(thread_info)
 
-
-print_download_intent(download_thread_info_dict)
-print('')
-pprint(sys.argv)
-print('')
-if file_dload_only: print(f"File download ONLY:{file_dload_only}") 
-yn = input('Continue (y)/n\n')
-if yn.strip().lower() == 'n': sys.exit(0)
+# TODO add cron option to skip this
+if len(download_thread_info_dict) > 0:
+    print_download_intent(download_thread_info_dict)
+    print('')
+    pprint(sys.argv)
+    print('')
+    if file_dload_only: print(f"File download ONLY:{file_dload_only}") 
+    yn = input('Continue (y)/n\n')
+    if yn.strip().lower() == 'n': sys.exit(0)
 
 # TODO add before exit hook to ensure persistence across exec runs
 # AFTER ALL OPTIONS PROCESSED SAVE DLOAD SESSION INFO as JSON        
@@ -487,9 +488,18 @@ for t in thread_list:
     print(f"{t.native_id} start:{t.target_dir} - {t.url_to_fetch}")
     t.start()
 
-DloadProgressDisplay().start()
+if '-i' in sys.argv:
+    print(f"\n> Dload Info [{len(download_thread_info_dict)}]: - - - - - - - - - - - <")
+    for chan,vid_dict in download_thread_info_dict:
+        print(f"C: {chan} - {len(vid_dict)}") 
+        
+    print(f"\nDload dict download_thread_info_dict size: {len(download_thread_info_dict)}")
+    print(f"Thread list size: {len(thread_list)}")
 
-
+if len(thread_list) > 0:
+    DloadProgressDisplay().start()
+else:
+    print('\nNothing scheduled for download\nUse -h for help')
 
 sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -498,16 +508,15 @@ sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # TODO
 # H - - - - - - - 
-# dont start DloadProgressDisplay().start() if there are no downloads queued
 # move code to wdtl from vdtl - remove ref to w/vdtl where possible
-# -f / -fo doesn't cleanup / update dl_session.json
+# -f / -fo doesn't cleanup / update dl_session.json DLOAD_SESSION_DB
 # Add help with option info & examples
 # Add -i option: DB info dump
 # assess / sort channel function items
 
 # M - - - - - - - 
 # Add video name after URL in file - simplify inspection
-
+# search for TODO add o this list
 
 # L - - - - - - - 
 # pause thread when tot_dload_band > 3.8Mb/s - EASY QUICK 
@@ -517,6 +526,7 @@ sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # To sort - - - - - - - 
 # add debug thread info to DloadProgressDisplay - find uncaught finished downloads (Logger needs work!)
 # add commit_dict_to_DB to EXIT HOOK to ensure persistence across exec runs (Logger needs work!)
+# add cron option to skip interactive elements
 #
 # channel function
 # when checking playlists for new content check 10,20,40,80,160,320 until caught up 
