@@ -86,7 +86,7 @@ def get_urls_from_file(filename):
 #
 # subscriptions - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \
 channel_DB = {}
-CHANNEL_DB_FILE = Path('./vtdl/channel_downloads.json')
+CHANNEL_DB_FILE = Path('./chanDloads/channel_downloads.json')
 load_dict_data_from_DB(channel_DB, CHANNEL_DB_FILE)
 NO_OF_ITEMS_PER_CHAN = 20
 playlist_items = f"1-{NO_OF_ITEMS_PER_CHAN}"
@@ -114,7 +114,7 @@ def get_playlist_update(cDB, chan_key, group_dir, pl_url, ydl_opts_pass={}):
             videos = result['entries']           # list of dict            
 
             for i, video in enumerate(videos):
-                # see Osx4T/05_download_tools_open_source/yt_dl/vtdl/video.json for object info
+                # see Osx4T/05_download_tools_open_source/yt_dl/chanDloads/video.json for object info
                 try:
                     if video == None:
                         print(f"{(i):03}: K: -- -- - * * * * Download not available * * * *")
@@ -328,7 +328,7 @@ class Dload(threading.Thread):
 
 def create_dld_thread_info( details={} ):
     thread_info =  { 'downloaded': False,
-                    'base_dir': 'vtdl',
+                    'base_dir': 'chanDloads',
                     'group_dir': '',
                     'target_dir': '',
                     'idx': None,
@@ -354,7 +354,7 @@ def print_download_intent(download_thread_info_dict):
 
 
 # ALL files to be downloaded in this session
-DLOAD_SESSION_DB = Path('./vtdl/dl_session.json')
+DLOAD_SESSION_DB = Path('./chanDloads/dl_session.json')
 download_thread_info_dict = {}
 
 if DLOAD_SESSION_DB.exists():
@@ -382,7 +382,7 @@ if ('-f' in sys.argv) or ('-fo' in sys.argv):
         for v_url in vid_url_list:
             download_thread_info_dict[dload_file.stem].append(create_dld_thread_info({
                 'downloaded': False,
-                'base_dir': 'vtdl',
+                'base_dir': 'chanDloads',
                 'group_dir': 'nonSub',
                 'target_dir': dload_file.stem,
                 'idx': None,
@@ -402,7 +402,7 @@ if ('-f' in sys.argv) or ('-fo' in sys.argv):
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # update subscriptions
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-CHANNEL_VIDEOS_FILE = Path('./vtdl/vtdl_video_channel_list.txt')
+CHANNEL_VIDEOS_FILE = Path('./chanDloads/video_channel_list.txt')
 video_channel_urls = get_urls_from_file(CHANNEL_VIDEOS_FILE)
 
 # r - reload - load all video info if channel doesn't exist, build list of new entries if it does
