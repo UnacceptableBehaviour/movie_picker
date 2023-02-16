@@ -508,7 +508,6 @@ sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 # TODO
 # H - - - - - - - 
-# move code to wdtl from vdtl - remove ref to w/vdtl where possible
 # -f / -fo doesn't cleanup / update dl_session.json DLOAD_SESSION_DB
 # Add help with option info & examples
 # Add -i option: DB info dump
