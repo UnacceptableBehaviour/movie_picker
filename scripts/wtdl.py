@@ -497,11 +497,28 @@ sys.exit(0) # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 
 # TODO
-# dont start DloadProgressDisplay().start() if there are no downloads queued - EASY QUICK - DONE? - CHECK
-# pause thread when tot_dload_band > 2MiB / sec - EASY QUICK 
-# add debug thread info to DloadProgressDisplay - find uncaught finished downloads (Logger needs work!) - HIGH
-# add commit_dict_to_DB to EXIT HOOK to ensure persistence across exec runs (Logger needs work!) - HIGH
+# H - - - - - - - 
+# dont start DloadProgressDisplay().start() if there are no downloads queued
+# move code to wdtl from vdtl - remove ref to w/vdtl where possible
+# -f / -fo doesn't cleanup / update dl_session.json
+# Add help with option info & examples
+# Add -i option: DB info dump
+# assess / sort channel function items
 
+# M - - - - - - - 
+# Add video name after URL in file - simplify inspection
+
+
+# L - - - - - - - 
+# pause thread when tot_dload_band > 3.8Mb/s - EASY QUICK 
+# Suppressing errors to screen and logging them in the logger
+
+
+# To sort - - - - - - - 
+# add debug thread info to DloadProgressDisplay - find uncaught finished downloads (Logger needs work!)
+# add commit_dict_to_DB to EXIT HOOK to ensure persistence across exec runs (Logger needs work!)
+#
+# channel function
 # when checking playlists for new content check 10,20,40,80,160,320 until caught up 
 # update DLOAD_SESSION_DB at end - or DELETE or rename for history / end of week compiliation
 # store this weeks new content in one folder for transfer to other devices
