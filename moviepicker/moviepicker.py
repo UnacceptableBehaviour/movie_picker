@@ -1090,16 +1090,38 @@ if __name__ == '__main__':
     if ('-h' in sys.argv) or ('-help' in sys.argv) or ('--help' in sys.argv):
         print(
 '''
-- - Help / Exmple use - -
+= = = EXAMPLE - Scan a directory,
+                Create DB,
+                Add it to DB list so entries apear in carousel
+
+$ cd into moviepicker repo
+
+# run with option update - - - \     / - - specify directory where movies files are
+$ ./moviepicker/moviepicker.py -u /Volumes/Osx4T/tor_2022
+
+Once finished DB filename displayed like so:
+PICKLING before EXIT: /Volumes/Osx4T/mov_2022/__media_data2/medialib2.pickle
+
+Copy path to bottom of file: ./movie_picker/db_paths.txt
+/Volumes/Osx4T/mov_2022/__media_data2/medialib2.pickle
+
+Movies found and added to the DB will automatically be added to the carousels
+
+A list of paths to search for DB file held in
+./movie_picker/db_paths.txt
+Lines starting with a # are ignored
+
+
+- - More Help / Exmple use - -
 $ cd path
-$ .pe                                        # alias .pe='. venv/bin/activate'
-$ ./moviepicker/moviepicker.py                 # plug in all disks - will report each DB contents &
+$ .pe                                       # alias .pe='. venv/bin/activate'
+$ ./moviepicker/moviepicker.py              # plug in all disks - will report each DB contents &
                                             # DUPLICATES that appear across discs
 
                                             # list movies in DB - ldb
-$ ./moviepicker/moviepicker.py -ldb /Volumes/Osx4T/tor/__media_data2/medialib2.pickle
+$ ./moviepicker/moviepicker.py -ldb /Volumes/Osx4T/mov/__media_data2/medialib2.pickle
 
-$ ./moviepicker/moviepicker.py -u -d         # find info about new additions to movie directory
+$ ./moviepicker/moviepicker.py -u -d        # find info about new additions to movie directory
                                             # - dummy run (NO WRITE)
                                             # or
 $ ./moviepicker/moviepicker.py -u -d /Volumes/nfs/nfs_C2_500G_JEN/movies
@@ -1108,17 +1130,17 @@ $ ./moviepicker/moviepicker.py -u           # find info about new additions to m
 
 option
 -ec             print list of file extension found on default target
--ec /path/        print list of file extension found on path
+-ec /path/      print list of file extension found on path
 
 -d              run but don't save results to disk (dummy run)
--u                 udate entries on default target
--u /path/        udate entries on default target with path
+-u              udate entries on default target
+-u /path/       udate entries on default target with path
 
--udev    update from local repo movie directory
+-udev           update from local repo movie directory
 
 -ldb /path/medialib2.pickle     list entries in a pickleDB
--ldr /path/media                 list potential entries in a target directory ??
-
+-ldr /path/media                list potential entries in a target directory ??
+            
 '''
         )
         sys.exit()
@@ -1277,7 +1299,9 @@ option
 
     import random
     print("\n\n\nMedia Object\n\n\n:")
-    pprint( random.choice(list(all_media.items())) ) # pprint a randon dict item to look at object
+    #print(f"len(all_media.items()): {len(all_media.items())}")
+    if len(all_media.items()) > 0:
+        pprint( random.choice(list(all_media.items())) ) # pprint a randon dict item to look at object
 
     print("\n\nDUPLICATES:")
     for d in duplicates:
