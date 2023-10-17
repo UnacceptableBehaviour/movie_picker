@@ -11,29 +11,29 @@
 example_help = '''
 - - Help / Exmple use - -
 $ cd path
-$ .pe										# alias .pe='. venv/bin/activate'
-$ ./moviepicker/moviepicker.py 				# plug in all disks - will report each DB contents &
-											# DUPLICATES that appear across discs
+$ .pe                                        # alias .pe='. venv/bin/activate'
+$ ./moviepicker/moviepicker.py                 # plug in all disks - will report each DB contents &
+                                            # DUPLICATES that appear across discs
 
-											# list movies in DB - ldb
+                                            # list movies in DB - ldb
 $ ./moviepicker/moviepicker.py -ldb /Volumes/Osx4T/tor/__media_data2/medialib2.pickle
 
-$ ./moviepicker/moviepicker.py -u -d 		# find info about new additions to movie directory
-											# - dummy run (NO WRITE)
-$ ./moviepicker/moviepicker.py -u   		# find info about new additions to movie directory UPDATE DB
+$ ./moviepicker/moviepicker.py -u -d         # find info about new additions to movie directory
+                                            # - dummy run (NO WRITE)
+$ ./moviepicker/moviepicker.py -u           # find info about new additions to movie directory UPDATE DB
 
 option
--ec 			print list of file extension found on default target
--ec /path/		print list of file extension found on path
+-ec             print list of file extension found on default target
+-ec /path/        print list of file extension found on path
 
--d  			run but don't save results to disk (dummy run)
--u 				udate entries on default target
--u /path/		udate entries on default target with path
+-d              run but don't save results to disk (dummy run)
+-u                 udate entries on default target
+-u /path/        udate entries on default target with path
 
--udev	update from local repo movie directory
+-udev    update from local repo movie directory
 
--ldb /path/medialib2.pickle 	list entries in a pickleDB
--ldr /path/media 				list potential entries in a target directory ??
+-ldb /path/medialib2.pickle     list entries in a pickleDB
+-ldr /path/media                 list potential entries in a target directory ??
 
 '''
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     # list entries in a pickleDB   - - - - - - - - - - - - - - - - - - - - - - - - -
     # --list_entries_db NON optional_target
-    # -ldb /path/	print list of file extension found on path
+    # -ldb /path/    print list of file extension found on path
     parser.add_argument("-ldb", "--list_entries_db", type=open, help="list media in DBname.pickle at PATH")
     # ./scripts/cli_parse.py -ldb                   < argument missing
     #                                                           |
@@ -103,17 +103,17 @@ if __name__ == "__main__":
 
     # specify DB to scan / update - - - - - - - - - - - - - - - - - - - - - - - - -
     # --specify_db NON optional_target
-    # -db /path/	print list of file extension found on path
+    # -db /path/    print list of file extension found on path
     parser.add_argument("-db", "--specify_db", type=open, help="specify PATH of DB to scan / update")
 
     # list entries in a pickleDB   - - - - - - - - - - - - - - - - - - - - - - - - -
     # --list_new_entries_in_dir NON optional_target
-    # -lnd /path/	print list of file extension found on path
+    # -lnd /path/    print list of file extension found on path
     parser.add_argument("-lnd", "--list_new_entries_in_dir", type=open, help="scan PATH for new media & in specified DB")
 
     # --extension_scan optional_target       - - - - - - - - - - - - - - - - - - -
-    # -ec 			print list of file extension found on default target
-    # -ec /path/	print list of file extension found on path
+    # -ec             print list of file extension found on default target
+    # -ec /path/    print list of file extension found on path
 
 
     # --push comment       - - - - - - - - - - - - - - - - - - - - - - - - - - - -
